@@ -1,10 +1,12 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +33,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
    const { toast } = useToast();
-   const router = useRouter(); // Get router instance
+   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,27 +44,36 @@ export default function LoginPage() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Simulate API call
     console.log("Login submitted:", values);
     toast({
       title: "Login Successful!",
       description: "Redirecting you to your dashboard...",
     });
-    // Add actual login logic here (e.g., API call)
+    // Add actual login logic here
 
-    // Redirect to home page after showing toast
-    // In a real app, this would likely happen after successful API response
     router.push('/');
   }
 
   return (
-    <div className="flex justify-center items-center py-12">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary">Login to EduHub</CardTitle>
-          <CardDescription>Enter your credentials to access your account.</CardDescription>
+    <motion.div
+      className="flex justify-center items-center min-h-[calc(100vh-15rem)] py-12" // Adjust min-height as needed
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="w-full max-w-md shadow-xl border-primary/20">
+        <CardHeader className="text-center space-y-2 bg-gradient-to-b from-primary/5 to-transparent p-8 rounded-t-lg">
+           <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
+          >
+             <LogIn className="h-12 w-12 mx-auto text-primary" />
+           </motion.div>
+          <CardTitle className="text-3xl font-bold text-primary">Welcome Back!</CardTitle>
+          <CardDescription className="text-lg">Login to access your EduHub dashboard.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -70,9 +81,9 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-base">Email Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="you@example.com" {...field} />
+                      <Input placeholder="you@example.com" {...field} className="text-base py-6" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -83,27 +94,32 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-base">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input type="password" placeholder="••••••••" {...field} className="text-base py-6" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                 <LogIn className="mr-2 h-4 w-4" /> Login
-              </Button>
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 text-lg py-7">
+                   <LogIn className="mr-2 h-5 w-5" /> Login
+                </Button>
+              </motion.div>
             </form>
           </Form>
-          <p className="mt-4 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-base text-muted-foreground">
             Don't have an account?{" "}
-            <Link href="/signup" className="font-medium text-primary hover:underline">
-              Sign up
+            <Link href="/signup" className="font-semibold text-primary hover:underline hover:text-accent transition-colors">
+              Sign up now
             </Link>
           </p>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

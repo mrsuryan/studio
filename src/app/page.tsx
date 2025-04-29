@@ -1,9 +1,13 @@
+
+'use client';
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from 'next/image';
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Mock course data
 const featuredCourses = [
@@ -12,59 +16,107 @@ const featuredCourses = [
   { id: 3, title: "Data Structures and Algorithms", description: "Master essential computer science concepts.", progress: 0, image: "https://picsum.photos/seed/dsa/300/200" },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+    },
+  },
+};
+
 export default function Home() {
   return (
-    <div className="space-y-8">
-      <section className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-primary mb-2">Welcome to EduHub Portal</h1>
-        <p className="text-xl text-muted-foreground">
-          Your journey to knowledge starts here. Explore our courses and enhance your skills.
+    <div className="space-y-12">
+      <motion.section
+        className="text-center py-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-4xl font-bold tracking-tight text-primary mb-3">Welcome to EduHub Portal</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Your journey to knowledge starts here. Explore our courses and enhance your skills with interactive learning.
         </p>
-      </section>
+      </motion.section>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Featured Courses</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <motion.section
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <h2 className="text-3xl font-semibold mb-6 text-primary flex items-center gap-2">
+             Featured Courses
+        </h2>
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+        >
           {featuredCourses.map((course) => (
-            <Card key={course.id} className="flex flex-col">
-              <CardHeader className="p-0">
-                <Image
-                  src={course.image}
-                  alt={course.title}
-                  width={300}
-                  height={200}
-                  className="rounded-t-lg w-full object-cover aspect-[3/2]"
-                />
-              </CardHeader>
-              <CardContent className="pt-4 flex-grow">
-                <CardTitle className="text-lg mb-1">{course.title}</CardTitle>
-                <CardDescription>{course.description}</CardDescription>
-              </CardContent>
-              <CardFooter className="flex flex-col items-start gap-2 pt-4">
-                 <div className="w-full">
-                   <div className="flex justify-between text-sm text-muted-foreground mb-1">
-                      <span>Progress</span>
-                      <span>{course.progress}%</span>
+            <motion.div key={course.id} variants={itemVariants}>
+               <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02]">
+                <CardHeader className="p-0">
+                  <Image
+                    src={course.image}
+                    alt={course.title}
+                    width={300}
+                    height={200}
+                    className="rounded-t-lg w-full object-cover aspect-[3/2]"
+                  />
+                </CardHeader>
+                <CardContent className="pt-5 flex-grow">
+                  <CardTitle className="text-xl mb-2">{course.title}</CardTitle>
+                  <CardDescription className="text-base">{course.description}</CardDescription>
+                </CardContent>
+                <CardFooter className="flex flex-col items-start gap-3 pt-4 border-t border-border/60">
+                   <div className="w-full">
+                     <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                        <span>Progress</span>
+                        <span>{course.progress}%</span>
+                     </div>
+                     <Progress value={course.progress} aria-label={`${course.title} progress: ${course.progress}%`} className="h-2" />
                    </div>
-                   <Progress value={course.progress} aria-label={`${course.title} progress: ${course.progress}%`} />
-                 </div>
-                  <Button variant={course.progress > 0 ? "outline" : "default"} size="sm" asChild className="mt-2 self-end border-primary text-primary hover:bg-primary/10 hover:text-primary data-[variant=default]:bg-primary data-[variant=default]:text-primary-foreground data-[variant=default]:hover:bg-primary/90">
-                    <Link href={`/courses/${course.id}`}>
-                       {course.progress > 0 ? 'Continue Learning' : 'Start Course'} <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-              </CardFooter>
-            </Card>
+                   <Button
+                    variant={course.progress > 0 ? "outline" : "default"}
+                    size="sm"
+                    asChild
+                    className="mt-2 self-end transition-transform duration-200 ease-in-out hover:translate-x-1"
+                    >
+                      <Link href={`/courses/${course.id}`}>
+                         {course.progress > 0 ? 'Continue Learning' : 'Start Course'} <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
           ))}
-        </div>
-         <div className="text-center mt-8">
-            <Button asChild>
+        </motion.div>
+         <motion.div
+            className="text-center mt-12"
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ delay: 0.5, duration: 0.5 }}
+         >
+            <Button size="lg" asChild className="transition-transform duration-200 ease-in-out hover:scale-105">
                 <Link href="/courses">
                     View All Courses <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
             </Button>
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
     </div>
   );
 }
