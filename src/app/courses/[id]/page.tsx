@@ -192,3 +192,4 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
     </motion.div>
   );
 }
+
