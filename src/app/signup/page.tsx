@@ -49,14 +49,20 @@ export default function SignupPage() {
 
  function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Signup submitted:", values);
+     // --- Simulate successful signup & auto-login ---
+     localStorage.setItem('isLoggedIn', 'true');
+     // Force Header to re-check localStorage (or use a global state)
+     window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+
+
      toast({
       title: "Signup Successful!",
       description: "Welcome to EduHub! Redirecting to login...",
       variant: "default", // Or success if you add a success variant
     });
-    // Add actual signup logic here
 
-    router.push('/login');
+
+    router.push('/login'); // Redirect to login page after signup
   }
 
   return (

@@ -2,11 +2,47 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
-import { BookOpen, LogIn, UserPlus, LayoutDashboard, ClipboardList, Activity, User } from 'lucide-react';
+import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+
 
 export function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
+
+  // Check login status on component mount and when localStorage changes
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const loggedInStatus = localStorage.getItem('isLoggedIn');
+      setIsLoggedIn(loggedInStatus === 'true');
+    };
+
+    checkLoginStatus();
+
+    // Optional: Listen for storage changes from other tabs/windows
+    window.addEventListener('storage', checkLoginStatus);
+
+    return () => {
+      window.removeEventListener('storage', checkLoginStatus);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    setIsLoggedIn(false);
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+    router.push('/login'); // Redirect to login page after logout
+  };
+
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -45,7 +81,7 @@ export function Header() {
               { href: "/assignments", label: "Assignments", icon: ClipboardList },
               { href: "/activities", label: "Activities", icon: Activity },
               // Removed Profile link from here
-           ].map((item, index) => (
+           ].map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -57,28 +93,39 @@ export function Header() {
             ))}
         </nav>
         <div className="flex items-center space-x-3"> {/* Increased spacing */}
-           {/* Added Profile link here */}
-           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-             <Button variant="ghost" size="sm" asChild>
-              <Link href="/profile">
-                <User className="mr-2 h-4 w-4" /> Profile
-              </Link>
-            </Button>
-           </motion.div>
-           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-             <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">
-                <LogIn className="mr-2 h-4 w-4" /> Login
-              </Link>
-            </Button>
-           </motion.div>
-           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow">
-              <Link href="/signup">
-                <UserPlus className="mr-2 h-4 w-4" /> Sign Up
-              </Link>
-            </Button>
-           </motion.div>
+           {isLoggedIn ? (
+             <>
+               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                 <Button variant="ghost" size="sm" asChild>
+                   <Link href="/profile">
+                     <User className="mr-2 h-4 w-4" /> Profile
+                   </Link>
+                 </Button>
+               </motion.div>
+               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                 <Button variant="outline" size="sm" onClick={handleLogout}>
+                   <LogOut className="mr-2 h-4 w-4" /> Logout
+                 </Button>
+               </motion.div>
+             </>
+           ) : (
+             <>
+               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                 <Button variant="ghost" size="sm" asChild>
+                   <Link href="/login">
+                     <LogIn className="mr-2 h-4 w-4" /> Login
+                   </Link>
+                 </Button>
+               </motion.div>
+               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                 <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow">
+                   <Link href="/signup">
+                     <UserPlus className="mr-2 h-4 w-4" /> Sign Up
+                   </Link>
+                 </Button>
+               </motion.div>
+             </>
+           )}
         </div>
       </div>
     </motion.header>

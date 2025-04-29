@@ -45,13 +45,19 @@ export default function LoginPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Login submitted:", values);
+    // --- Simulate successful login ---
+    localStorage.setItem('isLoggedIn', 'true');
+    // Force Header to re-check localStorage (or use a global state)
+    // A simple way is to dispatch a custom event or rely on page navigation
+    window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+
     toast({
       title: "Login Successful!",
       description: "Redirecting you to your dashboard...",
     });
-    // Add actual login logic here
 
-    router.push('/');
+
+    router.push('/'); // Redirect to homepage
   }
 
   return (
