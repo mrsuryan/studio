@@ -9,12 +9,13 @@ import Image from 'next/image';
 import { ArrowRight, BookOpen } from "lucide-react"; // Added BookOpen
 import { motion } from "framer-motion";
 
-// Mock course data
+// Mock course data - Update featured courses
 const featuredCourses = [
   { id: 1, title: "Introduction to Web Development", description: "Learn the fundamentals of HTML, CSS, and JavaScript.", progress: 65, image: "https://picsum.photos/seed/webdev/300/200" },
-  { id: 2, title: "Advanced React Concepts", description: "Dive deep into hooks, state management, and performance.", progress: 30, image: "https://picsum.photos/seed/react/300/200" },
-  { id: 3, title: "Data Structures and Algorithms", description: "Master essential computer science concepts.", progress: 0, image: "https://picsum.photos/seed/dsa/300/200" },
+  { id: 7, title: "Introduction to Cybersecurity", description: "Learn the basics of protecting systems and networks.", progress: 5, image: "https://picsum.photos/seed/cybersecurity/300/200" },
+  { id: 5, title: "Cloud Computing Basics (AWS)", description: "Understand the fundamentals of cloud services on AWS.", progress: 0, image: "https://picsum.photos/seed/awscloud/300/200" },
 ];
+
 
 const containerVariants = {
   hidden: { opacity: 0 },

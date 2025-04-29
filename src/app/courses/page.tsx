@@ -9,15 +9,22 @@ import Image from 'next/image';
 import { ArrowRight, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
-// Mock course data
+// Mock course data - Added more IT courses
 const allCourses = [
   { id: 1, title: "Introduction to Web Development", description: "Learn the fundamentals of HTML, CSS, and JavaScript.", progress: 65, image: "https://picsum.photos/seed/webdev/300/200" },
   { id: 2, title: "Advanced React Concepts", description: "Dive deep into hooks, state management, and performance.", progress: 30, image: "https://picsum.photos/seed/react/300/200" },
   { id: 3, title: "Data Structures and Algorithms", description: "Master essential computer science concepts.", progress: 0, image: "https://picsum.photos/seed/dsa/300/200" },
   { id: 4, title: "Python for Data Science", description: "Explore data analysis and machine learning with Python.", progress: 15, image: "https://picsum.photos/seed/python/300/200" },
-  { id: 5, title: "Cloud Computing Basics", description: "Understand the fundamentals of cloud services.", progress: 0, image: "https://picsum.photos/seed/cloud/300/200" },
-   { id: 6, title: "UI/UX Design Principles", description: "Learn the core concepts of user interface and experience design.", progress: 50, image: "https://picsum.photos/seed/uiux/300/200" },
+  { id: 5, title: "Cloud Computing Basics (AWS)", description: "Understand the fundamentals of cloud services on AWS.", progress: 0, image: "https://picsum.photos/seed/awscloud/300/200" },
+  { id: 6, title: "UI/UX Design Principles", description: "Learn the core concepts of user interface and experience design.", progress: 50, image: "https://picsum.photos/seed/uiux/300/200" },
+  { id: 7, title: "Introduction to Cybersecurity", description: "Learn the basics of protecting systems and networks from digital attacks.", progress: 5, image: "https://picsum.photos/seed/cybersecurity/300/200" },
+  { id: 8, title: "Database Management with SQL", description: "Master SQL for managing and querying relational databases.", progress: 20, image: "https://picsum.photos/seed/sql/300/200" },
+  { id: 9, title: "Networking Fundamentals", description: "Understand the core concepts of computer networks.", progress: 0, image: "https://picsum.photos/seed/networking/300/200" },
+  { id: 10, title: "Introduction to Machine Learning", description: "Get started with the basics of ML algorithms and applications.", progress: 10, image: "https://picsum.photos/seed/mlbasics/300/200" },
+  { id: 11, title: "DevOps Essentials", description: "Learn the principles and practices of DevOps for efficient software delivery.", progress: 0, image: "https://picsum.photos/seed/devops/300/200" },
+  { id: 12, title: "Mobile App Development (React Native)", description: "Build cross-platform mobile apps using React Native.", progress: 40, image: "https://picsum.photos/seed/reactnative/300/200" },
 ];
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
