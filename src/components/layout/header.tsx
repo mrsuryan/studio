@@ -2,7 +2,7 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
-import { BookOpen, LogIn, UserPlus, LayoutDashboard, ClipboardList, Activity } from 'lucide-react';
+import { BookOpen, LogIn, UserPlus, LayoutDashboard, ClipboardList, Activity, User } from 'lucide-react'; // Added User icon
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
@@ -44,6 +44,7 @@ export function Header() {
               { href: "/courses", label: "Courses", icon: BookOpen },
               { href: "/assignments", label: "Assignments", icon: ClipboardList },
               { href: "/activities", label: "Activities", icon: Activity },
+              { href: "/profile", label: "Profile", icon: User }, // Added Profile link
            ].map((item, index) => (
               <motion.div
                 key={item.href}
