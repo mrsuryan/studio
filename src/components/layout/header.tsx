@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, LogIn, UserPlus } from 'lucide-react';
+import { BookOpen, LogIn, UserPlus, LayoutDashboard, ClipboardList, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function Header() {
@@ -14,12 +14,33 @@ export function Header() {
           </span>
         </Link>
         <nav className="flex flex-1 items-center space-x-6 text-sm font-medium">
+           <Link
+            href="/dashboard"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+             <LayoutDashboard className="inline-block h-4 w-4 mr-1" />
+            Dashboard
+          </Link>
           <Link
-            href="/"
+            href="/courses"
             className="transition-colors hover:text-foreground/80 text-foreground/60"
           >
             <BookOpen className="inline-block h-4 w-4 mr-1" />
             Courses
+          </Link>
+           <Link
+            href="/assignments"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+             <ClipboardList className="inline-block h-4 w-4 mr-1" />
+            Assignments
+          </Link>
+           <Link
+            href="/activities"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+             <Activity className="inline-block h-4 w-4 mr-1" />
+            Activities
           </Link>
         </nav>
         <div className="flex items-center space-x-2">
