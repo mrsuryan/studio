@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // Import AnimatePresence
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -27,6 +27,7 @@ export function Header() {
   const [avatarUrl, setAvatarUrl] = useState(''); // State for avatar URL
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [searchQuery, setSearchQuery] = useState(''); // State for search input
+  const [isSearchFocused, setIsSearchFocused] = useState(false); // State for search focus animation
   const router = useRouter();
   const { toast } = useToast();
 
@@ -150,21 +151,53 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Search Bar - Placed after logo, before nav/auth */}
-        <div className="flex-1 mx-4 md:mx-6 max-w-xs sm:max-w-sm md:max-w-md">
+         {/* Animated Search Bar */}
+        <motion.div
+            className="flex-1 mx-4 md:mx-6"
+            initial={false} // Don't animate initially
+            animate={{ maxWidth: isSearchFocused ? '100%' : '24rem' }} // Animate max-width
+            transition={{ type: 'spring', stiffness: 120, damping: 15 }}
+        >
             <form onSubmit={handleSearchSubmit} className="relative w-full">
-               <Search className="absolute left-2.5 sm:left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+               <motion.div
+                  initial={{ scale: 1 }}
+                  animate={{ scale: isSearchFocused ? 1.1 : 1 }} // Slightly grow icon on focus
+                  transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+               >
+                   <Search
+                       className="absolute left-2.5 sm:left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" // Added pointer-events-none
+                   />
+               </motion.div>
                <Input
                   type="search"
-                  placeholder="Search courses, topics..."
+                  placeholder={isSearchFocused ? "Enter keywords..." : "Search courses..."} // Dynamic placeholder
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1" // Adjusted padding and height
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm focus:shadow-md" // Added transitions and shadow
                />
-               {/* Optionally add a submit button hidden visually but available */}
-               {/* <button type="submit" className="sr-only">Search</button> */}
+               {/* Animated clear button (optional) */}
+                <AnimatePresence>
+                    {searchQuery && isSearchFocused && (
+                        <motion.button
+                            type="button"
+                            onClick={() => setSearchQuery('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
+                            aria-label="Clear search"
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </motion.button>
+                    )}
+                </AnimatePresence>
             </form>
-        </div>
+        </motion.div>
 
          {/* Responsive Navigation Links */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium mr-4">
@@ -279,3 +312,4 @@ export function Header() {
     </motion.header>
   );
 }
+
