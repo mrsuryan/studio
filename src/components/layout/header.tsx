@@ -2,8 +2,9 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
-import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User } from 'lucide-react';
+import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search } from 'lucide-react'; // Added Search
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input'; // Added Input
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,7 @@ export function Header() {
   const [userEmail, setUserEmail] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(''); // State for avatar URL
   const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [searchQuery, setSearchQuery] = useState(''); // State for search input
   const router = useRouter();
   const { toast } = useToast();
 
@@ -97,6 +99,25 @@ export function Header() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    // TODO: Implement actual search functionality (e.g., debounced API call)
+    console.log('Search Query:', event.target.value);
+  };
+
+   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (searchQuery.trim()) {
+         // TODO: Redirect to a search results page or perform search action
+         toast({
+             title: "Search Submitted",
+             description: `Searching for: "${searchQuery}" (Feature not fully implemented)`,
+         });
+         console.log('Submitting search for:', searchQuery);
+         // Example: router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      }
+   };
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -105,7 +126,8 @@ export function Header() {
       className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm"
     >
       <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="mr-4 md:mr-8 flex items-center space-x-1.5 sm:space-x-2 group">
+        {/* Logo and Title */}
+        <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0">
            <motion.svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -127,8 +149,25 @@ export function Header() {
             EduHub Portal
           </span>
         </Link>
+
+        {/* Search Bar - Placed after logo, before nav/auth */}
+        <div className="flex-1 mx-4 md:mx-6 max-w-xs sm:max-w-sm md:max-w-md">
+            <form onSubmit={handleSearchSubmit} className="relative w-full">
+               <Search className="absolute left-2.5 sm:left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+               <Input
+                  type="search"
+                  placeholder="Search courses, topics..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1" // Adjusted padding and height
+               />
+               {/* Optionally add a submit button hidden visually but available */}
+               {/* <button type="submit" className="sr-only">Search</button> */}
+            </form>
+        </div>
+
          {/* Responsive Navigation Links */}
-         <nav className="hidden md:flex flex-1 items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium">
+         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium mr-4">
            {[
               { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
               { href: "/courses", label: "Courses", icon: BookOpen },
@@ -153,7 +192,9 @@ export function Header() {
                  <Menu className="h-6 w-6" />
              </Button>
         </div> */}
-        <div className="flex flex-1 md:flex-none justify-end items-center space-x-2 sm:space-x-3">
+
+        {/* Auth Buttons / User Dropdown */}
+        <div className="flex items-center space-x-2 sm:space-x-3 ml-auto"> {/* Use ml-auto to push to the right */}
            {isLoading ? (
               // Skeleton Loader while checking auth status
               <div className="flex items-center space-x-2">
