@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import { ArrowLeft, PlayCircle, CheckCircle, BookText, ArrowRight } from "lucide-react"; // Added ArrowRight
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast"; // Import useToast
 
 // Mock course data - In a real app, fetch this based on params.id
 const allCourses = [
@@ -55,9 +56,22 @@ const moduleItemVariants = {
 };
 
 export default function CourseDetailPage({ params }: CoursePageProps) {
+  const { toast } = useToast(); // Initialize toast hook
   const courseId = parseInt(params.id, 10);
   // In a real app, fetch course data based on ID. For now, find in mock data.
   const course = allCourses.find(c => c.id === courseId);
+
+  const handleModuleAction = (moduleTitle: string, completed: boolean) => {
+    // Log the action and show a toast message instead of navigating
+    console.log(`Action clicked for module: ${moduleTitle} (Completed: ${completed})`);
+    toast({
+      title: "Coming Soon!",
+      description: `Navigating to the '${moduleTitle}' module content is not yet implemented.`,
+      variant: "default", // or 'info' if you add such a variant
+    });
+    // In a real app, you would navigate: router.push(`/courses/${courseId}/modules/${moduleId}`);
+  };
+
 
   if (!course) {
     return (
@@ -150,7 +164,12 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                                 )}
                                 <span className={`text-sm sm:text-base ${module.completed ? 'text-muted-foreground line-through' : 'font-medium'}`}>{module.title}</span>
                              </div>
-                             <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10 group text-xs sm:text-sm px-2 sm:px-3"> {/* Adjusted button size/padding */}
+                             <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-primary hover:text-primary/80 hover:bg-primary/10 group text-xs sm:text-sm px-2 sm:px-3" // Adjusted button size/padding
+                                onClick={() => handleModuleAction(module.title, module.completed)} // Added onClick handler
+                              >
                                 {module.completed ? 'Review' : 'Start'}
                                 <ArrowRight className="ml-1 h-3.5 w-3.5 sm:h-4 sm:w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"/>
                             </Button>
