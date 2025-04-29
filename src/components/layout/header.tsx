@@ -2,7 +2,7 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
-import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search } from 'lucide-react'; // Added Search
+import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, X } from 'lucide-react'; // Added Search, X
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'; // Added Input
 import {
@@ -80,6 +80,8 @@ export function Header() {
         localStorage.removeItem('userAvatarUrl'); // Clear avatar URL on logout
         // Optionally remove avatar seed if stored, or handle avatar logic differently
         // localStorage.removeItem('userAvatarSeed');
+        // Dispatch storage event to notify other components (like profile page)
+        window.dispatchEvent(new Event('storage'));
      }
     setIsLoggedIn(false);
     setUserName('');
@@ -153,31 +155,33 @@ export function Header() {
 
          {/* Animated Search Bar */}
         <motion.div
-            className="flex-1 mx-4 md:mx-6"
+            className="flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Define max width
             initial={false} // Don't animate initially
-            animate={{ maxWidth: isSearchFocused ? '100%' : '24rem' }} // Animate max-width
+            animate={{ maxWidth: isSearchFocused ? '100%' : '24rem' }} // Animate max-width on focus
             transition={{ type: 'spring', stiffness: 120, damping: 15 }}
         >
             <form onSubmit={handleSearchSubmit} className="relative w-full">
                <motion.div
+                  className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none"
                   initial={{ scale: 1 }}
                   animate={{ scale: isSearchFocused ? 1.1 : 1 }} // Slightly grow icon on focus
-                  transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+                  transition={{ type: 'spring', stiffness: 180, damping: 10 }} // Bouncier spring
                >
                    <Search
-                       className="absolute left-2.5 sm:left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" // Added pointer-events-none
+                       className="h-4 w-4 text-muted-foreground"
                    />
                </motion.div>
                <Input
                   type="search"
-                  placeholder={isSearchFocused ? "Enter keywords..." : "Search courses..."} // Dynamic placeholder
+                  placeholder={isSearchFocused ? "Enter keywords to search..." : "Search courses..."} // Dynamic placeholder
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm focus:shadow-md" // Added transitions and shadow
+                  className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background" // Added transitions, shadow, bg change
+                  aria-label="Search courses"
                />
-               {/* Animated clear button (optional) */}
+               {/* Animated clear button */}
                 <AnimatePresence>
                     {searchQuery && isSearchFocused && (
                         <motion.button
@@ -188,11 +192,9 @@ export function Header() {
                             initial={{ opacity: 0, scale: 0.5 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.5 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }} // Smoother ease
                         >
-                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
+                           <X className="size-4" />
                         </motion.button>
                     )}
                 </AnimatePresence>
@@ -312,4 +314,3 @@ export function Header() {
     </motion.header>
   );
 }
-
