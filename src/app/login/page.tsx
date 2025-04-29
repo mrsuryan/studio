@@ -7,6 +7,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { motion } from "framer-motion";
+import { useEffect } from 'react'; // Import useEffect
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +36,14 @@ export default function LoginPage() {
    const { toast } = useToast();
    const router = useRouter();
 
+   // Redirect if already logged in
+   useEffect(() => {
+     if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
+       router.push('/'); // Redirect to homepage if already logged in
+     }
+   }, [router]);
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,11 +54,21 @@ export default function LoginPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Login submitted:", values);
+
     // --- Simulate successful login ---
-    localStorage.setItem('isLoggedIn', 'true');
-    // Force Header to re-check localStorage (or use a global state)
-    // A simple way is to dispatch a custom event or rely on page navigation
-    window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+    // Derive a placeholder name from the email
+    const nameFromEmail = values.email.split('@')[0] || "User";
+    const userName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1); // Capitalize first letter
+
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userEmail', values.email);
+        localStorage.setItem('userName', userName); // Store derived name
+        // Force Header to re-check localStorage (or use a global state)
+        // A simple way is to dispatch a custom event or rely on page navigation
+        window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+    }
+
 
     toast({
       title: "Login Successful!",

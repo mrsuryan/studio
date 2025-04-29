@@ -7,6 +7,8 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { motion } from "framer-motion";
+import { useEffect } from 'react'; // Import useEffect
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +40,14 @@ export default function SignupPage() {
   const { toast } = useToast();
   const router = useRouter();
 
+  // Redirect if already logged in
+   useEffect(() => {
+     if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
+       router.push('/'); // Redirect to homepage if already logged in
+     }
+   }, [router]);
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,19 +60,23 @@ export default function SignupPage() {
  function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Signup submitted:", values);
      // --- Simulate successful signup & auto-login ---
-     localStorage.setItem('isLoggedIn', 'true');
-     // Force Header to re-check localStorage (or use a global state)
-     window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+     if (typeof window !== 'undefined') {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userName', values.name); // Store the provided name
+        localStorage.setItem('userEmail', values.email); // Store the email
+        // Force Header to re-check localStorage (or use a global state)
+        window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+     }
 
 
      toast({
       title: "Signup Successful!",
-      description: "Welcome to EduHub! Redirecting to login...",
+      description: "Welcome to EduHub! Redirecting you...",
       variant: "default", // Or success if you add a success variant
     });
 
 
-    router.push('/login'); // Redirect to login page after signup
+    router.push('/'); // Redirect to homepage after signup
   }
 
   return (
