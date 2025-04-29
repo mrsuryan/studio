@@ -1,9 +1,11 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +36,7 @@ const formSchema = z.object({
 
 export default function SignupPage() {
   const { toast } = useToast();
+  const router = useRouter(); // Get router instance
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,11 +52,12 @@ export default function SignupPage() {
     console.log("Signup submitted:", values);
      toast({
       title: "Signup Successful!",
-      description: "Welcome to EduHub! Please log in.",
+      description: "Welcome to EduHub! Redirecting to login...",
     });
     // Add actual signup logic here (e.g., API call)
-    // Typically, redirect to login page or dashboard after signup.
-    // For now, we just show a toast.
+
+    // Redirect to login page after showing toast
+    router.push('/login');
   }
 
   return (
