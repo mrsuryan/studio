@@ -2,7 +2,7 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
-import { BookOpen, LogIn, UserPlus, LayoutDashboard, ClipboardList, Activity, User } from 'lucide-react'; // Added User icon
+import { BookOpen, LogIn, UserPlus, LayoutDashboard, ClipboardList, Activity, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
@@ -44,7 +44,7 @@ export function Header() {
               { href: "/courses", label: "Courses", icon: BookOpen },
               { href: "/assignments", label: "Assignments", icon: ClipboardList },
               { href: "/activities", label: "Activities", icon: Activity },
-              { href: "/profile", label: "Profile", icon: User }, // Added Profile link
+              // Removed Profile link from here
            ].map((item, index) => (
               <motion.div
                 key={item.href}
@@ -62,6 +62,14 @@ export function Header() {
             ))}
         </nav>
         <div className="flex items-center space-x-3"> {/* Increased spacing */}
+           {/* Added Profile link here */}
+           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+             <Button variant="ghost" size="sm" asChild>
+              <Link href="/profile">
+                <User className="mr-2 h-4 w-4" /> Profile
+              </Link>
+            </Button>
+           </motion.div>
            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
              <Button variant="ghost" size="sm" asChild>
               <Link href="/login">
