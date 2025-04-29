@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2 } from "lucide-react";
+import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2, Upload } from "lucide-react"; // Added Upload
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -55,7 +55,7 @@ const itemVariants = {
 interface UserProfile {
   name: string;
   email: string;
-  avatarUrl: string; // Consider how to persist/generate this meaningfully
+  avatarUrl: string; // Can now be a data URL
   bio: string;
   emailNotifications: boolean;
   darkMode: boolean;
@@ -64,16 +64,19 @@ interface UserProfile {
 const defaultUser: UserProfile = {
     name: "User",
     email: "user@example.com",
-    avatarUrl: `https://picsum.photos/seed/default-user/200`, // Consistent default
+    avatarUrl: `https://picsum.photos/seed/default-user/200`, // Consistent default placeholder
     bio: "Learning enthusiast.",
     emailNotifications: true,
     darkMode: false,
 };
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
+
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile>(defaultUser);
+  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
   const { toast } = useToast();
 
   // Load user data from localStorage on mount
@@ -86,13 +89,13 @@ export default function ProfilePage() {
       const storedBio = localStorage.getItem('userBio');
       const storedNotifications = localStorage.getItem('userEmailNotifications');
       const storedDarkMode = localStorage.getItem('userDarkMode');
-      // Generate avatar URL based on stored email if available, otherwise use default seed
-      const avatarSeed = storedEmail || 'default-user';
+      const storedAvatarUrl = localStorage.getItem('userAvatarUrl'); // Load stored avatar URL
 
       loadedProfile = {
         name: storedName || defaultUser.name,
         email: storedEmail || defaultUser.email,
-        avatarUrl: `https://picsum.photos/seed/${avatarSeed}/200`,
+        // Use stored avatar URL if available, otherwise fallback
+        avatarUrl: storedAvatarUrl || `https://picsum.photos/seed/${storedEmail || 'default-user'}/200`,
         bio: storedBio || defaultUser.bio,
         emailNotifications: storedNotifications ? storedNotifications === 'true' : defaultUser.emailNotifications,
         darkMode: storedDarkMode ? storedDarkMode === 'true' : defaultUser.darkMode,
@@ -135,6 +138,8 @@ export default function ProfilePage() {
       }
        if (typeof window !== 'undefined') {
            localStorage.setItem('userDarkMode', String(checked));
+           // Trigger storage event to potentially update other components like header
+           window.dispatchEvent(new Event('storage'));
        }
     }
     // Save notification preference
@@ -152,6 +157,7 @@ export default function ProfilePage() {
         localStorage.setItem('userBio', profile.bio);
         localStorage.setItem('userEmailNotifications', String(profile.emailNotifications));
         localStorage.setItem('userDarkMode', String(profile.darkMode));
+        localStorage.setItem('userAvatarUrl', profile.avatarUrl); // Save avatar URL
         // Trigger storage event to update header etc.
         window.dispatchEvent(new Event('storage'));
      }
@@ -178,6 +184,66 @@ export default function ProfilePage() {
      setTimeout(() => {
          window.location.href = '/signup';
      }, 1500); // Delay to allow toast visibility
+   };
+
+   // Handle file selection for avatar
+   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+     const file = event.target.files?.[0];
+     if (!file) return;
+
+     // Basic validation
+     if (!file.type.startsWith('image/')) {
+       toast({
+         variant: "destructive",
+         title: "Invalid File Type",
+         description: "Please select an image file (e.g., JPG, PNG, WEBP).",
+       });
+       return;
+     }
+
+     if (file.size > MAX_FILE_SIZE) {
+       toast({
+         variant: "destructive",
+         title: "File Too Large",
+         description: `Please select an image smaller than ${MAX_FILE_SIZE / 1024 / 1024}MB.`,
+       });
+       return;
+     }
+
+     // Read file as data URL
+     const reader = new FileReader();
+     reader.onloadend = () => {
+       const dataUrl = reader.result as string;
+       setProfile((prevProfile) => ({
+         ...prevProfile,
+         avatarUrl: dataUrl,
+       }));
+       // Automatically save the new avatar to localStorage
+       if (typeof window !== 'undefined') {
+           localStorage.setItem('userAvatarUrl', dataUrl);
+           // Trigger storage event to update header
+           window.dispatchEvent(new Event('storage'));
+       }
+        toast({
+            title: "Avatar Updated",
+            description: "Your profile picture has been changed.",
+        });
+        // Optionally trigger save if in editing mode? Or just save avatar immediately.
+        // For simplicity, saving avatar immediately without needing main "Save" button.
+     };
+     reader.onerror = () => {
+        toast({
+            variant: "destructive",
+            title: "Error Reading File",
+            description: "Could not read the selected image file.",
+        });
+     }
+     reader.readAsDataURL(file);
+   };
+
+   // Trigger hidden file input click
+   const triggerFileInput = () => {
+     fileInputRef.current?.click();
    };
 
   return (
@@ -207,8 +273,24 @@ export default function ProfilePage() {
                  initial={{ scale: 0 }}
                  animate={{ scale: 1 }}
                  transition={{ delay: 0.2, type: "spring", stiffness: 150 }} // Adjusted delay
+                 className="relative group" // Add relative positioning for overlay
                >
-                <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-primary/20"> {/* Responsive avatar */}
+                 {/* Hidden File Input */}
+                 <input
+                   type="file"
+                   ref={fileInputRef}
+                   onChange={handleFileChange}
+                   accept="image/png, image/jpeg, image/webp" // Specify accepted image types
+                   className="hidden"
+                   aria-label="Upload profile picture"
+                 />
+                <Avatar
+                    className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-primary/20 cursor-pointer"
+                    onClick={triggerFileInput} // Make avatar clickable
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerFileInput() }}
+                >
                  {isLoading ? (
                     <Skeleton className="h-full w-full rounded-full" />
                   ) : (
@@ -221,6 +303,15 @@ export default function ProfilePage() {
                     </>
                   )}
                 </Avatar>
+                 {/* Edit Icon Overlay */}
+                 <div
+                    className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                    onClick={triggerFileInput}
+                    role="button"
+                    aria-label="Change profile picture"
+                  >
+                    <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                  </div>
                </motion.div>
                {/* Name - Editable */}
                {isLoading ? (

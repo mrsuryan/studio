@@ -23,6 +23,7 @@ export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(''); // State for avatar URL
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const router = useRouter();
   const { toast } = useToast();
@@ -37,9 +38,17 @@ export function Header() {
         const loggedInStatus = localStorage.getItem('isLoggedIn');
         const storedUserName = localStorage.getItem('userName');
         const storedUserEmail = localStorage.getItem('userEmail');
-        setIsLoggedIn(loggedInStatus === 'true');
-        setUserName(storedUserName || '');
-        setUserEmail(storedUserEmail || '');
+        const storedAvatarUrl = localStorage.getItem('userAvatarUrl'); // Load avatar URL
+
+        const isLoggedInNow = loggedInStatus === 'true';
+        setIsLoggedIn(isLoggedInNow);
+        setUserName(isLoggedInNow ? (storedUserName || '') : '');
+        setUserEmail(isLoggedInNow ? (storedUserEmail || '') : '');
+        // Set avatar URL if logged in, otherwise use default/placeholder logic or clear it
+        setAvatarUrl(isLoggedInNow
+            ? (storedAvatarUrl || `https://picsum.photos/seed/${storedUserEmail || 'default'}/100`)
+            : ''); // Clear avatar URL if not logged in
+
         setIsLoading(false); // Set loading false after checking
       } else {
         setIsLoading(false); // Also set loading false if window is not defined (SSR/initial render)
@@ -65,12 +74,14 @@ export function Header() {
         localStorage.removeItem('userBio');
         localStorage.removeItem('userEmailNotifications');
         localStorage.removeItem('userDarkMode');
+        localStorage.removeItem('userAvatarUrl'); // Clear avatar URL on logout
         // Optionally remove avatar seed if stored, or handle avatar logic differently
         // localStorage.removeItem('userAvatarSeed');
      }
     setIsLoggedIn(false);
     setUserName('');
     setUserEmail('');
+    setAvatarUrl(''); // Clear avatar URL state
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
@@ -124,14 +135,16 @@ export function Header() {
               { href: "/assignments", label: "Assignments", icon: ClipboardList },
               { href: "/activities", label: "Activities", icon: Activity },
            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200"
-              >
-                <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
-                {item.label}
-              </Link>
+               isLoggedIn ? ( // Only show nav items if logged in
+                   <Link
+                       key={item.href}
+                       href={item.href}
+                       className="flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200"
+                   >
+                       <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
+                       {item.label}
+                   </Link>
+               ) : null // Render nothing if not logged in
             ))}
         </nav>
         {/* Mobile Navigation Trigger (Example Placeholder - Not fully functional) */}
@@ -153,8 +166,8 @@ export function Header() {
                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                      <Button variant="ghost" className="relative h-9 w-9 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                         <Avatar className="h-9 w-9 border border-primary/20">
-                          {/* Use a consistent seed for placeholder or implement image upload later */}
-                          <AvatarImage src={`https://picsum.photos/seed/${userEmail || 'default'}/100`} alt={userName} />
+                          {/* Use avatarUrl state */}
+                          <AvatarImage src={avatarUrl} alt={userName} />
                           <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
                               {getInitials(userName)}
                           </AvatarFallback>
