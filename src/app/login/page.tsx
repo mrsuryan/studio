@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +31,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
    const { toast } = useToast();
+   const router = useRouter(); // Get router instance
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,9 +46,13 @@ export default function LoginPage() {
     console.log("Login submitted:", values);
     toast({
       title: "Login Successful!",
-      description: "Redirecting you to your dashboard...", // In a real app, you'd redirect here.
+      description: "Redirecting you to your dashboard...",
     });
     // Add actual login logic here (e.g., API call)
+
+    // Redirect to home page after showing toast
+    // In a real app, this would likely happen after successful API response
+    router.push('/');
   }
 
   return (
