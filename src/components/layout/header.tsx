@@ -46,19 +46,14 @@ export function Header() {
               { href: "/activities", label: "Activities", icon: Activity },
               // Removed Profile link from here
            ].map((item, index) => (
-              <motion.div
+              <Link
                 key={item.href}
-                whileHover={{ y: -2 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                href={item.href}
+                className="flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200" // Add Tailwind hover effect instead
               >
-                <Link
-                  href={item.href}
-                  className="flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70"
-                >
-                  <item.icon className="h-5 w-5" /> {/* Increased icon size */}
-                  {item.label}
-                </Link>
-              </motion.div>
+                <item.icon className="h-5 w-5" /> {/* Increased icon size */}
+                {item.label}
+              </Link>
             ))}
         </nav>
         <div className="flex items-center space-x-3"> {/* Increased spacing */}
