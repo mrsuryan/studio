@@ -129,6 +129,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                             fill // Use fill for responsive images with aspect ratio container
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Example sizes, adjust as needed
                             className="rounded-t-lg object-cover transition-transform duration-500 hover:scale-105"
+                            priority // Add priority for important images like the main course image
                         />
                      </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
