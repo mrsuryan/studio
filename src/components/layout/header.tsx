@@ -4,6 +4,15 @@
 import Link from 'next/link';
 import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,19 +21,25 @@ import { useToast } from '@/hooks/use-toast';
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState(''); // Added state for email
   const router = useRouter();
   const { toast } = useToast();
 
   // Check login status on component mount and when localStorage changes
   useEffect(() => {
     const checkLoginStatus = () => {
-      const loggedInStatus = localStorage.getItem('isLoggedIn');
+      const loggedInStatus = typeof window !== 'undefined' ? localStorage.getItem('isLoggedIn') : null;
+      const storedUserName = typeof window !== 'undefined' ? localStorage.getItem('userName') : null;
+      const storedUserEmail = typeof window !== 'undefined' ? localStorage.getItem('userEmail') : null; // Get email
       setIsLoggedIn(loggedInStatus === 'true');
+      setUserName(storedUserName || '');
+      setUserEmail(storedUserEmail || ''); // Set email
     };
 
     checkLoginStatus();
 
-    // Optional: Listen for storage changes from other tabs/windows
+    // Listen for storage changes from other tabs/windows or same tab updates
     window.addEventListener('storage', checkLoginStatus);
 
     return () => {
@@ -33,14 +48,27 @@ export function Header() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
+     if (typeof window !== 'undefined') {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail'); // Remove email on logout
+        localStorage.removeItem('userBio');
+        localStorage.removeItem('userEmailNotifications');
+        localStorage.removeItem('userDarkMode');
+     }
     setIsLoggedIn(false);
+    setUserName('');
+    setUserEmail(''); // Clear email state
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
     router.push('/login'); // Redirect to login page after logout
   };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase() || 'U';
+  }
 
 
   return (
@@ -80,7 +108,6 @@ export function Header() {
               { href: "/courses", label: "Courses", icon: BookOpen },
               { href: "/assignments", label: "Assignments", icon: ClipboardList },
               { href: "/activities", label: "Activities", icon: Activity },
-              // Removed Profile link from here
            ].map((item) => (
               <Link
                 key={item.href}
@@ -94,20 +121,43 @@ export function Header() {
         </nav>
         <div className="flex items-center space-x-3"> {/* Increased spacing */}
            {isLoggedIn ? (
-             <>
-               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 <Button variant="ghost" size="sm" asChild>
-                   <Link href="/profile">
-                     <User className="mr-2 h-4 w-4" /> Profile
-                   </Link>
-                 </Button>
-               </motion.div>
-               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 <Button variant="outline" size="sm" onClick={handleLogout}>
-                   <LogOut className="mr-2 h-4 w-4" /> Logout
-                 </Button>
-               </motion.div>
-             </>
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                     <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                        <Avatar className="h-9 w-9">
+                          {/* Add AvatarImage if you store profile picture URLs */}
+                          {/* <AvatarImage src="/path/to/avatar.jpg" alt={userName} /> */}
+                          <AvatarFallback className="bg-primary text-primary-foreground">
+                              {getInitials(userName)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </motion.div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{userName}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {userEmail}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                   <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link href="/profile">
+                         <User className="mr-2 h-4 w-4" />
+                         <span>Profile</span>
+                      </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+             </DropdownMenu>
            ) : (
              <>
                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
