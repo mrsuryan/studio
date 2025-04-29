@@ -3,6 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button"; // Import Button component
 import { ListChecks, CheckCircle, Clock, CircleHelp, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link"; // Assuming assignments might link somewhere
