@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from 'next/image';
-import { ArrowLeft, PlayCircle, CheckCircle, BookText } from "lucide-react";
+import { ArrowLeft, PlayCircle, CheckCircle, BookText, ArrowRight } from "lucide-react"; // Added ArrowRight
 import { motion } from "framer-motion";
 
 // Mock course data - In a real app, fetch this based on params.id
@@ -29,7 +29,7 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.2,
+      delayChildren: 0.15, // Slightly earlier delay
     },
   },
 };
@@ -56,19 +56,20 @@ const moduleItemVariants = {
 
 export default function CourseDetailPage({ params }: CoursePageProps) {
   const courseId = parseInt(params.id, 10);
+  // In a real app, fetch course data based on ID. For now, find in mock data.
   const course = allCourses.find(c => c.id === courseId);
 
   if (!course) {
     return (
        <motion.div
-          className="text-center py-20"
+          className="text-center py-16 sm:py-20" // Adjusted padding
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
        >
-        <h1 className="text-3xl font-semibold text-destructive mb-4">Course Not Found</h1>
-         <p className="text-lg text-muted-foreground mb-6">We couldn't find the course you were looking for.</p>
-        <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-destructive mb-4">Course Not Found</h1>
+         <p className="text-base sm:text-lg text-muted-foreground mb-6">We couldn't find the course you were looking for.</p>
+        <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105 text-sm sm:text-base">
           <Link href="/courses">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to All Courses
           </Link>
@@ -79,81 +80,84 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
 
   return (
     <motion.div
-      className="space-y-10"
+      className="space-y-8 md:space-y-10" // Adjusted spacing
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
        <motion.div variants={itemVariants}>
-         <Button variant="outline" size="sm" asChild className="mb-6 group transition-all hover:bg-accent hover:text-accent-foreground">
+         <Button variant="outline" size="sm" asChild className="mb-4 sm:mb-6 group transition-all hover:bg-accent hover:text-accent-foreground text-xs sm:text-sm">
             <Link href="/courses">
-              <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" /> Back to Courses
+              <ArrowLeft className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:-translate-x-1 transition-transform duration-200" /> Back to Courses
             </Link>
           </Button>
        </motion.div>
        <motion.h1
-          className="text-4xl font-bold text-primary flex items-center gap-3"
+          className="text-3xl sm:text-4xl font-bold text-primary flex items-center gap-2 sm:gap-3" // Responsive font size and gap
           variants={itemVariants}
         >
-            <BookText className="h-9 w-9"/> {course.title}
+            <BookText className="h-7 w-7 sm:h-9 sm:w-9"/> {course.title}
        </motion.h1>
+      {/* Responsive Grid for Course Details and Modules */}
       <motion.section
-        className="grid md:grid-cols-3 gap-10"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10" // Adjusted gaps, changed breakpoint to lg
         variants={containerVariants}
       >
-         <motion.div className="md:col-span-2 space-y-6" variants={itemVariants}>
-
+         {/* Course Description Column */}
+         <motion.div className="lg:col-span-2 space-y-6" variants={itemVariants}>
             <Card className="overflow-hidden shadow-lg border-primary/10">
                 <CardHeader className="p-0 relative">
-                     <Image
-                        src={course.image}
-                        alt={course.title}
-                        width={600}
-                        height={400}
-                        className="rounded-t-lg w-full object-cover aspect-video transition-transform duration-500 hover:scale-105"
-                     />
+                     {/* Responsive Image Handling */}
+                     <div className="aspect-video w-full">
+                        <Image
+                            src={course.image}
+                            alt={course.title}
+                            fill // Use fill for responsive images with aspect ratio container
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Example sizes, adjust as needed
+                            className="rounded-t-lg object-cover transition-transform duration-500 hover:scale-105"
+                        />
+                     </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                      <div className="absolute bottom-4 left-4 text-white">
-                        {/* Optional: Add overlay text or elements here */}
-                      </div>
+                      {/* Optional: Add overlay text */}
                 </CardHeader>
-                <CardContent className="p-6 pt-6">
-                     <CardDescription className="text-lg leading-relaxed">{course.description}</CardDescription>
+                <CardContent className="p-4 sm:p-6 pt-6"> {/* Adjusted padding */}
+                     <CardDescription className="text-base sm:text-lg leading-relaxed">{course.description}</CardDescription>
                 </CardContent>
             </Card>
          </motion.div>
 
-        <motion.div className="md:col-span-1 space-y-5" variants={itemVariants}>
-            <h2 className="text-2xl font-semibold">Course Modules</h2>
+        {/* Course Modules Column */}
+        <motion.div className="lg:col-span-1 space-y-5" variants={itemVariants}>
+            <h2 className="text-xl sm:text-2xl font-semibold">Course Modules</h2>
              <Card className="shadow-md border-accent/10">
-                <CardContent className="pt-6 space-y-4">
+                <CardContent className="pt-4 sm:pt-6 space-y-3 sm:space-y-4"> {/* Adjusted padding and spacing */}
                     {course.modules.map((module, index) => (
                          <motion.div
                             key={module.id}
-                            className="flex items-center justify-between p-4 rounded-lg border bg-muted/30 hover:bg-muted/70 transition-all duration-200 ease-in-out hover:border-primary/50"
+                            className="flex items-center justify-between p-3 sm:p-4 rounded-lg border bg-muted/30 hover:bg-muted/70 transition-all duration-200 ease-in-out hover:border-primary/50" // Adjusted padding
                             variants={moduleItemVariants}
                             initial="hidden"
                             animate="visible"
-                            transition={{ delay: index * 0.1 }}
+                            transition={{ delay: index * 0.08 }} // Slightly faster delay
                          >
-                             <div className="flex items-center gap-4">
+                             <div className="flex items-center gap-3 sm:gap-4"> {/* Adjusted gap */}
                                 {module.completed ? (
                                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }}>
-                                        <CheckCircle className="h-6 w-6 text-green-500" />
+                                        <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-500" /> {/* Responsive icon size */}
                                     </motion.div>
                                 ) : (
-                                    <PlayCircle className="h-6 w-6 text-primary" />
+                                    <PlayCircle className="h-5 w-5 sm:h-6 sm:w-6 text-primary" /> {/* Responsive icon size */}
                                 )}
-                                <span className={`text-base ${module.completed ? 'text-muted-foreground line-through' : 'font-medium'}`}>{module.title}</span>
+                                <span className={`text-sm sm:text-base ${module.completed ? 'text-muted-foreground line-through' : 'font-medium'}`}>{module.title}</span>
                              </div>
-                             <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10 group">
+                             <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10 group text-xs sm:text-sm px-2 sm:px-3"> {/* Adjusted button size/padding */}
                                 {module.completed ? 'Review' : 'Start'}
-                                <ArrowRight className="ml-1 h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"/>
+                                <ArrowRight className="ml-1 h-3.5 w-3.5 sm:h-4 sm:w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"/>
                             </Button>
                         </motion.div>
                     ))}
                      {course.modules.length === 0 && (
-                        <p className="text-base text-muted-foreground text-center py-6">No modules available for this course yet.</p>
+                        <p className="text-sm sm:text-base text-muted-foreground text-center py-4 sm:py-6">No modules available for this course yet.</p> {/* Adjusted padding/font size */}
                     )}
                 </CardContent>
             </Card>

@@ -7,13 +7,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea"; // Import Textarea
-import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2 } from "lucide-react"; // Added Moon and Trash2
+import { Textarea } from "@/components/ui/textarea";
+import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch"; // Import Switch
-import { Skeleton } from "@/components/ui/skeleton"; // Import Skeleton
+import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"; // Import Alert Dialog components
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,7 +33,7 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.2,
+      delayChildren: 0.15, // Adjusted delay
     },
   },
 };
@@ -34,6 +46,7 @@ const itemVariants = {
     transition: {
       type: "spring",
       stiffness: 100,
+      damping: 12, // Adjusted damping
     },
   },
 };
@@ -42,7 +55,7 @@ const itemVariants = {
 interface UserProfile {
   name: string;
   email: string;
-  avatarUrl: string;
+  avatarUrl: string; // Consider how to persist/generate this meaningfully
   bio: string;
   emailNotifications: boolean;
   darkMode: boolean;
@@ -51,12 +64,11 @@ interface UserProfile {
 const defaultUser: UserProfile = {
     name: "User",
     email: "user@example.com",
-    avatarUrl: `https://picsum.photos/seed/${Math.random()}/200`, // Random placeholder
+    avatarUrl: `https://picsum.photos/seed/default-user/200`, // Consistent default
     bio: "Learning enthusiast.",
     emailNotifications: true,
-    darkMode: false, // Default to light mode
+    darkMode: false,
 };
-
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -66,36 +78,38 @@ export default function ProfilePage() {
 
   // Load user data from localStorage on mount
   useEffect(() => {
+    let loadedProfile = { ...defaultUser }; // Start with default
+
     if (typeof window !== 'undefined') {
       const storedName = localStorage.getItem('userName');
       const storedEmail = localStorage.getItem('userEmail');
-      const storedBio = localStorage.getItem('userBio'); // Attempt to load bio
+      const storedBio = localStorage.getItem('userBio');
       const storedNotifications = localStorage.getItem('userEmailNotifications');
       const storedDarkMode = localStorage.getItem('userDarkMode');
+      // Generate avatar URL based on stored email if available, otherwise use default seed
+      const avatarSeed = storedEmail || 'default-user';
 
-      const loadedProfile: UserProfile = {
+      loadedProfile = {
         name: storedName || defaultUser.name,
         email: storedEmail || defaultUser.email,
-        // Keep random avatar or implement avatar storage/upload later
-        avatarUrl: `https://picsum.photos/seed/${storedEmail || defaultUser.email}/200`,
+        avatarUrl: `https://picsum.photos/seed/${avatarSeed}/200`,
         bio: storedBio || defaultUser.bio,
         emailNotifications: storedNotifications ? storedNotifications === 'true' : defaultUser.emailNotifications,
         darkMode: storedDarkMode ? storedDarkMode === 'true' : defaultUser.darkMode,
       };
 
-      setProfile(loadedProfile);
-      setIsLoading(false); // Data loaded
-
-      // Apply dark mode if enabled
+      // Apply initial dark mode
       if (loadedProfile.darkMode) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-
-    } else {
-       setIsLoading(false); // Stop loading even if window is undefined (SSR case)
     }
+
+    setProfile(loadedProfile);
+    // Simulate loading time or wait for actual data fetch
+    setTimeout(() => setIsLoading(false), 300); // Simulate loading for skeletons
+
   }, []); // Empty dependency array ensures this runs only once on mount
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -112,7 +126,7 @@ export default function ProfilePage() {
       [id]: checked,
     }));
 
-     // Apply dark mode immediately
+     // Apply dark mode immediately and save
     if (id === 'darkMode') {
       if (checked) {
         document.documentElement.classList.add('dark');
@@ -123,23 +137,22 @@ export default function ProfilePage() {
            localStorage.setItem('userDarkMode', String(checked));
        }
     }
-     if (id === 'emailNotifications') {
-        if (typeof window !== 'undefined') {
-           localStorage.setItem('userEmailNotifications', String(checked));
-        }
+    // Save notification preference
+     if (id === 'emailNotifications' && typeof window !== 'undefined') {
+        localStorage.setItem('userEmailNotifications', String(checked));
      }
  };
-
 
   const handleSave = () => {
     console.log("Saving profile:", profile);
      if (typeof window !== 'undefined') {
         localStorage.setItem('userName', profile.name);
-        localStorage.setItem('userEmail', profile.email); // Allow email editing? Maybe disable field later
+        // Avoid saving potentially edited email directly if it shouldn't be changeable
+        // localStorage.setItem('userEmail', profile.email);
         localStorage.setItem('userBio', profile.bio);
         localStorage.setItem('userEmailNotifications', String(profile.emailNotifications));
         localStorage.setItem('userDarkMode', String(profile.darkMode));
-        // Trigger storage event to potentially update other components if needed
+        // Trigger storage event to update header etc.
         window.dispatchEvent(new Event('storage'));
      }
     setIsEditing(false);
@@ -150,110 +163,109 @@ export default function ProfilePage() {
   };
 
    const handleDeleteAccount = () => {
-     // Add confirmation dialog here before proceeding
-     console.log("Deleting account...");
+     console.log("Attempting to delete account...");
       if (typeof window !== 'undefined') {
-        localStorage.clear(); // Clear all user data
-         window.dispatchEvent(new Event('storage')); // Notify header/other components
+        localStorage.clear(); // Clear all local storage data
+        window.dispatchEvent(new Event('storage')); // Notify header/other components
+        document.documentElement.classList.remove('dark'); // Reset dark mode just in case
       }
      toast({
        title: "Account Deleted",
-       description: "Your account and data have been removed.",
+       description: "Your account and data have been removed. Redirecting...",
        variant: "destructive",
      });
-     // Redirect to signup or login page
-     window.location.href = '/signup'; // Use window.location for full redirect after localStorage clear
+     // Redirect to signup page after a short delay
+     setTimeout(() => {
+         window.location.href = '/signup';
+     }, 1500); // Delay to allow toast visibility
    };
-
 
   return (
     <motion.div
-      className="space-y-10"
+      className="space-y-8 md:space-y-10" // Adjusted spacing
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <motion.h1
-        className="text-4xl font-bold text-primary mb-8 flex items-center gap-3"
+        className="text-3xl sm:text-4xl font-bold text-primary mb-6 md:mb-8 flex items-center gap-2 sm:gap-3" // Responsive heading
         variants={itemVariants}
       >
-        <UserCircle className="h-9 w-9" /> My Profile
+        <UserCircle className="h-7 w-7 sm:h-9 sm:w-9" /> My Profile
       </motion.h1>
 
+      {/* Responsive Grid */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10" // Adjusted breakpoint and gap
         variants={containerVariants}
       >
         {/* Profile Information Card */}
-        <motion.div className="md:col-span-1" variants={itemVariants}>
+        <motion.div className="lg:col-span-1" variants={itemVariants}>
           <Card className="shadow-lg border-primary/10">
-            <CardHeader className="items-center text-center">
+            <CardHeader className="items-center text-center p-4 sm:p-6"> {/* Responsive padding */}
                <motion.div
                  initial={{ scale: 0 }}
                  animate={{ scale: 1 }}
-                 transition={{ delay: 0.3, type: "spring", stiffness: 150 }}
+                 transition={{ delay: 0.2, type: "spring", stiffness: 150 }} // Adjusted delay
                >
-                <Avatar className="w-24 h-24 border-4 border-primary/20">
+                <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-primary/20"> {/* Responsive avatar */}
                  {isLoading ? (
                     <Skeleton className="h-full w-full rounded-full" />
                   ) : (
                     <>
                      <AvatarImage src={profile.avatarUrl} alt={profile.name} />
-                     <AvatarFallback>{profile.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                     {/* Fallback with initials */}
+                     <AvatarFallback className="text-lg sm:text-xl font-semibold">
+                       {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                     </AvatarFallback>
                     </>
                   )}
                 </Avatar>
                </motion.div>
+               {/* Name - Editable */}
                {isLoading ? (
-                  <Skeleton className="h-8 w-3/4 mt-4 mx-auto" />
+                  <Skeleton className="h-7 sm:h-8 w-3/4 mt-4 mx-auto" />
                ) : isEditing ? (
                 <Input
                   id="name"
                   value={profile.name}
                   onChange={handleInputChange}
-                  className="text-2xl font-semibold mt-4 text-center"
+                  className="text-xl sm:text-2xl font-semibold mt-4 text-center h-auto py-1" // Responsive text/height
                   placeholder="Your Name"
                 />
               ) : (
-                <CardTitle className="text-2xl mt-4">{profile.name}</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl mt-4">{profile.name}</CardTitle>
               )}
+              {/* Email - Read-only */}
               {isLoading ? (
                  <Skeleton className="h-5 w-1/2 mt-2 mx-auto" />
-              ) : isEditing ? (
-                 // Consider disabling email editing or adding verification
-                <Input
-                  id="email"
-                  type="email"
-                  value={profile.email}
-                  onChange={handleInputChange}
-                  className="text-base text-muted-foreground mt-1 text-center"
-                  placeholder="your.email@example.com"
-                />
               ) : (
-                 <CardDescription className="text-base flex items-center justify-center gap-1.5 mt-1">
-                    <Mail className="h-4 w-4"/> {profile.email}
+                 <CardDescription className="text-sm sm:text-base flex items-center justify-center gap-1 sm:gap-1.5 mt-1">
+                    <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4"/> {profile.email}
                  </CardDescription>
               )}
             </CardHeader>
-            <CardContent className="text-center">
+            <CardContent className="text-center p-4 sm:p-6 pt-0"> {/* Responsive padding */}
+               {/* Bio - Editable */}
                {isLoading ? (
-                 <>
-                   <Skeleton className="h-4 w-full mt-1" />
-                   <Skeleton className="h-4 w-5/6 mt-1" />
-                   <Skeleton className="h-4 w-3/4 mt-1" />
-                 </>
+                 <div className="space-y-1 mt-1">
+                   <Skeleton className="h-4 w-full" />
+                   <Skeleton className="h-4 w-5/6" />
+                   <Skeleton className="h-4 w-3/4" />
+                 </div>
                ) : isEditing ? (
-                 <Textarea // Use Textarea component
+                 <Textarea
                    id="bio"
                    value={profile.bio}
                    onChange={handleInputChange}
-                   className="w-full p-2 border rounded-md text-sm text-muted-foreground min-h-[80px] focus:ring-primary focus:border-primary"
+                   className="w-full p-2 border rounded-md text-xs sm:text-sm text-muted-foreground min-h-[60px] sm:min-h-[80px] focus:ring-primary focus:border-primary mt-2" // Responsive styles
                    placeholder="Tell us about yourself..."
                  />
                ) : (
-                <p className="text-sm text-muted-foreground italic">"{profile.bio || 'No bio yet.'}"</p>
+                <p className="text-xs sm:text-sm text-muted-foreground italic mt-2">"{profile.bio || 'No bio yet.'}"</p>
                )}
               <Separator className="my-4" />
+               {/* Edit/Save Button */}
                {isLoading ? (
                    <Skeleton className="h-9 w-full" />
                ) : (
@@ -261,16 +273,16 @@ export default function ProfilePage() {
                     variant={isEditing ? "default" : "outline"}
                     size="sm"
                     onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-                    className="w-full group transition-all"
-                    disabled={isLoading} // Disable button while loading
+                    className="w-full group transition-all text-xs sm:text-sm" // Responsive text size
+                    disabled={isLoading}
                   >
                     {isEditing ? (
                       <>
-                        <Save className="mr-2 h-4 w-4" /> Save Changes
+                        <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Save Changes
                       </>
                     ) : (
                       <>
-                        <Edit3 className="mr-2 h-4 w-4 group-hover:animate-pulse" /> Edit Profile
+                        <Edit3 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:animate-pulse" /> Edit Profile
                       </>
                     )}
                   </Button>
@@ -280,38 +292,39 @@ export default function ProfilePage() {
         </motion.div>
 
         {/* Settings & Preferences Card */}
-        <motion.div className="md:col-span-2 space-y-6" variants={itemVariants}>
+        <motion.div className="lg:col-span-2 space-y-6" variants={itemVariants}>
           <Card className="shadow-md border-accent/10">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <Settings className="h-5 w-5 text-accent" /> Account Settings
+            <CardHeader className="p-4 sm:p-6"> {/* Responsive padding */}
+              <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
+                <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-accent" /> Account Settings
               </CardTitle>
-              <CardDescription>Manage your account preferences and notification settings.</CardDescription>
+              <CardDescription className="text-sm">Manage your account preferences and notification settings.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6 pt-0"> {/* Responsive padding */}
                {isLoading ? (
                    <>
                        <Skeleton className="h-10 w-full" />
                        <Skeleton className="h-10 w-full" />
-                       <div className="flex gap-2 pt-2">
+                       <div className="flex flex-wrap gap-2 pt-2">
                            <Skeleton className="h-9 w-32" />
-                           <Skeleton className="h-9 w-32" />
+                           <Skeleton className="h-9 w-36" />
                        </div>
                    </>
                ) : (
                  <>
                    <div className="flex items-center justify-between p-3 rounded-md bg-muted/30 border">
-                     <Label htmlFor="emailNotifications" className="flex items-center gap-2 cursor-pointer text-base">
+                     <Label htmlFor="emailNotifications" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base">
                        <Bell className="h-4 w-4 text-muted-foreground"/> Email Notifications
                      </Label>
                      <Switch
                        id="emailNotifications"
                        checked={profile.emailNotifications}
                        onCheckedChange={(checked) => handleSwitchChange(checked, 'emailNotifications')}
+                       aria-label="Toggle email notifications"
                      />
                    </div>
                    <div className="flex items-center justify-between p-3 rounded-md bg-muted/30 border">
-                     <Label htmlFor="darkMode" className="flex items-center gap-2 cursor-pointer text-base">
+                     <Label htmlFor="darkMode" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base">
                        <Moon className="h-4 w-4 text-muted-foreground" />
                         Dark Mode
                       </Label>
@@ -319,13 +332,35 @@ export default function ProfilePage() {
                        id="darkMode"
                        checked={profile.darkMode}
                        onCheckedChange={(checked) => handleSwitchChange(checked, 'darkMode')}
+                       aria-label="Toggle dark mode"
                      />
                    </div>
-                    <div className="pt-4 flex flex-wrap gap-3">
-                        <Button variant="outline" size="sm">Change Password</Button>
-                        <Button variant="destructive" size="sm" onClick={handleDeleteAccount}>
-                           <Trash2 className="mr-2 h-4 w-4"/> Delete Account
-                        </Button>
+                    {/* Buttons with responsive text and wrapping */}
+                    <div className="pt-4 flex flex-wrap gap-2 sm:gap-3">
+                        <Button variant="outline" size="sm" className="text-xs sm:text-sm">Change Password</Button>
+                         {/* Delete Account with Confirmation */}
+                         <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                                <Button variant="destructive" size="sm" className="text-xs sm:text-sm">
+                                    <Trash2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4"/> Delete Account
+                                </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete your
+                                    account and remove your data from our servers.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                                    Yes, delete account
+                                </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                  </>
                )}
@@ -334,17 +369,17 @@ export default function ProfilePage() {
 
            {/* Learning Statistics Placeholder */}
            <Card className="shadow-md border-secondary/10">
-            <CardHeader>
-              <CardTitle className="text-xl">Learning Statistics</CardTitle>
-              <CardDescription>Your progress overview.</CardDescription>
+            <CardHeader className="p-4 sm:p-6"> {/* Responsive padding */}
+              <CardTitle className="text-lg sm:text-xl">Learning Statistics</CardTitle>
+              <CardDescription className="text-sm">Your progress overview.</CardDescription>
             </CardHeader>
-             <CardContent>
+             <CardContent className="p-4 sm:p-6 pt-0"> {/* Responsive padding */}
                  {isLoading ? (
-                    <Skeleton className="h-32 w-full mt-4" />
+                    <Skeleton className="h-24 sm:h-32 w-full mt-4" /> // Responsive height
                  ) : (
                      <>
-                         <p className="text-muted-foreground">Course completion charts and activity summaries will appear here.</p>
-                         <div className="mt-4 h-32 bg-muted/50 rounded-md flex items-center justify-center text-muted-foreground border border-dashed">
+                         <p className="text-muted-foreground text-sm sm:text-base">Course completion charts and activity summaries will appear here.</p>
+                         <div className="mt-4 h-24 sm:h-32 bg-muted/50 rounded-md flex items-center justify-center text-muted-foreground border border-dashed text-xs sm:text-sm">
                              Statistics Area (Coming Soon)
                          </div>
                      </>

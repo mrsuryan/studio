@@ -24,8 +24,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
+      staggerChildren: 0.08, // Slightly faster stagger for cards
+      delayChildren: 0.1, // Start cards animation slightly earlier
     },
   },
 };
@@ -38,33 +38,34 @@ const itemVariants = {
     transition: {
       type: "spring",
       stiffness: 100,
+      damping: 12, // Adjust damping for smoother spring
     },
   },
 };
 
-
 export default function CoursesPage() {
   return (
     <motion.div
-      className="space-y-12"
+      className="space-y-10 md:space-y-12" // Adjusted spacing
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
        <motion.section variants={itemVariants}>
-        <h1 className="text-4xl font-bold text-primary mb-4 flex items-center gap-3">
-           <BookOpen className="h-9 w-9"/> All Courses
+        <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+           <BookOpen className="h-7 w-7 sm:h-9 sm:w-9"/> All Courses
         </h1>
-         <p className="text-xl text-muted-foreground mb-8">
+         <p className="text-lg sm:text-xl text-muted-foreground mb-6 md:mb-8 max-w-3xl"> {/* Adjusted margins and max-width */}
           Browse through our available courses and start learning today. Expand your horizons!
         </p>
+        {/* Responsive Grid for Courses */}
         <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            variants={containerVariants} // Re-use container for staggering cards
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" // Adjusted gaps
+            variants={containerVariants}
         >
           {allCourses.map((course) => (
              <motion.div key={course.id} variants={itemVariants}>
-                 <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02] border-primary/10">
+                 <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02] border border-primary/10">
                   <CardHeader className="p-0">
                     <Image
                       src={course.image}
@@ -74,26 +75,26 @@ export default function CoursesPage() {
                       className="rounded-t-lg w-full object-cover aspect-[3/2]"
                     />
                   </CardHeader>
-                  <CardContent className="pt-5 flex-grow">
-                    <CardTitle className="text-xl mb-2">{course.title}</CardTitle>
-                    <CardDescription className="text-base">{course.description}</CardDescription>
+                  <CardContent className="p-4 sm:p-5 flex-grow"> {/* Adjusted padding */}
+                    <CardTitle className="text-lg sm:text-xl mb-2">{course.title}</CardTitle>
+                    <CardDescription className="text-sm sm:text-base">{course.description}</CardDescription>
                   </CardContent>
-                  <CardFooter className="flex flex-col items-start gap-3 pt-4 border-t border-border/60">
+                  <CardFooter className="flex flex-col items-start gap-3 p-4 sm:p-5 border-t border-border/60 bg-muted/30"> {/* Adjusted padding */}
                      <div className="w-full">
-                       <div className="flex justify-between text-sm text-muted-foreground mb-1">
+                       <div className="flex justify-between text-xs sm:text-sm text-muted-foreground mb-1">
                           <span>Progress</span>
                           <span>{course.progress}%</span>
                        </div>
-                       <Progress value={course.progress} aria-label={`${course.title} progress: ${course.progress}%`} className="h-2"/>
+                       <Progress value={course.progress} aria-label={`${course.title} progress: ${course.progress}%`} className="h-1.5 sm:h-2"/> {/* Adjusted height */}
                      </div>
                      <Button
                         variant={course.progress > 0 ? "outline" : "default"}
                         size="sm"
                         asChild
-                        className="mt-2 self-end transition-transform duration-200 ease-in-out hover:translate-x-1"
+                        className="mt-2 self-end transition-transform duration-200 ease-in-out hover:translate-x-1 text-xs sm:text-sm" // Adjusted font size
                         >
                         <Link href={`/courses/${course.id}`}>
-                          {course.progress > 0 ? 'Continue Learning' : 'Start Course'} <ArrowRight className="ml-2 h-4 w-4" />
+                          {course.progress > 0 ? 'Continue Learning' : 'Start Course'} <ArrowRight className="ml-1.5 h-3.5 w-3.5 sm:ml-2 sm:h-4 sm:w-4" /> {/* Adjusted icon size/margin */}
                         </Link>
                       </Button>
                   </CardFooter>

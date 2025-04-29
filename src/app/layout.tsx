@@ -31,9 +31,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-gradient-to-br from-background to-blue-50/50 dark:from-background dark:to-blue-950/20`} // Added subtle gradient
       >
         <Header />
-        <main className="flex-grow container py-10 md:py-12">{children}</main> {/* Increased padding */}
-         <footer className="mt-auto py-6 border-t border-border/50 bg-background/50">
-            <div className="container text-center text-muted-foreground text-sm">
+         {/* Adjusted padding for different screen sizes */}
+        <main className="flex-grow container px-4 sm:px-6 lg:px-8 py-8 md:py-12">{children}</main>
+         <footer className="mt-auto py-4 sm:py-6 border-t border-border/50 bg-background/50">
+            <div className="container text-center text-muted-foreground text-xs sm:text-sm">
                 © {new Date().getFullYear()} EduHub Portal. All rights reserved.
             </div>
         </footer>

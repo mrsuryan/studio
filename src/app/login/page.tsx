@@ -7,7 +7,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { motion } from "framer-motion";
-import { useEffect } from 'react'; // Import useEffect
+import { useEffect } from 'react';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,13 +36,12 @@ export default function LoginPage() {
    const { toast } = useToast();
    const router = useRouter();
 
-   // Redirect if already logged in
+   // Redirect if already logged in (client-side check)
    useEffect(() => {
      if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
-       router.push('/'); // Redirect to homepage if already logged in
+       router.push('/'); // Redirect to homepage
      }
    }, [router]);
-
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,57 +57,71 @@ export default function LoginPage() {
     // --- Simulate successful login ---
     // Derive a placeholder name from the email
     const nameFromEmail = values.email.split('@')[0] || "User";
-    const userName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1); // Capitalize first letter
+    // Capitalize first letter, handle short names gracefully
+    const userName = nameFromEmail.length > 0
+      ? nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
+      : "User";
 
     if (typeof window !== 'undefined') {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userEmail', values.email);
-        localStorage.setItem('userName', userName); // Store derived name
-        // Force Header to re-check localStorage (or use a global state)
-        // A simple way is to dispatch a custom event or rely on page navigation
-        window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+        localStorage.setItem('userName', userName);
+        // Set default values for other profile fields if not existing
+        if (!localStorage.getItem('userBio')) {
+            localStorage.setItem('userBio', 'Learning enthusiast.');
+        }
+        if (!localStorage.getItem('userEmailNotifications')) {
+            localStorage.setItem('userEmailNotifications', 'true');
+        }
+        if (!localStorage.getItem('userDarkMode')) {
+            localStorage.setItem('userDarkMode', 'false');
+        }
+        // Trigger storage event for header update
+        window.dispatchEvent(new Event('storage'));
     }
-
 
     toast({
       title: "Login Successful!",
       description: "Redirecting you to your dashboard...",
     });
 
-
     router.push('/'); // Redirect to homepage
   }
 
   return (
     <motion.div
-      className="flex justify-center items-center min-h-[calc(100vh-15rem)] py-12" // Adjust min-height as needed
+      // Responsive vertical centering and padding
+      className="flex justify-center items-center min-h-[calc(100vh-10rem)] sm:min-h-[calc(100vh-12rem)] py-8 sm:py-12 px-4"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="w-full max-w-md shadow-xl border-primary/20">
-        <CardHeader className="text-center space-y-2 bg-gradient-to-b from-primary/5 to-transparent p-8 rounded-t-lg">
+      <Card className="w-full max-w-md shadow-xl border-primary/20 overflow-hidden"> {/* Ensure content doesn't overflow */}
+        <CardHeader className="text-center space-y-1 sm:space-y-2 bg-gradient-to-b from-primary/5 to-transparent p-6 sm:p-8 rounded-t-lg">
            <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
           >
-             <LogIn className="h-12 w-12 mx-auto text-primary" />
+             {/* Responsive Icon Size */}
+             <LogIn className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-primary" />
            </motion.div>
-          <CardTitle className="text-3xl font-bold text-primary">Welcome Back!</CardTitle>
-          <CardDescription className="text-lg">Login to access your EduHub dashboard.</CardDescription>
+           {/* Responsive Titles */}
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-primary">Welcome Back!</CardTitle>
+          <CardDescription className="text-base sm:text-lg">Login to access your EduHub dashboard.</CardDescription>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="p-6 sm:p-8">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6"> {/* Responsive spacing */}
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">Email Address</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Email Address</FormLabel> {/* Responsive label */}
                     <FormControl>
-                      <Input placeholder="you@example.com" {...field} className="text-base py-6" />
+                      {/* Responsive Input */}
+                      <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base py-2.5 sm:py-3 h-10 sm:h-11" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,25 +132,28 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">Password</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Password</FormLabel> {/* Responsive label */}
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} className="text-base py-6" />
+                       {/* Responsive Input */}
+                      <Input type="password" placeholder="••••••••" {...field} className="text-sm sm:text-base py-2.5 sm:py-3 h-10 sm:h-11" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <motion.div
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.02 }} // Slightly reduced hover scale
                 whileTap={{ scale: 0.98 }}
+                className="pt-2" // Add some top padding before button
               >
-                <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 text-lg py-7">
-                   <LogIn className="mr-2 h-5 w-5" /> Login
+                 {/* Responsive Button */}
+                <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 text-base sm:text-lg py-3 sm:py-3.5 h-11 sm:h-12">
+                   <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Login
                 </Button>
               </motion.div>
             </form>
           </Form>
-          <p className="mt-6 text-center text-base text-muted-foreground">
+          <p className="mt-4 sm:mt-6 text-center text-sm sm:text-base text-muted-foreground">
             Don't have an account?{" "}
             <Link href="/signup" className="font-semibold text-primary hover:underline hover:text-accent transition-colors">
               Sign up now

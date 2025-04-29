@@ -7,8 +7,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { motion } from "framer-motion";
-import { useEffect } from 'react'; // Import useEffect
-
+import { useEffect } from 'react';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,13 +39,12 @@ export default function SignupPage() {
   const { toast } = useToast();
   const router = useRouter();
 
-  // Redirect if already logged in
+  // Redirect if already logged in (client-side check)
    useEffect(() => {
      if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
-       router.push('/'); // Redirect to homepage if already logged in
+       router.push('/'); // Redirect to homepage
      }
    }, [router]);
-
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,53 +60,59 @@ export default function SignupPage() {
      // --- Simulate successful signup & auto-login ---
      if (typeof window !== 'undefined') {
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userName', values.name); // Store the provided name
-        localStorage.setItem('userEmail', values.email); // Store the email
-        // Force Header to re-check localStorage (or use a global state)
-        window.dispatchEvent(new Event('storage')); // Trigger storage event listeners
+        localStorage.setItem('userName', values.name);
+        localStorage.setItem('userEmail', values.email);
+        // Set default profile fields on signup
+        localStorage.setItem('userBio', 'New user - ready to learn!');
+        localStorage.setItem('userEmailNotifications', 'true');
+        localStorage.setItem('userDarkMode', 'false'); // Default to light mode
+        // Trigger storage event for header update
+        window.dispatchEvent(new Event('storage'));
      }
-
 
      toast({
       title: "Signup Successful!",
       description: "Welcome to EduHub! Redirecting you...",
-      variant: "default", // Or success if you add a success variant
+      variant: "default",
     });
-
 
     router.push('/'); // Redirect to homepage after signup
   }
 
   return (
     <motion.div
-      className="flex justify-center items-center min-h-[calc(100vh-15rem)] py-12" // Adjust min-height as needed
+      // Responsive vertical centering and padding
+      className="flex justify-center items-center min-h-[calc(100vh-10rem)] sm:min-h-[calc(100vh-12rem)] py-8 sm:py-12 px-4"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="w-full max-w-md shadow-xl border-primary/20">
-        <CardHeader className="text-center space-y-2 bg-gradient-to-b from-primary/5 to-transparent p-8 rounded-t-lg">
+      <Card className="w-full max-w-md shadow-xl border-primary/20 overflow-hidden"> {/* Ensure content doesn't overflow */}
+        <CardHeader className="text-center space-y-1 sm:space-y-2 bg-gradient-to-b from-primary/5 to-transparent p-6 sm:p-8 rounded-t-lg">
            <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
           >
-             <UserPlus className="h-12 w-12 mx-auto text-primary" />
+             {/* Responsive Icon Size */}
+             <UserPlus className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-primary" />
            </motion.div>
-          <CardTitle className="text-3xl font-bold text-primary">Create Your Account</CardTitle>
-          <CardDescription className="text-lg">Join EduHub to start your learning journey.</CardDescription>
+           {/* Responsive Titles */}
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-primary">Create Your Account</CardTitle>
+          <CardDescription className="text-base sm:text-lg">Join EduHub to start your learning journey.</CardDescription>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="p-6 sm:p-8">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6"> {/* Responsive spacing */}
                <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">Full Name</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Full Name</FormLabel> {/* Responsive label */}
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} className="text-base py-6" />
+                      {/* Responsive Input */}
+                      <Input placeholder="John Doe" {...field} className="text-sm sm:text-base py-2.5 sm:py-3 h-10 sm:h-11" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,9 +123,10 @@ export default function SignupPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">Email Address</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Email Address</FormLabel> {/* Responsive label */}
                     <FormControl>
-                      <Input placeholder="you@example.com" {...field} className="text-base py-6" />
+                      {/* Responsive Input */}
+                      <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base py-2.5 sm:py-3 h-10 sm:h-11" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,25 +137,28 @@ export default function SignupPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">Password</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Password</FormLabel> {/* Responsive label */}
                     <FormControl>
-                      <Input type="password" placeholder="•••••••• (min. 6 characters)" {...field} className="text-base py-6" />
+                      {/* Responsive Input */}
+                      <Input type="password" placeholder="•••••••• (min. 6 characters)" {...field} className="text-sm sm:text-base py-2.5 sm:py-3 h-10 sm:h-11" />
                     </FormControl>
                      <FormMessage />
                   </FormItem>
                 )}
               />
               <motion.div
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.02 }} // Slightly reduced hover scale
                 whileTap={{ scale: 0.98 }}
+                className="pt-2" // Add some top padding before button
               >
-                <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 text-lg py-7">
-                   <UserPlus className="mr-2 h-5 w-5" /> Sign Up
+                 {/* Responsive Button */}
+                <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 text-base sm:text-lg py-3 sm:py-3.5 h-11 sm:h-12">
+                   <UserPlus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Sign Up
                 </Button>
               </motion.div>
             </form>
           </Form>
-           <p className="mt-6 text-center text-base text-muted-foreground">
+           <p className="mt-4 sm:mt-6 text-center text-sm sm:text-base text-muted-foreground">
             Already have an account?{" "}
             <Link href="/login" className="font-semibold text-primary hover:underline hover:text-accent transition-colors">
               Log in
