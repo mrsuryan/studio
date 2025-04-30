@@ -88,7 +88,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
 
 // Zod schema for password change form
 const passwordSchema = z.object({
-    currentPassword: z.string().min(6, "Current password is required."),
+    currentPassword: z.string().min(6, "Current password is required (min. 6 chars)."), // Added min length hint
     newPassword: z.string().min(8, "New password must be at least 8 characters."),
     confirmPassword: z.string().min(8, "Confirm password is required."),
   }).refine((data) => data.newPassword === data.confirmPassword, {
@@ -190,10 +190,10 @@ export default function ProfilePage() {
   const handleProfileSave = () => {
     console.log("Saving profile:", profile);
      if (typeof window !== 'undefined') {
+        // Only save fields that are editable in this section (name, bio)
         localStorage.setItem('userName', profile.name);
-        // Don't save email here; handle separately if allowed
         localStorage.setItem('userBio', profile.bio);
-        // Save avatar URL just in case it changed via file upload but wasn't auto-saved
+        // Ensure avatar URL is saved if it was changed
         localStorage.setItem('userAvatarUrl', profile.avatarUrl);
         // Trigger storage event to update header etc.
         window.dispatchEvent(new Event('storage'));
@@ -201,21 +201,21 @@ export default function ProfilePage() {
     setIsEditingProfile(false);
     toast({
       title: "Profile Updated",
-      description: "Your profile information has been saved successfully.",
+      description: "Your profile information (name, bio, avatar) has been saved.",
     });
   };
 
   // Handle password change form submission
   function onPasswordSubmit(values: z.infer<typeof passwordSchema>) {
       console.log("Password change submitted:", values);
-      // --- Simulate password change ---
-      // In a real app, send 'values.currentPassword' and 'values.newPassword' to the backend
-      // The backend would verify the current password and update it.
+      // --- Simulate password change success ---
+      // In a real app: Send 'values.currentPassword' and 'values.newPassword' to the backend for verification and update.
+      // For this demo, we'll just show a success message.
 
-      // Simulate success
+      // Simulate success (replace with actual API call logic)
       toast({
           title: "Password Updated",
-          description: "Your password has been changed successfully.",
+          description: "Your password has been changed successfully. (Demo)", // Indicate it's a demo
        });
       passwordForm.reset(); // Clear the form after submission
     }
@@ -223,14 +223,15 @@ export default function ProfilePage() {
     // Simulate Email Change Request
     const handleEmailChangeRequest = () => {
       // In a real app:
-      // 1. Prompt the user for the new email address.
+      // 1. Prompt the user for the new email address (e.g., using a Dialog).
       // 2. Send the request to the backend.
       // 3. Backend sends a verification email to the new address.
       // 4. User clicks link in email to confirm.
       // 5. Backend updates the email address.
       toast({
-        title: "Change Email",
-        description: "Functionality to change email is not fully implemented in this demo.",
+        title: "Change Email (Demo)",
+        description: "Functionality to change email requires backend integration and is not fully implemented in this demo.",
+        variant: "default", // Use default variant for informational messages
       });
     };
 
@@ -396,13 +397,13 @@ export default function ProfilePage() {
                   {isLoading ? (
                     <Skeleton key="name-skeleton" className="h-7 sm:h-8 md:h-9 w-3/4 mt-4 mx-auto" />
                   ) : isEditingProfile ? (
-                    <motion.div key="name-input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    <motion.div key="name-input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full mt-4">
                        <Label htmlFor="name" className="sr-only">Name</Label>
                        <Input
                          id="name"
                          value={profile.name}
                          onChange={handleProfileInputChange}
-                          className="text-xl sm:text-2xl md:text-3xl font-semibold mt-4 text-center h-auto py-1 px-2" // Responsive text/height/padding
+                          className="text-xl sm:text-2xl md:text-3xl font-semibold text-center h-auto py-1 px-2" // Responsive text/height/padding
                          placeholder="Your Name"
                        />
                     </motion.div>
@@ -437,13 +438,13 @@ export default function ProfilePage() {
                         <Skeleton className="h-4 sm:h-5 w-3/4" />
                       </div>
                     ) : isEditingProfile ? (
-                       <motion.div key="bio-textarea" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                       <motion.div key="bio-textarea" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full mt-2 md:mt-3">
                          <Label htmlFor="bio" className="sr-only">Bio</Label>
                          <Textarea
                            id="bio"
                            value={profile.bio}
                            onChange={handleProfileInputChange}
-                           className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary mt-2 md:mt-3" // Responsive styles
+                           className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary" // Responsive styles
                            placeholder="Tell us about yourself..."
                          />
                        </motion.div>
@@ -477,7 +478,7 @@ export default function ProfilePage() {
                            >
                              {isEditingProfile ? (
                                <>
-                                 <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Profile {/* Updated Text */}
+                                 <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Changes {/* Updated Text */}
                                </>
                              ) : (
                                <>
@@ -502,7 +503,7 @@ export default function ProfilePage() {
                  <motion.div whileHover={{ rotate: -15 }}> <Lock className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-secondary-foreground" /> </motion.div>
                  Change Password
                </CardTitle>
-               <CardDescription className="text-sm md:text-base">Update your account password.</CardDescription>
+               <CardDescription className="text-sm md:text-base">Update your account password. Requires backend integration for full functionality.</CardDescription>
              </CardHeader>
              <motion.div
                  className="p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
@@ -571,8 +572,13 @@ export default function ProfilePage() {
                           whileTap={{ scale: 0.97 }}
                           className="pt-2"
                         >
-                           <Button type="submit" size="sm" className="text-xs sm:text-sm md:text-base md:py-2.5">
-                               <KeyRound className="mr-2 h-4 w-4"/> Update Password
+                           <Button type="submit" size="sm" className="text-xs sm:text-sm md:text-base md:py-2.5" disabled={passwordForm.formState.isSubmitting}>
+                               {passwordForm.formState.isSubmitting ? (
+                                   <Loader className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                   <KeyRound className="mr-2 h-4 w-4"/>
+                               )}
+                                Update Password
                             </Button>
                        </motion.div>
                      </form>
