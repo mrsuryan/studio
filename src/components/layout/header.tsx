@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
+import { cn } from '@/lib/utils'; // Import cn utility
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,6 +35,7 @@ export function Header() {
 
   // Routes where the search bar should be hidden
   const hideSearchOnRoutes = ['/login', '/signup'];
+  const shouldHideSearch = hideSearchOnRoutes.includes(pathname);
 
   // Check login status on component mount and when localStorage changes
   useEffect(() => {
@@ -171,7 +173,7 @@ export function Header() {
         </Link>
 
          {/* Animated Search Bar - Conditionally Rendered */}
-         {!hideSearchOnRoutes.includes(pathname) && (
+         {!shouldHideSearch && (
             <motion.div
                 className="flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Define max width
                 initial={false} // Don't animate initially
@@ -223,16 +225,22 @@ export function Header() {
 
          {/* Responsive Navigation Links */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium mr-4">
-           {navItems.filter(item => !item.requiresLogin || isLoggedIn).map((item) => ( // Filter based on login state
-               <Link
-                   key={item.href}
-                   href={item.href}
-                   className="flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200"
-               >
-                   <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
-                   {item.label}
-               </Link>
-            ))}
+           {navItems.filter(item => !item.requiresLogin || isLoggedIn).map((item) => { // Filter based on login state
+               const isActive = pathname === item.href;
+               return (
+                   <Link
+                       key={item.href}
+                       href={item.href}
+                       className={cn(
+                           "flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200 pb-1", // Added pb-1 for underline space
+                           isActive ? "text-primary border-b-2 border-primary" : "border-b-2 border-transparent" // Conditional underline
+                       )}
+                   >
+                       <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
+                       {item.label}
+                   </Link>
+               )
+            })}
         </nav>
         {/* Mobile Navigation Trigger (Example Placeholder - Not fully functional) */}
         {/* <div className="md:hidden flex-1 flex justify-end">
@@ -322,3 +330,4 @@ export function Header() {
     </motion.header>
   );
 }
+
