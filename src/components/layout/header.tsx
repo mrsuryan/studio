@@ -198,12 +198,12 @@ export function Header() {
                     onChange={handleSearchChange}
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
-                    className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background" // Added transitions, shadow, bg change
+                    className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background" // Adjusted padding right for clear button
                     aria-label="Search courses"
                 />
                 {/* Animated clear button */}
                     <AnimatePresence>
-                        {searchQuery && isSearchFocused && (
+                        {searchQuery && ( // Show clear button if there's text, regardless of focus for better UX
                             <motion.button
                                 type="button"
                                 onClick={() => setSearchQuery('')}
@@ -232,8 +232,10 @@ export function Header() {
                        key={item.href}
                        href={item.href}
                        className={cn(
-                           "flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200 pb-1", // Added pb-1 for underline space
-                           isActive ? "text-primary border-b-2 border-primary" : "border-b-2 border-transparent" // Conditional underline
+                          "relative flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 pb-1 group", // Use group for hover effects on underline
+                          // Animated Underline effect using ::after pseudo-element
+                          "after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-full after:bg-primary after:origin-center after:transition-transform after:duration-300 after:ease-out",
+                          isActive ? "text-primary after:scale-x-100" : "after:scale-x-0 group-hover:after:scale-x-50" // Animate scaleX for underline on active/hover
                        )}
                    >
                        <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
@@ -330,4 +332,3 @@ export function Header() {
     </motion.header>
   );
 }
-
