@@ -31,7 +31,8 @@ export function Header() {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(''); // State for avatar URL
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true); // Add loading state for auth check
+  const [hasMounted, setHasMounted] = useState(false); // State to track client mount
   const [searchQuery, setSearchQuery] = useState(''); // State for search input
   const [isSearchFocused, setIsSearchFocused] = useState(false); // State for search focus animation
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu sheet
@@ -53,6 +54,11 @@ export function Header() {
   ];
 
   const filteredNavItems = navItems.filter(item => !item.requiresLogin || isLoggedIn);
+
+  // Set mounted state after initial render
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // Check login status on component mount and when localStorage changes
   useEffect(() => {
@@ -185,8 +191,9 @@ export function Header() {
                  <path d="M12 14.5V19"/>
            </motion.svg>
           <span className="font-bold text-lg sm:text-xl inline-block text-primary group-hover:text-accent transition-colors duration-300">
-            EduHub {/* Shorten name on mobile if needed, or keep full */}
-             <span className="hidden sm:inline"> Portal</span>
+            EduHub {/* Base name always visible */}
+            {/* Conditionally render " Portal" only after mount to avoid hydration mismatch */}
+            {hasMounted && <span className="hidden sm:inline"> Portal</span>}
           </span>
         </Link>
 
