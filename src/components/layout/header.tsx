@@ -58,10 +58,6 @@ export function Header() {
     setHasMounted(true);
   }, []);
 
-  // Filter nav items only after mount and auth check is complete
-  const filteredNavItems = hasMounted && !isLoadingAuth
-    ? navItems.filter(item => !item.requiresLogin || isLoggedIn)
-    : []; // Render no nav items initially or while loading to avoid mismatch
 
   // Check login status on component mount and when localStorage changes
   useEffect(() => {
@@ -96,6 +92,13 @@ export function Header() {
       window.removeEventListener('storage', checkLoginStatus);
     };
   }, [hasMounted]); // Rerun when hasMounted becomes true
+
+
+  // Filter nav items only after mount and auth check is complete
+  const filteredNavItems = hasMounted && !isLoadingAuth
+    ? navItems.filter(item => !item.requiresLogin || isLoggedIn)
+    : []; // Render no nav items initially or while loading to avoid mismatch
+
 
   // Close mobile menu on navigation
   useEffect(() => {
@@ -162,7 +165,7 @@ export function Header() {
       {/* Ensure container padding is responsive */}
       <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
         {/* Logo and Title */}
-        <Link href="/" className="mr-2 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0">
+        <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0"> {/* Adjusted mr-2 to mr-4 */}
            {/* Enhanced Logo SVG */}
            <motion.svg
             xmlns="http://www.w3.org/2000/svg"
@@ -183,15 +186,15 @@ export function Header() {
                  <path d="m6.5 14 5.5 3 5.5-3"/>
                  <path d="M12 14.5V19"/>
            </motion.svg>
+           {/* Ensure text rendering is consistent after mount */}
           <span className="font-bold text-lg sm:text-xl inline-block text-primary group-hover:text-accent transition-colors duration-300">
-            EduHub {/* Base name always visible */}
-            {/* Conditionally render " Portal" only after mount to avoid hydration mismatch */}
-            {hasMounted && <span className="hidden sm:inline"> Portal</span>}
+              EduHub
+              {hasMounted && <span className="hidden sm:inline"> Portal</span>}
           </span>
         </Link>
 
          {/* Animated Search Bar - Conditionally Rendered & Hidden on Mobile */}
-         {!shouldHideSearch && (
+         {hasMounted && !shouldHideSearch && ( // Ensure search bar only renders after mount if not hidden
             <motion.div
                 className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens (mobile)
                 initial={false} // Don't animate initially
@@ -243,9 +246,9 @@ export function Header() {
          {/* Spacer to push auth to the right (Desktop) */}
          <div className="flex-1 hidden md:block"></div>
 
-         {/* Responsive Navigation Links (Desktop) - Render only after mount */}
+         {/* Responsive Navigation Links (Desktop) - Render only after mount and auth check */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium ml-auto md:ml-0 mr-2 sm:mr-4">
-           {hasMounted && filteredNavItems.map((item) => { // Use filtered items and check hasMounted
+           {filteredNavItems.map((item) => { // Use filtered items which already depends on hasMounted and !isLoadingAuth
                const isActive = pathname.startsWith(item.href); // Use startsWith for nested routes
                return (
                    <Link
@@ -269,8 +272,13 @@ export function Header() {
         {/* Use ml-auto to push auth buttons to the right on mobile when nav is hidden */}
         <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 ml-auto md:ml-0">
            {/* Render Skeleton or Auth Elements only after mount */}
-           {hasMounted ? (
-              isLoadingAuth ? (
+           {!hasMounted ? (
+              // Render initial skeleton state before mount to prevent mismatch
+               <div className="flex items-center space-x-2">
+                   <Skeleton className="h-9 w-9 rounded-full" />
+                   <Skeleton className="h-8 w-16 hidden sm:block" />
+               </div>
+           ) : isLoadingAuth ? (
                 // Skeleton Loader while checking auth status
                 <div className="flex items-center space-x-2">
                     <Skeleton className="h-9 w-9 rounded-full" />
@@ -425,14 +433,7 @@ export function Header() {
                   </motion.div>
                 </>
               )
-           ) : (
-              // Optional: Render nothing or a placeholder before mount to avoid hydration errors
-              // Or render the skeleton state immediately if preferred
-               <div className="flex items-center space-x-2">
-                   <Skeleton className="h-9 w-9 rounded-full" />
-                   <Skeleton className="h-8 w-16 hidden sm:block" />
-               </div>
-           )}
+           }
         </div>
       </div>
     </motion.header>
