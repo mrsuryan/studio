@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from 'next/image';
-import { ArrowRight, BookOpen } from "lucide-react"; // Added BookOpen
+import { ArrowRight, BookOpen, Info } from "lucide-react"; // Added Info icon
 import { motion } from "framer-motion";
 
 // Mock course data - Update featured courses
@@ -61,6 +61,8 @@ export default function Home() {
       >
         <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-primary flex items-center gap-2">
              <BookOpen className="h-6 w-6 sm:h-7 sm:w-7"/> Featured Courses
+             {/* Added Info icon for instruction indication */}
+             <Info className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-foreground transition-colors cursor-help" title="Explore some of our most popular courses." />
         </h2>
         {/* Responsive Grid */}
         <motion.div
