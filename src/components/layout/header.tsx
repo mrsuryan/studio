@@ -189,7 +189,7 @@ export function Header() {
            {/* Ensure text rendering is consistent */}
           <span className="font-bold text-lg sm:text-xl inline-block text-primary group-hover:text-accent transition-colors duration-300">
               EduHub
-              <span className="hidden sm:inline"> Portal</span>
+              <span className="inline"> Portal</span> {/* Always show Portal */}
           </span>
         </Link>
 
@@ -441,3 +441,4 @@ export function Header() {
   );
 }
 
+    
