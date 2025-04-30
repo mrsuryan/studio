@@ -57,21 +57,23 @@ const itemVariants = {
 export default function CoursesPage() {
   return (
     <motion.div
-      className="space-y-10 md:space-y-12" // Adjusted spacing
+      className="space-y-10 md:space-y-12 lg:space-y-16" // Adjusted spacing
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
        <motion.section variants={itemVariants}>
-        <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
-           <BookOpen className="h-7 w-7 sm:h-9 sm:w-9"/> All Courses
-        </h1>
-         <p className="text-lg sm:text-xl text-muted-foreground mb-6 md:mb-8 max-w-3xl"> {/* Adjusted margins and max-width */}
-          Browse through our available courses and start learning today. Expand your horizons!
-        </p>
+         {/* Responsive Heading */}
+         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-3 sm:mb-4 md:mb-5 flex items-center gap-2 sm:gap-3">
+            <BookOpen className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10"/> All Courses {/* Responsive Icon */}
+         </h1>
+         {/* Responsive Description */}
+          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-6 md:mb-8 lg:mb-10 max-w-3xl"> {/* Adjusted margins and max-width */}
+           Browse through our available courses and start learning today. Expand your horizons!
+         </p>
         {/* Responsive Grid for Courses */}
         <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" // Adjusted gaps
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8" // Added xl breakpoint, adjusted gaps
             variants={containerVariants}
         >
           {allCourses.map((course) => (
@@ -86,26 +88,28 @@ export default function CoursesPage() {
                       className="rounded-t-lg w-full object-cover aspect-[3/2]"
                     />
                   </CardHeader>
-                  <CardContent className="p-4 sm:p-5 flex-grow"> {/* Adjusted padding */}
-                    <CardTitle className="text-lg sm:text-xl mb-2">{course.title}</CardTitle>
-                    <CardDescription className="text-sm sm:text-base">{course.description}</CardDescription>
+                  {/* Responsive Card Content */}
+                  <CardContent className="p-4 sm:p-5 flex-grow">
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl mb-2">{course.title}</CardTitle>
+                    <CardDescription className="text-sm sm:text-base md:text-lg">{course.description}</CardDescription>
                   </CardContent>
-                  <CardFooter className="flex flex-col items-start gap-3 p-4 sm:p-5 border-t border-border/60 bg-muted/30"> {/* Adjusted padding */}
+                  {/* Responsive Card Footer */}
+                  <CardFooter className="flex flex-col items-start gap-3 p-4 sm:p-5 border-t border-border/60 bg-muted/30">
                      <div className="w-full">
-                       <div className="flex justify-between text-xs sm:text-sm text-muted-foreground mb-1">
+                       <div className="flex justify-between text-xs sm:text-sm md:text-base text-muted-foreground mb-1">
                           <span>Progress</span>
                           <span>{course.progress}%</span>
                        </div>
-                       <Progress value={course.progress} aria-label={`${course.title} progress: ${course.progress}%`} className="h-1.5 sm:h-2"/> {/* Adjusted height */}
+                       <Progress value={course.progress} aria-label={`${course.title} progress: ${course.progress}%`} className="h-1.5 sm:h-2 md:h-2.5"/> {/* Adjusted height */}
                      </div>
                      <Button
                         variant={course.progress > 0 ? "outline" : "default"}
                         size="sm"
                         asChild
-                        className="mt-2 self-end transition-transform duration-200 ease-in-out hover:translate-x-1 text-xs sm:text-sm" // Adjusted font size
+                         className="mt-2 self-end transition-transform duration-200 ease-in-out hover:translate-x-1 text-xs sm:text-sm md:text-base" // Adjusted font size
                         >
                         <Link href={`/courses/${course.id}`}>
-                          {course.progress > 0 ? 'Continue Learning' : 'Start Course'} <ArrowRight className="ml-1.5 h-3.5 w-3.5 sm:ml-2 sm:h-4 sm:w-4" /> {/* Adjusted icon size/margin */}
+                          {course.progress > 0 ? 'Continue Learning' : 'Start Course'} <ArrowRight className="ml-1.5 h-3.5 w-3.5 sm:ml-2 sm:h-4 sm:w-4 md:h-5 md:w-5" /> {/* Adjusted icon size/margin */}
                         </Link>
                       </Button>
                   </CardFooter>

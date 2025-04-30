@@ -2,7 +2,7 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
-import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, Rocket, X } from 'lucide-react'; // Added Search, Rocket, X
+import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, Rocket, X, Menu } from 'lucide-react'; // Added Search, Rocket, X, Menu
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'; // Added Input
 import {
@@ -20,6 +20,11 @@ import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 import { cn } from '@/lib/utils'; // Import cn utility
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet" // Import Sheet components
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,6 +34,7 @@ export function Header() {
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [searchQuery, setSearchQuery] = useState(''); // State for search input
   const [isSearchFocused, setIsSearchFocused] = useState(false); // State for search focus animation
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu sheet
   const router = useRouter();
   const pathname = usePathname(); // Get current path
   const { toast } = useToast();
@@ -36,6 +42,17 @@ export function Header() {
   // Routes where the search bar should be hidden
   const hideSearchOnRoutes = ['/login', '/signup'];
   const shouldHideSearch = hideSearchOnRoutes.includes(pathname);
+
+  // Navigation items - Filtered based on login state later
+  const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
+    { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
+    { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true },
+    { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
+    { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true }, // Added Demo Link
+  ];
+
+  const filteredNavItems = navItems.filter(item => !item.requiresLogin || isLoggedIn);
 
   // Check login status on component mount and when localStorage changes
   useEffect(() => {
@@ -73,6 +90,12 @@ export function Header() {
       window.removeEventListener('storage', checkLoginStatus);
     };
   }, []); // Empty dependency array ensures this runs once on mount
+
+  // Close mobile menu on navigation
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
 
   const handleLogout = () => {
      if (typeof window !== 'undefined') {
@@ -127,15 +150,6 @@ export function Header() {
       }
    };
 
-  // Navigation items - Filtered based on login state later
-  const navItems = [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
-    { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
-    { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true },
-    { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
-    { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true }, // Added Demo Link
-  ];
-
 
   return (
     <motion.header
@@ -175,7 +189,7 @@ export function Header() {
          {/* Animated Search Bar - Conditionally Rendered */}
          {!shouldHideSearch && (
             <motion.div
-                className="flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Define max width
+                className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens, define max width
                 initial={false} // Don't animate initially
                 animate={{ maxWidth: isSearchFocused ? '100%' : '24rem' }} // Animate max-width on focus
                 transition={{ type: 'spring', stiffness: 120, damping: 15 }}
@@ -222,11 +236,13 @@ export function Header() {
             </motion.div>
          )}
 
+         {/* Spacer to push auth to the right */}
+         <div className="flex-1 hidden md:block"></div>
 
-         {/* Responsive Navigation Links */}
+         {/* Responsive Navigation Links (Desktop) */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium mr-4">
-           {navItems.filter(item => !item.requiresLogin || isLoggedIn).map((item) => { // Filter based on login state
-               const isActive = pathname === item.href;
+           {filteredNavItems.map((item) => { // Use filtered items
+               const isActive = pathname.startsWith(item.href); // Use startsWith for nested routes
                return (
                    <Link
                        key={item.href}
@@ -244,15 +260,9 @@ export function Header() {
                )
             })}
         </nav>
-        {/* Mobile Navigation Trigger (Example Placeholder - Not fully functional) */}
-        {/* <div className="md:hidden flex-1 flex justify-end">
-             <Button variant="ghost" size="icon">
-                 <Menu className="h-6 w-6" />
-             </Button>
-        </div> */}
 
-        {/* Auth Buttons / User Dropdown */}
-        <div className="flex items-center space-x-2 sm:space-x-3 ml-auto"> {/* Use ml-auto to push to the right */}
+        {/* Auth Buttons / User Dropdown / Mobile Menu Trigger */}
+        <div className="flex items-center space-x-2 sm:space-x-3 ml-auto">
            {isLoading ? (
               // Skeleton Loader while checking auth status
               <div className="flex items-center space-x-2">
@@ -260,57 +270,119 @@ export function Header() {
                   <Skeleton className="h-8 w-20 hidden sm:block" />
               </div>
            ) : isLoggedIn ? (
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                     <Button variant="ghost" className="relative h-9 w-9 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                        <Avatar className="h-9 w-9 border border-primary/20">
-                          {/* Use avatarUrl state */}
-                          <AvatarImage src={avatarUrl} alt={userName} />
-                          <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                              {getInitials(userName)}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </motion.div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none truncate">{userName || 'User'}</p>
-                      <p className="text-xs leading-none text-muted-foreground truncate">
-                        {userEmail || 'No email'}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                   {/* Mobile Only Nav Links */}
-                    <div className="md:hidden">
-                       {navItems.filter(item => !item.requiresLogin || isLoggedIn).map((item) => ( // Filter for mobile dropdown too
-                          <DropdownMenuItem key={item.href} asChild className="cursor-pointer">
-                              <Link href={item.href}>
-                                 <item.icon className="mr-2 h-4 w-4" />
-                                 <span>{item.label}</span>
-                              </Link>
-                          </DropdownMenuItem>
-                       ))}
-                        <DropdownMenuSeparator />
-                    </div>
-                   <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link href="/profile">
-                         <User className="mr-2 h-4 w-4" />
-                         <span>Profile</span>
-                      </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-             </DropdownMenu>
+            <>
+                {/* User Dropdown (Visible on all screens) */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button variant="ghost" className="relative h-9 w-9 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                            <Avatar className="h-9 w-9 border border-primary/20">
+                            {/* Use avatarUrl state */}
+                            <AvatarImage src={avatarUrl} alt={userName} />
+                            <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                                {getInitials(userName)}
+                            </AvatarFallback>
+                            </Avatar>
+                        </Button>
+                        </motion.div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none truncate">{userName || 'User'}</p>
+                        <p className="text-xs leading-none text-muted-foreground truncate">
+                            {userEmail || 'No email'}
+                        </p>
+                        </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {/* Profile Link */}
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link href="/profile">
+                            <User className="mr-2 h-4 w-4" />
+                            <span>Profile</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                    </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                {/* Mobile Menu Trigger (Only visible on mobile) */}
+                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                    <SheetTrigger asChild className="md:hidden">
+                         <Button variant="ghost" size="icon">
+                             <Menu className="h-6 w-6" />
+                             <span className="sr-only">Toggle Menu</span>
+                         </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0">
+                        {/* Mobile Menu Content */}
+                        <div className="flex flex-col h-full">
+                             {/* Mobile Header */}
+                             <div className="flex items-center justify-between p-4 border-b">
+                                <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
+                                     <motion.svg /* Re-use logo SVG */
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                        className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
+                                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                                        <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+                                        <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
+                                    </motion.svg>
+                                    <span className="font-bold text-lg text-primary">EduHub</span>
+                                </Link>
+                                {/* Optional: Close button inside sheet */}
+                                {/* <SheetClose asChild> <Button variant="ghost" size="icon"> <X className="h-5 w-5" /> </Button> </SheetClose> */}
+                             </div>
+                             {/* Mobile Search (Optional) */}
+                             {!shouldHideSearch && (
+                                <div className="p-4 border-b">
+                                    <form onSubmit={handleSearchSubmit} className="relative">
+                                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            type="search"
+                                            placeholder="Search..."
+                                            value={searchQuery}
+                                            onChange={handleSearchChange}
+                                            className="w-full rounded-lg bg-muted pl-8 pr-3 py-2 h-9 text-sm"
+                                            aria-label="Search"
+                                        />
+                                    </form>
+                                </div>
+                             )}
+                             {/* Mobile Navigation */}
+                             <nav className="flex-1 py-4 space-y-1">
+                                {filteredNavItems.map((item) => {
+                                    const isActive = pathname.startsWith(item.href);
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={cn(
+                                                "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
+                                                isActive ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                                            )}
+                                        >
+                                            <item.icon className="h-5 w-5" />
+                                            {item.label}
+                                        </Link>
+                                    );
+                                })}
+                             </nav>
+                             {/* Optional Footer in Mobile Menu */}
+                              {/* <div className="p-4 border-t"> <Button variant="outline" className="w-full">Settings</Button> </div> */}
+                        </div>
+                    </SheetContent>
+                </Sheet>
+            </>
            ) : (
              <>
+                {/* Login/Signup buttons (Visible on all screens when logged out) */}
                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                  <Button variant="ghost" size="sm" asChild className="text-sm px-2 sm:px-3">
                    <Link href="/login">

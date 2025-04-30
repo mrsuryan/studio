@@ -91,76 +91,77 @@ export default function LoginPage() {
   return (
     <motion.div
       // Responsive vertical centering and padding
-      className="flex justify-center items-center min-h-[calc(100vh-10rem)] sm:min-h-[calc(100vh-12rem)] py-8 sm:py-12 px-4"
+       className="flex justify-center items-center min-h-[calc(100vh-8rem)] sm:min-h-[calc(100vh-10rem)] py-8 sm:py-12 px-4" // Adjusted min-height
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="w-full max-w-md shadow-xl border-primary/20 overflow-hidden"> {/* Ensure content doesn't overflow */}
-        <CardHeader className="text-center space-y-1 sm:space-y-2 bg-gradient-to-b from-primary/5 to-transparent p-6 sm:p-8 rounded-t-lg">
-           <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
-          >
-             {/* Responsive Icon Size */}
-             <LogIn className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-primary" />
-           </motion.div>
-           {/* Responsive Titles */}
-          <CardTitle className="text-2xl sm:text-3xl font-bold text-primary">Welcome Back!</CardTitle>
-          <CardDescription className="text-base sm:text-lg">Login to access your EduHub dashboard.</CardDescription>
-        </CardHeader>
-        <CardContent className="p-6 sm:p-8">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6"> {/* Responsive spacing */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm sm:text-base">Email Address</FormLabel> {/* Responsive label */}
-                    <FormControl>
-                      {/* Responsive Input */}
-                      <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base py-2.5 sm:py-3 h-10 sm:h-11" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm sm:text-base">Password</FormLabel> {/* Responsive label */}
-                    <FormControl>
+       {/* Responsive Card Width */}
+       <Card className="w-full max-w-sm sm:max-w-md md:max-w-lg shadow-xl border-primary/20 overflow-hidden">
+         <CardHeader className="text-center space-y-1 sm:space-y-2 bg-gradient-to-b from-primary/5 to-transparent p-6 sm:p-8 rounded-t-lg">
+            <motion.div
+             initial={{ scale: 0.5, opacity: 0 }}
+             animate={{ scale: 1, opacity: 1 }}
+             transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
+           >
+              {/* Responsive Icon Size */}
+              <LogIn className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mx-auto text-primary" />
+            </motion.div>
+            {/* Responsive Titles */}
+           <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">Welcome Back!</CardTitle>
+           <CardDescription className="text-base sm:text-lg md:text-xl">Login to access your EduHub dashboard.</CardDescription>
+         </CardHeader>
+         <CardContent className="p-6 sm:p-8">
+           <Form {...form}>
+             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6"> {/* Responsive spacing */}
+               <FormField
+                 control={form.control}
+                 name="email"
+                 render={({ field }) => (
+                   <FormItem>
+                     <FormLabel className="text-sm sm:text-base md:text-lg">Email Address</FormLabel> {/* Responsive label */}
+                     <FormControl>
                        {/* Responsive Input */}
-                      <Input type="password" placeholder="••••••••" {...field} className="text-sm sm:text-base py-2.5 sm:py-3 h-10 sm:h-11" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <motion.div
-                whileHover={{ scale: 1.02 }} // Slightly reduced hover scale
-                whileTap={{ scale: 0.98 }}
-                className="pt-2" // Add some top padding before button
-              >
-                 {/* Responsive Button */}
-                <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 text-base sm:text-lg py-3 sm:py-3.5 h-11 sm:h-12">
-                   <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Login
-                </Button>
-              </motion.div>
-            </form>
-          </Form>
-          <p className="mt-4 sm:mt-6 text-center text-sm sm:text-base text-muted-foreground">
-            Don't have an account?{" "}
-            <Link href="/signup" className="font-semibold text-primary hover:underline hover:text-accent transition-colors">
-              Sign up now
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
+                       <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
+                     </FormControl>
+                     <FormMessage />
+                   </FormItem>
+                 )}
+               />
+               <FormField
+                 control={form.control}
+                 name="password"
+                 render={({ field }) => (
+                   <FormItem>
+                     <FormLabel className="text-sm sm:text-base md:text-lg">Password</FormLabel> {/* Responsive label */}
+                     <FormControl>
+                        {/* Responsive Input */}
+                       <Input type="password" placeholder="••••••••" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
+                     </FormControl>
+                     <FormMessage />
+                   </FormItem>
+                 )}
+               />
+               <motion.div
+                 whileHover={{ scale: 1.02 }} // Slightly reduced hover scale
+                 whileTap={{ scale: 0.98 }}
+                 className="pt-2 sm:pt-4" // Add responsive top padding
+               >
+                  {/* Responsive Button */}
+                 <Button type="submit" size="lg" className="w-full bg-primary hover:bg-primary/90 text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 h-11 sm:h-12 md:h-14">
+                    <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" /> Login {/* Responsive Icon */}
+                 </Button>
+               </motion.div>
+             </form>
+           </Form>
+           <p className="mt-4 sm:mt-6 text-center text-sm sm:text-base md:text-lg text-muted-foreground">
+             Don't have an account?{" "}
+             <Link href="/signup" className="font-semibold text-primary hover:underline hover:text-accent transition-colors">
+               Sign up now
+             </Link>
+           </p>
+         </CardContent>
+       </Card>
     </motion.div>
   );
 }

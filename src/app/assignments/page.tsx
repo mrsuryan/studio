@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // Ensure Button is imported
 import { ListChecks, CheckCircle, Clock, CircleHelp, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -60,62 +60,65 @@ const itemVariants = {
 export default function AssignmentsPage() {
   return (
     <motion.div
-      className="space-y-8 md:space-y-10" // Adjusted spacing
+      className="space-y-8 md:space-y-10 lg:space-y-12" // Adjusted spacing
        initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <motion.h1
-        className="text-3xl sm:text-4xl font-bold text-primary mb-6 md:mb-8 flex items-center gap-2 sm:gap-3" // Responsive font size and gap
+         className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3" // Responsive font size and gap
         variants={itemVariants}
       >
-         <ListChecks className="h-7 w-7 sm:h-9 sm:w-9" /> Assignments Overview
+         <ListChecks className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" /> Assignments Overview {/* Responsive Icon */}
       </motion.h1>
 
-      <motion.div className="space-y-4 sm:space-y-5" variants={containerVariants}> {/* Adjusted spacing */}
+      <motion.div className="space-y-4 sm:space-y-5 md:space-y-6" variants={containerVariants}> {/* Adjusted spacing */}
         {assignments.map((assignment) => {
           const { variant, icon: Icon, borderColorClass } = getStatusProps(assignment.status);
           return (
             <motion.div key={assignment.id} variants={itemVariants}>
               {/* Added responsive classes and border style */}
               <Card className={`hover:shadow-lg transition-all duration-300 ease-in-out border-l-4 ${borderColorClass} hover:border-primary/50`}>
-                <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-4 sm:p-6 pb-2 sm:pb-3"> {/* Responsive padding and flex direction */}
-                  <div className="flex-1">
-                     <CardTitle className="text-lg sm:text-xl font-semibold">{assignment.title}</CardTitle>
-                      <CardDescription className="text-sm sm:text-base mt-1">
-                        Course: {assignment.course}
-                     </CardDescription>
-                  </div>
-                   <Badge variant={variant} className="text-xs sm:text-sm px-2.5 py-1 sm:px-3 capitalize flex items-center gap-1 sm:gap-1.5 self-start sm:self-center mt-2 sm:mt-0"> {/* Responsive badge */}
-                      <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4"/>
-                      {assignment.status}
-                   </Badge>
-                </CardHeader>
-                <CardContent className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 pt-2 sm:p-6 sm:pt-2 gap-3 sm:gap-4"> {/* Responsive padding, flex direction, and gap */}
-                  <p className="text-sm sm:text-base text-muted-foreground">
-                     Due: <span className="font-medium text-foreground">{assignment.dueDate}</span>
-                  </p>
-                   <Link href={`/assignments/${assignment.id}`} passHref className="self-end sm:self-center">
-                        <Button variant="outline" size="sm" className="group transition-all hover:bg-primary hover:text-primary-foreground text-xs sm:text-sm"> {/* Responsive button */}
-                          View Details
-                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3.5 sm:size-4 ml-1.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200">
-                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                           </svg>
-                        </Button>
-                   </Link>
-                </CardContent>
+                 {/* Responsive Card Header */}
+                 <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 p-4 sm:p-6 pb-2 sm:pb-3 md:p-8 md:pb-4">
+                   <div className="flex-1">
+                      <CardTitle className="text-lg sm:text-xl md:text-2xl font-semibold">{assignment.title}</CardTitle>
+                       <CardDescription className="text-sm sm:text-base md:text-lg mt-1">
+                         Course: {assignment.course}
+                      </CardDescription>
+                   </div>
+                    <Badge variant={variant} className="text-xs sm:text-sm md:text-base px-2.5 py-1 sm:px-3 capitalize flex items-center gap-1 sm:gap-1.5 self-start sm:self-center mt-2 sm:mt-0"> {/* Responsive badge */}
+                       <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> {/* Responsive Icon */}
+                       {assignment.status}
+                    </Badge>
+                 </CardHeader>
+                 {/* Responsive Card Content */}
+                 <CardContent className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 pt-2 sm:p-6 sm:pt-2 md:p-8 md:pt-3 gap-3 sm:gap-4">
+                   <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
+                      Due: <span className="font-medium text-foreground">{assignment.dueDate}</span>
+                   </p>
+                    <Link href={`/assignments/${assignment.id}`} passHref className="self-end sm:self-center">
+                         <Button variant="outline" size="sm" className="group transition-all hover:bg-primary hover:text-primary-foreground text-xs sm:text-sm md:text-base md:py-2 md:px-4"> {/* Responsive button */}
+                           View Details
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3.5 sm:size-4 md:size-5 ml-1.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"> {/* Responsive Icon */}
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                            </svg>
+                         </Button>
+                    </Link>
+                 </CardContent>
               </Card>
              </motion.div>
           );
         })}
       </motion.div>
        {assignments.length === 0 && (
-          <motion.div variants={itemVariants} className="text-center py-10">
-            <Card className="inline-block p-6 sm:p-8 border-dashed">
-                 <CircleHelp className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-muted-foreground mb-4"/>
-                <p className="text-lg sm:text-xl text-muted-foreground">You have no assignments currently.</p>
-                <p className="text-sm sm:text-base text-muted-foreground mt-2">Keep up the great work!</p>
-            </Card>
+          <motion.div variants={itemVariants} className="text-center py-10 md:py-16">
+             {/* Responsive Empty State Card */}
+             <Card className="inline-block p-6 sm:p-8 md:p-10 lg:p-12 border-dashed">
+                  <CircleHelp className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 mx-auto text-muted-foreground mb-4 md:mb-6"/> {/* Responsive Icon */}
+                 <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-muted-foreground">You have no assignments currently.</p>
+                 <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mt-2 md:mt-3">Keep up the great work!</p>
+             </Card>
           </motion.div>
         )}
     </motion.div>

@@ -58,61 +58,64 @@ const itemVariants = {
 export default function ActivitiesPage() {
   return (
     <motion.div
-      className="space-y-8 md:space-y-10" // Adjusted spacing
+      className="space-y-8 md:space-y-10 lg:space-y-12" // Adjusted spacing
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <motion.h1
-        className="text-3xl sm:text-4xl font-bold text-primary mb-6 md:mb-8 flex items-center gap-2 sm:gap-3" // Responsive font size and gap
+         className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3" // Responsive font size and gap
         variants={itemVariants} // Use item variant for the title
       >
-        <BellRing className="h-7 w-7 sm:h-9 sm:w-9" /> Recent Activities Feed
+        <BellRing className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" /> Recent Activities Feed {/* Responsive Icon */}
       </motion.h1>
 
-       <Card className="shadow-lg border-primary/10">
-         <CardContent className="p-4 sm:p-6 pt-6 space-y-4 sm:space-y-6"> {/* Responsive padding and spacing */}
-           {activities.map((activity, index) => {
-             const Icon = activityIcons[activity.type];
-             const iconColor = activityColors[activity.type];
+        <Card className="shadow-lg border-primary/10">
+          {/* Responsive Card Content Padding */}
+          <CardContent className="p-4 sm:p-6 md:p-8 pt-6 space-y-4 sm:space-y-6 md:space-y-8">
+            {activities.map((activity, index) => {
+              const Icon = activityIcons[activity.type];
+              const iconColor = activityColors[activity.type];
 
-             return (
-               <motion.div
-                key={activity.id}
-                className="flex items-start space-x-3 sm:space-x-4 pb-4 border-b last:border-b-0 border-border/50" // Responsive spacing
-                variants={itemVariants}
-               >
-                  {/* Icon container */}
-                  <motion.div
-                     className={`mt-0.5 sm:mt-1 flex-shrink-0 p-1.5 sm:p-2 rounded-full bg-muted ${iconColor}/10`} // Responsive padding/margin
-                     initial={{ scale: 0 }}
-                     animate={{ scale: 1 }}
-                     transition={{ delay: index * 0.1 + 0.2, type: "spring", stiffness: 150 }} // Adjusted delay
-                   >
-                     <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${iconColor}`} /> {/* Responsive icon size */}
-                  </motion.div>
-                  {/* Text content */}
-                  <div className="flex-1 space-y-0.5 sm:space-y-1">
-                    <p className="text-sm sm:text-base font-medium leading-snug">
-                      {activity.description}
-                    </p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      {activity.timestamp}
-                    </p>
-                  </div>
-              </motion.div>
-            )})}
-          {activities.length === 0 && (
-            <motion.div variants={itemVariants} className="text-center py-8 sm:py-10"> {/* Responsive padding */}
-                <Card className="inline-block p-6 sm:p-8 border-dashed">
-                    <BellRing className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-muted-foreground mb-4"/>
-                    <p className="text-lg sm:text-xl text-muted-foreground">No recent activities to display.</p>
-                    <p className="text-sm sm:text-base text-muted-foreground mt-2">Start learning to see your progress here!</p>
-                </Card>
-            </motion.div>
-          )}
-        </CardContent>
-      </Card>
+              return (
+                <motion.div
+                 key={activity.id}
+                 className="flex items-start space-x-3 sm:space-x-4 md:space-x-5 pb-4 md:pb-6 border-b last:border-b-0 border-border/50" // Responsive spacing and padding-bottom
+                 variants={itemVariants}
+                >
+                   {/* Icon container */}
+                   <motion.div
+                      className={`mt-0.5 sm:mt-1 flex-shrink-0 p-1.5 sm:p-2 md:p-2.5 rounded-full bg-muted ${iconColor}/10`} // Responsive padding/margin
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: index * 0.1 + 0.2, type: "spring", stiffness: 150 }} // Adjusted delay
+                    >
+                      <Icon className={`h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 ${iconColor}`} /> {/* Responsive icon size */}
+                   </motion.div>
+                   {/* Text content */}
+                   <div className="flex-1 space-y-0.5 sm:space-y-1 md:space-y-1.5">
+                     {/* Responsive Text Size */}
+                     <p className="text-sm sm:text-base md:text-lg font-medium leading-snug">
+                       {activity.description}
+                     </p>
+                     <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
+                       {activity.timestamp}
+                     </p>
+                   </div>
+               </motion.div>
+             )})}
+           {activities.length === 0 && (
+             <motion.div variants={itemVariants} className="text-center py-8 sm:py-10 md:py-16"> {/* Responsive padding */}
+                 {/* Responsive Empty State Card */}
+                 <Card className="inline-block p-6 sm:p-8 md:p-10 lg:p-12 border-dashed">
+                     <BellRing className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 mx-auto text-muted-foreground mb-4 md:mb-6"/> {/* Responsive Icon */}
+                     <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-muted-foreground">No recent activities to display.</p>
+                     <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mt-2 md:mt-3">Start learning to see your progress here!</p>
+                 </Card>
+             </motion.div>
+           )}
+         </CardContent>
+       </Card>
     </motion.div>
   );
 }

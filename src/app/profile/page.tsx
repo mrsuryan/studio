@@ -248,235 +248,236 @@ export default function ProfilePage() {
 
   return (
     <motion.div
-      className="space-y-8 md:space-y-10" // Adjusted spacing
+      className="space-y-8 md:space-y-10 lg:space-y-12" // Adjusted spacing
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <motion.h1
-        className="text-3xl sm:text-4xl font-bold text-primary mb-6 md:mb-8 flex items-center gap-2 sm:gap-3" // Responsive heading
+         className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3" // Responsive heading
         variants={itemVariants}
       >
-        <UserCircle className="h-7 w-7 sm:h-9 sm:w-9" /> My Profile
+        <UserCircle className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" /> My Profile {/* Responsive Icon */}
       </motion.h1>
 
       {/* Responsive Grid */}
       <motion.div
-        className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10" // Adjusted breakpoint and gap
+         className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12" // Adjusted breakpoint and gap
         variants={containerVariants}
       >
         {/* Profile Information Card */}
         <motion.div className="lg:col-span-1" variants={itemVariants}>
           <Card className="shadow-lg border-primary/10">
-            <CardHeader className="items-center text-center p-4 sm:p-6"> {/* Responsive padding */}
-               <motion.div
-                 initial={{ scale: 0 }}
-                 animate={{ scale: 1 }}
-                 transition={{ delay: 0.2, type: "spring", stiffness: 150 }} // Adjusted delay
-                 className="relative group" // Add relative positioning for overlay
-               >
-                 {/* Hidden File Input */}
-                 <input
-                   type="file"
-                   ref={fileInputRef}
-                   onChange={handleFileChange}
-                   accept="image/png, image/jpeg, image/webp" // Specify accepted image types
-                   className="hidden"
-                   aria-label="Upload profile picture"
-                 />
-                <Avatar
-                    className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-primary/20 cursor-pointer"
-                    onClick={triggerFileInput} // Make avatar clickable
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerFileInput() }}
+             <CardHeader className="items-center text-center p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 150 }} // Adjusted delay
+                  className="relative group" // Add relative positioning for overlay
                 >
-                 {isLoading ? (
-                    <Skeleton className="h-full w-full rounded-full" />
-                  ) : (
-                    <>
-                     <AvatarImage src={profile.avatarUrl} alt={profile.name} />
-                     {/* Fallback with initials */}
-                     <AvatarFallback className="text-lg sm:text-xl font-semibold">
-                       {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
-                     </AvatarFallback>
-                    </>
-                  )}
-                </Avatar>
-                 {/* Edit Icon Overlay */}
-                 <div
-                    className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
-                    onClick={triggerFileInput}
-                    role="button"
-                    aria-label="Change profile picture"
-                  >
-                    <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-                  </div>
-               </motion.div>
-               {/* Name - Editable */}
-               {isLoading ? (
-                  <Skeleton className="h-7 sm:h-8 w-3/4 mt-4 mx-auto" />
-               ) : isEditing ? (
-                <Input
-                  id="name"
-                  value={profile.name}
-                  onChange={handleInputChange}
-                  className="text-xl sm:text-2xl font-semibold mt-4 text-center h-auto py-1" // Responsive text/height
-                  placeholder="Your Name"
-                />
-              ) : (
-                <CardTitle className="text-xl sm:text-2xl mt-4">{profile.name}</CardTitle>
-              )}
-              {/* Email - Read-only */}
-              {isLoading ? (
-                 <Skeleton className="h-5 w-1/2 mt-2 mx-auto" />
-              ) : (
-                 <CardDescription className="text-sm sm:text-base flex items-center justify-center gap-1 sm:gap-1.5 mt-1">
-                    <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4"/> {profile.email}
-                 </CardDescription>
-              )}
-            </CardHeader>
-            <CardContent className="text-center p-4 sm:p-6 pt-0"> {/* Responsive padding */}
-               {/* Bio - Editable */}
-               {isLoading ? (
-                 <div className="space-y-1 mt-1">
-                   <Skeleton className="h-4 w-full" />
-                   <Skeleton className="h-4 w-5/6" />
-                   <Skeleton className="h-4 w-3/4" />
-                 </div>
-               ) : isEditing ? (
-                 <Textarea
-                   id="bio"
-                   value={profile.bio}
+                  {/* Hidden File Input */}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/png, image/jpeg, image/webp" // Specify accepted image types
+                    className="hidden"
+                    aria-label="Upload profile picture"
+                  />
+                 {/* Responsive Avatar */}
+                 <Avatar
+                     className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 border-4 border-primary/20 cursor-pointer"
+                     onClick={triggerFileInput} // Make avatar clickable
+                     role="button"
+                     tabIndex={0}
+                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerFileInput() }}
+                 >
+                  {isLoading ? (
+                     <Skeleton className="h-full w-full rounded-full" />
+                   ) : (
+                     <>
+                      <AvatarImage src={profile.avatarUrl} alt={profile.name} />
+                      {/* Fallback with initials */}
+                      <AvatarFallback className="text-lg sm:text-xl md:text-2xl font-semibold">
+                        {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                      </AvatarFallback>
+                     </>
+                   )}
+                 </Avatar>
+                  {/* Edit Icon Overlay */}
+                  <div
+                     className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                     onClick={triggerFileInput}
+                     role="button"
+                     aria-label="Change profile picture"
+                   >
+                     <Upload className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 text-white" /> {/* Responsive Icon */}
+                   </div>
+                </motion.div>
+                {/* Name - Editable */}
+                {isLoading ? (
+                   <Skeleton className="h-7 sm:h-8 md:h-9 w-3/4 mt-4 mx-auto" />
+                ) : isEditing ? (
+                 <Input
+                   id="name"
+                   value={profile.name}
                    onChange={handleInputChange}
-                   className="w-full p-2 border rounded-md text-xs sm:text-sm text-muted-foreground min-h-[60px] sm:min-h-[80px] focus:ring-primary focus:border-primary mt-2" // Responsive styles
-                   placeholder="Tell us about yourself..."
+                    className="text-xl sm:text-2xl md:text-3xl font-semibold mt-4 text-center h-auto py-1 px-2" // Responsive text/height/padding
+                   placeholder="Your Name"
                  />
                ) : (
-                <p className="text-xs sm:text-sm text-muted-foreground italic mt-2">"{profile.bio || 'No bio yet.'}"</p>
+                  <CardTitle className="text-xl sm:text-2xl md:text-3xl mt-4">{profile.name}</CardTitle>
                )}
-              <Separator className="my-4" />
-               {/* Edit/Save Button */}
+               {/* Email - Read-only */}
                {isLoading ? (
-                   <Skeleton className="h-9 w-full" />
+                  <Skeleton className="h-5 sm:h-6 md:h-7 w-1/2 mt-2 mx-auto" />
                ) : (
-                   <Button
-                    variant={isEditing ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-                    className="w-full group transition-all text-xs sm:text-sm" // Responsive text size
-                    disabled={isLoading}
-                  >
-                    {isEditing ? (
-                      <>
-                        <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Save Changes
-                      </>
-                    ) : (
-                      <>
-                        <Edit3 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:animate-pulse" /> Edit Profile
-                      </>
-                    )}
-                  </Button>
+                  <CardDescription className="text-sm sm:text-base md:text-lg flex items-center justify-center gap-1 sm:gap-1.5 mt-1 md:mt-2">
+                     <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> {profile.email} {/* Responsive Icon */}
+                  </CardDescription>
                )}
-            </CardContent>
-          </Card>
+             </CardHeader>
+             <CardContent className="text-center p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
+                {/* Bio - Editable */}
+                {isLoading ? (
+                  <div className="space-y-1 mt-1 md:mt-2">
+                    <Skeleton className="h-4 sm:h-5 w-full" />
+                    <Skeleton className="h-4 sm:h-5 w-5/6" />
+                    <Skeleton className="h-4 sm:h-5 w-3/4" />
+                  </div>
+                ) : isEditing ? (
+                  <Textarea
+                    id="bio"
+                    value={profile.bio}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary mt-2 md:mt-3" // Responsive styles
+                    placeholder="Tell us about yourself..."
+                  />
+                ) : (
+                  <p className="text-xs sm:text-sm md:text-base text-muted-foreground italic mt-2 md:mt-3">"{profile.bio || 'No bio yet.'}"</p>
+                )}
+               <Separator className="my-4 md:my-6" />
+                {/* Edit/Save Button */}
+                {isLoading ? (
+                    <Skeleton className="h-9 md:h-10 w-full" />
+                ) : (
+                    <Button
+                     variant={isEditing ? "default" : "outline"}
+                     size="sm"
+                     onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+                     className="w-full group transition-all text-xs sm:text-sm md:text-base md:py-2.5" // Responsive text size & padding
+                     disabled={isLoading}
+                   >
+                     {isEditing ? (
+                       <>
+                         <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Changes {/* Responsive Icon */}
+                       </>
+                     ) : (
+                       <>
+                         <Edit3 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:animate-pulse" /> Edit Profile {/* Responsive Icon */}
+                       </>
+                     )}
+                   </Button>
+                )}
+             </CardContent>
+           </Card>
         </motion.div>
 
         {/* Settings & Preferences Card */}
-        <motion.div className="lg:col-span-2 space-y-6" variants={itemVariants}>
+        <motion.div className="lg:col-span-2 space-y-6 md:space-y-8 lg:space-y-10" variants={itemVariants}>
           <Card className="shadow-md border-accent/10">
-            <CardHeader className="p-4 sm:p-6"> {/* Responsive padding */}
-              <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
-                <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-accent" /> Account Settings
-              </CardTitle>
-              <CardDescription className="text-sm">Manage your account preferences and notification settings.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 p-4 sm:p-6 pt-0"> {/* Responsive padding */}
-               {isLoading ? (
-                   <>
-                       <Skeleton className="h-10 w-full" />
-                       <Skeleton className="h-10 w-full" />
-                       <div className="flex flex-wrap gap-2 pt-2">
-                           <Skeleton className="h-9 w-32" />
-                           <Skeleton className="h-9 w-36" />
-                       </div>
-                   </>
-               ) : (
-                 <>
-                   <div className="flex items-center justify-between p-3 rounded-md bg-muted/30 border">
-                     <Label htmlFor="emailNotifications" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base">
-                       <Bell className="h-4 w-4 text-muted-foreground"/> Email Notifications
-                     </Label>
-                     <Switch
-                       id="emailNotifications"
-                       checked={profile.emailNotifications}
-                       onCheckedChange={(checked) => handleSwitchChange(checked, 'emailNotifications')}
-                       aria-label="Toggle email notifications"
-                     />
-                   </div>
-                   <div className="flex items-center justify-between p-3 rounded-md bg-muted/30 border">
-                     <Label htmlFor="darkMode" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base">
-                       <Moon className="h-4 w-4 text-muted-foreground" />
-                        Dark Mode
+             <CardHeader className="p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
+               <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2">
+                 <Settings className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-accent" /> Account Settings {/* Responsive Icon */}
+               </CardTitle>
+               <CardDescription className="text-sm md:text-base">Manage your account preferences and notification settings.</CardDescription>
+             </CardHeader>
+             <CardContent className="space-y-4 md:space-y-5 p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
+                {isLoading ? (
+                    <>
+                        <Skeleton className="h-10 md:h-12 w-full" />
+                        <Skeleton className="h-10 md:h-12 w-full" />
+                        <div className="flex flex-wrap gap-2 pt-2 md:pt-4">
+                            <Skeleton className="h-9 md:h-10 w-32 md:w-40" />
+                            <Skeleton className="h-9 md:h-10 w-36 md:w-44" />
+                        </div>
+                    </>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
+                      <Label htmlFor="emailNotifications" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
+                        <Bell className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground"/> Email Notifications {/* Responsive Icon */}
                       </Label>
                       <Switch
-                       id="darkMode"
-                       checked={profile.darkMode}
-                       onCheckedChange={(checked) => handleSwitchChange(checked, 'darkMode')}
-                       aria-label="Toggle dark mode"
-                     />
-                   </div>
-                    {/* Buttons with responsive text and wrapping */}
-                    <div className="pt-4 flex flex-wrap gap-2 sm:gap-3">
-                        <Button variant="outline" size="sm" className="text-xs sm:text-sm">Change Password</Button>
-                         {/* Delete Account with Confirmation */}
-                         <AlertDialog>
-                             <AlertDialogTrigger asChild>
-                                <Button variant="destructive" size="sm" className="text-xs sm:text-sm">
-                                    <Trash2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4"/> Delete Account
-                                </Button>
-                             </AlertDialogTrigger>
-                             <AlertDialogContent>
-                                <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete your
-                                    account and remove your data from our servers.
-                                </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
-                                    Yes, delete account
-                                </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
+                        id="emailNotifications"
+                        checked={profile.emailNotifications}
+                        onCheckedChange={(checked) => handleSwitchChange(checked, 'emailNotifications')}
+                        aria-label="Toggle email notifications"
+                      />
                     </div>
-                 </>
-               )}
-            </CardContent>
-          </Card>
+                    <div className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
+                      <Label htmlFor="darkMode" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
+                        <Moon className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" /> {/* Responsive Icon */}
+                         Dark Mode
+                       </Label>
+                       <Switch
+                        id="darkMode"
+                        checked={profile.darkMode}
+                        onCheckedChange={(checked) => handleSwitchChange(checked, 'darkMode')}
+                        aria-label="Toggle dark mode"
+                      />
+                    </div>
+                     {/* Buttons with responsive text and wrapping */}
+                     <div className="pt-4 md:pt-6 flex flex-wrap gap-2 sm:gap-3">
+                         <Button variant="outline" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">Change Password</Button>
+                          {/* Delete Account with Confirmation */}
+                          <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                 <Button variant="destructive" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">
+                                     <Trash2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> Delete Account {/* Responsive Icon */}
+                                 </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                 <AlertDialogHeader>
+                                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                 <AlertDialogDescription>
+                                     This action cannot be undone. This will permanently delete your
+                                     account and remove your data from our servers.
+                                 </AlertDialogDescription>
+                                 </AlertDialogHeader>
+                                 <AlertDialogFooter>
+                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                 <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                                     Yes, delete account
+                                 </AlertDialogAction>
+                                 </AlertDialogFooter>
+                             </AlertDialogContent>
+                         </AlertDialog>
+                     </div>
+                  </>
+                )}
+             </CardContent>
+           </Card>
 
-           {/* Learning Statistics Placeholder */}
-           <Card className="shadow-md border-secondary/10">
-            <CardHeader className="p-4 sm:p-6"> {/* Responsive padding */}
-              <CardTitle className="text-lg sm:text-xl">Learning Statistics</CardTitle>
-              <CardDescription className="text-sm">Your progress overview.</CardDescription>
-            </CardHeader>
-             <CardContent className="p-4 sm:p-6 pt-0"> {/* Responsive padding */}
-                 {isLoading ? (
-                    <Skeleton className="h-24 sm:h-32 w-full mt-4" /> // Responsive height
-                 ) : (
-                     <>
-                         <p className="text-muted-foreground text-sm sm:text-base">Course completion charts and activity summaries will appear here.</p>
-                         <div className="mt-4 h-24 sm:h-32 bg-muted/50 rounded-md flex items-center justify-center text-muted-foreground border border-dashed text-xs sm:text-sm">
-                             Statistics Area (Coming Soon)
-                         </div>
-                     </>
-                 )}
-            </CardContent>
-         </Card>
+            {/* Learning Statistics Placeholder */}
+            <Card className="shadow-md border-secondary/10">
+             <CardHeader className="p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
+               <CardTitle className="text-lg sm:text-xl md:text-2xl">Learning Statistics</CardTitle>
+               <CardDescription className="text-sm md:text-base">Your progress overview.</CardDescription>
+             </CardHeader>
+              <CardContent className="p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
+                  {isLoading ? (
+                     <Skeleton className="h-24 sm:h-32 md:h-40 w-full mt-4" /> // Responsive height
+                  ) : (
+                      <>
+                          <p className="text-muted-foreground text-sm sm:text-base md:text-lg">Course completion charts and activity summaries will appear here.</p>
+                          <div className="mt-4 h-24 sm:h-32 md:h-40 bg-muted/50 rounded-md flex items-center justify-center text-muted-foreground border border-dashed text-xs sm:text-sm md:text-base">
+                              Statistics Area (Coming Soon)
+                          </div>
+                      </>
+                  )}
+             </CardContent>
+          </Card>
 
         </motion.div>
       </motion.div>
