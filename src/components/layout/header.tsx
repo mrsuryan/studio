@@ -145,6 +145,7 @@ export function Header() {
       <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
         {/* Logo and Title */}
         <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0">
+           {/* Enhanced Logo SVG */}
            <motion.svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -153,14 +154,16 @@ export function Header() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-6 w-6 sm:h-7 sm:w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]"
+            className="h-7 w-7 sm:h-8 sm:w-8 text-primary transition-transform duration-300 group-hover:rotate-[10deg]" // Slightly larger icon
             initial={{ rotate: -15, opacity: 0 }}
             animate={{ rotate: 0, opacity: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
           >
                 <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                <path d="M6.5 2H20v20H6.5C4 22 4 19.5 4 19.5zM12 7h-1v7.5"/>
-                <path d="m11 11 1 1 1-1"/>
+                 {/* Adding a small 'graduation cap' like element */}
+                 <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+                 <path d="m6.5 14 5.5 3 5.5-3"/>
+                 <path d="M12 14.5V19"/>
            </motion.svg>
           <span className="font-bold text-lg sm:text-xl inline-block text-primary group-hover:text-accent transition-colors duration-300">
             EduHub Portal
