@@ -31,7 +31,7 @@ export function Header() {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(''); // State for avatar URL
-  const [isLoading, setIsLoading] = useState(true); // Add loading state for auth check
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true); // Renamed isLoading to be specific
   const [hasMounted, setHasMounted] = useState(false); // State to track client mount
   const [searchQuery, setSearchQuery] = useState(''); // State for search input
   const [isSearchFocused, setIsSearchFocused] = useState(false); // State for search focus animation
@@ -53,38 +53,38 @@ export function Header() {
     { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true }, // Added Demo Link
   ];
 
-  const filteredNavItems = navItems.filter(item => !item.requiresLogin || isLoggedIn);
-
   // Set mounted state after initial render
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
+  // Filter nav items only after mount and auth check is complete
+  const filteredNavItems = hasMounted && !isLoadingAuth
+    ? navItems.filter(item => !item.requiresLogin || isLoggedIn)
+    : []; // Render no nav items initially or while loading to avoid mismatch
+
   // Check login status on component mount and when localStorage changes
   useEffect(() => {
+    // Only run on the client after mounting
+    if (!hasMounted) return;
+
     const checkLoginStatus = () => {
-      // Set loading true at the beginning of the check
-      setIsLoading(true);
-      // Ensure this runs only on the client side
-      if (typeof window !== 'undefined') {
-        const loggedInStatus = localStorage.getItem('isLoggedIn');
-        const storedUserName = localStorage.getItem('userName');
-        const storedUserEmail = localStorage.getItem('userEmail');
-        const storedAvatarUrl = localStorage.getItem('userAvatarUrl'); // Load avatar URL
+      setIsLoadingAuth(true);
+      // We know window is defined because hasMounted is true
+      const loggedInStatus = localStorage.getItem('isLoggedIn');
+      const storedUserName = localStorage.getItem('userName');
+      const storedUserEmail = localStorage.getItem('userEmail');
+      const storedAvatarUrl = localStorage.getItem('userAvatarUrl'); // Load avatar URL
 
-        const isLoggedInNow = loggedInStatus === 'true';
-        setIsLoggedIn(isLoggedInNow);
-        setUserName(isLoggedInNow ? (storedUserName || '') : '');
-        setUserEmail(isLoggedInNow ? (storedUserEmail || '') : '');
-        // Set avatar URL if logged in, otherwise use default/placeholder logic or clear it
-        setAvatarUrl(isLoggedInNow
-            ? (storedAvatarUrl || `https://picsum.photos/seed/${storedUserEmail || 'default'}/100`)
-            : ''); // Clear avatar URL if not logged in
+      const isLoggedInNow = loggedInStatus === 'true';
+      setIsLoggedIn(isLoggedInNow);
+      setUserName(isLoggedInNow ? (storedUserName || '') : '');
+      setUserEmail(isLoggedInNow ? (storedUserEmail || '') : '');
+      setAvatarUrl(isLoggedInNow
+          ? (storedAvatarUrl || `https://picsum.photos/seed/${storedUserEmail || 'default'}/100`)
+          : ''); // Clear avatar URL if not logged in
 
-        setIsLoading(false); // Set loading false after checking
-      } else {
-        setIsLoading(false); // Also set loading false if window is not defined (SSR/initial render)
-      }
+      setIsLoadingAuth(false); // Set loading false after checking
     };
 
     checkLoginStatus();
@@ -95,7 +95,7 @@ export function Header() {
     return () => {
       window.removeEventListener('storage', checkLoginStatus);
     };
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, [hasMounted]); // Rerun when hasMounted becomes true
 
   // Close mobile menu on navigation
   useEffect(() => {
@@ -104,6 +104,7 @@ export function Header() {
 
 
   const handleLogout = () => {
+     // Ensure window is defined (though should be if button is clickable)
      if (typeof window !== 'undefined') {
         // Clear all relevant user data
         localStorage.removeItem('isLoggedIn');
@@ -113,23 +114,15 @@ export function Header() {
         localStorage.removeItem('userEmailNotifications');
         localStorage.removeItem('userDarkMode');
         localStorage.removeItem('userAvatarUrl'); // Clear avatar URL on logout
-        // Optionally remove avatar seed if stored, or handle avatar logic differently
-        // localStorage.removeItem('userAvatarSeed');
         // Dispatch storage event to notify other components (like profile page)
         window.dispatchEvent(new Event('storage'));
      }
-    setIsLoggedIn(false);
-    setUserName('');
-    setUserEmail('');
-    setAvatarUrl(''); // Clear avatar URL state
+    // No need to manually set state here, the storage event listener will trigger checkLoginStatus
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
-    // Use router.push for client-side navigation
     router.push('/login');
-     // Optionally force a reload if state updates aren't propagating reliably everywhere
-     // setTimeout(() => window.location.reload(), 50);
   };
 
   const getInitials = (name: string) => {
@@ -250,9 +243,9 @@ export function Header() {
          {/* Spacer to push auth to the right (Desktop) */}
          <div className="flex-1 hidden md:block"></div>
 
-         {/* Responsive Navigation Links (Desktop) */}
+         {/* Responsive Navigation Links (Desktop) - Render only after mount */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium ml-auto md:ml-0 mr-2 sm:mr-4">
-           {filteredNavItems.map((item) => { // Use filtered items
+           {hasMounted && filteredNavItems.map((item) => { // Use filtered items and check hasMounted
                const isActive = pathname.startsWith(item.href); // Use startsWith for nested routes
                return (
                    <Link
@@ -275,160 +268,170 @@ export function Header() {
         {/* Auth Buttons / User Dropdown / Mobile Menu Trigger */}
         {/* Use ml-auto to push auth buttons to the right on mobile when nav is hidden */}
         <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 ml-auto md:ml-0">
-           {isLoading ? (
-              // Skeleton Loader while checking auth status
-              <div className="flex items-center space-x-2">
-                  <Skeleton className="h-9 w-9 rounded-full" />
-                  <Skeleton className="h-8 w-16 hidden sm:block" /> {/* Adjusted skeleton width */}
-              </div>
-           ) : isLoggedIn ? (
-            <>
-                {/* User Dropdown (Visible on all screens when logged in) */}
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        {/* Adjusted button padding for better mobile tap target */}
-                        <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                             <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
-                            {/* Use avatarUrl state */}
-                            <AvatarImage src={avatarUrl} alt={userName} />
-                            <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                                {getInitials(userName)}
-                            </AvatarFallback>
-                            </Avatar>
-                        </Button>
-                        </motion.div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
-                        <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none truncate">{userName || 'User'}</p>
-                        <p className="text-xs leading-none text-muted-foreground truncate">
-                            {userEmail || 'No email'}
-                        </p>
-                        </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {/* Profile Link */}
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                        <Link href="/profile">
-                            <User className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
-                    </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+           {/* Render Skeleton or Auth Elements only after mount */}
+           {hasMounted ? (
+              isLoadingAuth ? (
+                // Skeleton Loader while checking auth status
+                <div className="flex items-center space-x-2">
+                    <Skeleton className="h-9 w-9 rounded-full" />
+                    <Skeleton className="h-8 w-16 hidden sm:block" /> {/* Adjusted skeleton width */}
+                </div>
+              ) : isLoggedIn ? (
+                <>
+                    {/* User Dropdown (Visible on all screens when logged in) */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            {/* Adjusted button padding for better mobile tap target */}
+                            <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                                <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
+                                {/* Use avatarUrl state */}
+                                <AvatarImage src={avatarUrl} alt={userName} />
+                                <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                                    {getInitials(userName)}
+                                </AvatarFallback>
+                                </Avatar>
+                            </Button>
+                            </motion.div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56" align="end" forceMount>
+                        <DropdownMenuLabel className="font-normal">
+                            <div className="flex flex-col space-y-1">
+                            <p className="text-sm font-medium leading-none truncate">{userName || 'User'}</p>
+                            <p className="text-xs leading-none text-muted-foreground truncate">
+                                {userEmail || 'No email'}
+                            </p>
+                            </div>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {/* Profile Link */}
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                            <Link href="/profile">
+                                <User className="mr-2 h-4 w-4" />
+                                <span>Profile</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Log out</span>
+                        </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
-                {/* Mobile Menu Trigger (Only visible on mobile) */}
-                {/* Use md:hidden to hide only on medium screens and up */}
-                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                    <SheetTrigger asChild className="md:hidden">
-                         <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:h-10"> {/* Ensure consistent size */}
-                             <Menu className="h-5 w-5 sm:h-6 sm:w-6" /> {/* Adjusted icon size */}
-                             <span className="sr-only">Toggle Menu</span>
-                         </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col"> {/* Added flex flex-col */}
-                        {/* Mobile Menu Content */}
-                        <div className="flex flex-col h-full">
-                             {/* Mobile Header */}
-                             <div className="flex items-center justify-between p-4 border-b">
-                                <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
-                                     <motion.svg /* Re-use logo SVG */
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                                        className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
-                                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                                        <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
-                                        <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
-                                    </motion.svg>
-                                    <span className="font-bold text-lg text-primary">EduHub Portal</span>
-                                </Link>
-                                {/* Explicit Close Button */}
-                                <SheetTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                                        <X className="h-5 w-5" />
-                                        <span className="sr-only">Close Menu</span>
-                                    </Button>
-                                </SheetTrigger>
-                             </div>
-                             {/* Mobile Search (Optional but recommended for mobile) */}
-                             {!shouldHideSearch && (
-                                <div className="p-4 border-b">
-                                    <form onSubmit={handleSearchSubmit} className="relative">
-                                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                        <Input
-                                            type="search"
-                                            placeholder="Search..."
-                                            value={searchQuery}
-                                            onChange={handleSearchChange}
-                                            className="w-full rounded-lg bg-muted pl-8 pr-3 py-2 h-9 text-sm"
-                                            aria-label="Search"
-                                        />
-                                         {/* Optional: Add clear button for mobile search too */}
-                                         {searchQuery && (
-                                             <button
-                                                 type="button"
-                                                 onClick={() => setSearchQuery('')}
-                                                 className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
-                                                 aria-label="Clear search"
-                                             >
-                                             <X className="size-4" />
-                                             </button>
-                                         )}
-                                    </form>
+                    {/* Mobile Menu Trigger (Only visible on mobile) */}
+                    {/* Use md:hidden to hide only on medium screens and up */}
+                    <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                        <SheetTrigger asChild className="md:hidden">
+                            <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:h-10"> {/* Ensure consistent size */}
+                                <Menu className="h-5 w-5 sm:h-6 sm:w-6" /> {/* Adjusted icon size */}
+                                <span className="sr-only">Toggle Menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col"> {/* Added flex flex-col */}
+                            {/* Mobile Menu Content */}
+                            <div className="flex flex-col h-full">
+                                {/* Mobile Header */}
+                                <div className="flex items-center justify-between p-4 border-b">
+                                    <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
+                                        <motion.svg /* Re-use logo SVG */
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                            className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
+                                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                                            <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+                                            <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
+                                        </motion.svg>
+                                        <span className="font-bold text-lg text-primary">EduHub Portal</span>
+                                    </Link>
+                                    {/* Explicit Close Button */}
+                                    <SheetTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                                            <X className="h-5 w-5" />
+                                            <span className="sr-only">Close Menu</span>
+                                        </Button>
+                                    </SheetTrigger>
                                 </div>
-                             )}
-                             {/* Mobile Navigation */}
-                             <nav className="flex-1 overflow-y-auto py-4 space-y-1">
-                                {filteredNavItems.map((item) => {
-                                    const isActive = pathname.startsWith(item.href);
-                                    return (
-                                        <Link
-                                            key={item.href}
-                                            href={item.href}
-                                            onClick={() => setIsMobileMenuOpen(false)} // Close menu on link click
-                                            className={cn(
-                                                "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
-                                                isActive ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                                {/* Mobile Search (Optional but recommended for mobile) */}
+                                {!shouldHideSearch && (
+                                    <div className="p-4 border-b">
+                                        <form onSubmit={handleSearchSubmit} className="relative">
+                                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input
+                                                type="search"
+                                                placeholder="Search..."
+                                                value={searchQuery}
+                                                onChange={handleSearchChange}
+                                                className="w-full rounded-lg bg-muted pl-8 pr-3 py-2 h-9 text-sm"
+                                                aria-label="Search"
+                                            />
+                                            {/* Optional: Add clear button for mobile search too */}
+                                            {searchQuery && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSearchQuery('')}
+                                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                                                    aria-label="Clear search"
+                                                >
+                                                <X className="size-4" />
+                                                </button>
                                             )}
-                                        >
-                                            <item.icon className="h-5 w-5" />
-                                            {item.label}
-                                        </Link>
-                                    );
-                                })}
-                             </nav>
-                             {/* Optional Footer in Mobile Menu */}
-                             {/* <div className="p-4 mt-auto border-t"> <Button variant="outline" className="w-full">Settings</Button> </div> */}
-                        </div>
-                    </SheetContent>
-                </Sheet>
-            </>
+                                        </form>
+                                    </div>
+                                )}
+                                {/* Mobile Navigation */}
+                                <nav className="flex-1 overflow-y-auto py-4 space-y-1">
+                                    {filteredNavItems.map((item) => { // Use filtered items here too
+                                        const isActive = pathname.startsWith(item.href);
+                                        return (
+                                            <Link
+                                                key={item.href}
+                                                href={item.href}
+                                                onClick={() => setIsMobileMenuOpen(false)} // Close menu on link click
+                                                className={cn(
+                                                    "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
+                                                    isActive ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                                                )}
+                                            >
+                                                <item.icon className="h-5 w-5" />
+                                                {item.label}
+                                            </Link>
+                                        );
+                                    })}
+                                </nav>
+                                {/* Optional Footer in Mobile Menu */}
+                                {/* <div className="p-4 mt-auto border-t"> <Button variant="outline" className="w-full">Settings</Button> </div> */}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </>
+              ) : (
+                <>
+                    {/* Login/Signup buttons (Visible on all screens when logged out) */}
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button variant="ghost" size="sm" asChild className="text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
+                      <Link href="/login">
+                        <LogIn className="mr-1 sm:mr-2 h-4 w-4" /> Login
+                      </Link>
+                    </Button>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
+                      <Link href="/signup">
+                        <UserPlus className="mr-1 sm:mr-2 h-4 w-4" /> Sign Up
+                      </Link>
+                    </Button>
+                  </motion.div>
+                </>
+              )
            ) : (
-             <>
-                {/* Login/Signup buttons (Visible on all screens when logged out) */}
-               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 <Button variant="ghost" size="sm" asChild className="text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
-                   <Link href="/login">
-                     <LogIn className="mr-1 sm:mr-2 h-4 w-4" /> Login
-                   </Link>
-                 </Button>
-               </motion.div>
-               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
-                   <Link href="/signup">
-                     <UserPlus className="mr-1 sm:mr-2 h-4 w-4" /> Sign Up
-                   </Link>
-                 </Button>
-               </motion.div>
-             </>
+              // Optional: Render nothing or a placeholder before mount to avoid hydration errors
+              // Or render the skeleton state immediately if preferred
+               <div className="flex items-center space-x-2">
+                   <Skeleton className="h-9 w-9 rounded-full" />
+                   <Skeleton className="h-8 w-16 hidden sm:block" />
+               </div>
            )}
         </div>
       </div>
