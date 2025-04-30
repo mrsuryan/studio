@@ -9,24 +9,32 @@ import Image from 'next/image';
 import { ArrowRight, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
-// Mock course data - Resolved merge conflict, using the 16 course version
+// Expanded mock course data with more diverse IT topics and relevant image seeds
 const allCourses = [
-  { id: 1, title: "Introduction to Web Development", description: "Learn the fundamentals of HTML, CSS, and JavaScript.", progress: 65, image: "https://picsum.photos/seed/webdev/300/200" },
-  { id: 2, title: "Advanced React Concepts", description: "Dive deep into hooks, state management, and performance.", progress: 30, image: "https://picsum.photos/seed/react/300/200" },
-  { id: 3, title: "Data Structures and Algorithms", description: "Master essential computer science concepts.", progress: 0, image: "https://picsum.photos/seed/dsa/300/200" },
-  { id: 4, title: "Python for Data Science", description: "Explore data analysis and machine learning with Python.", progress: 15, image: "https://picsum.photos/seed/python/300/200" },
-  { id: 5, title: "Cloud Computing Basics (AWS)", description: "Understand the fundamentals of cloud services on AWS.", progress: 0, image: "https://picsum.photos/seed/awscloud/300/200" },
-  { id: 6, title: "UI/UX Design Principles", description: "Learn the core concepts of user interface and experience design.", progress: 50, image: "https://picsum.photos/seed/uiux/300/200" },
-  { id: 7, title: "Cybersecurity Fundamentals", description: "Learn the basics of cybersecurity threats, defenses, and best practices.", progress: 10, image: "https://picsum.photos/seed/cybersec/300/200" },
-  { id: 8, title: "Database Management (SQL)", description: "Master SQL for querying and managing relational databases.", progress: 40, image: "https://picsum.photos/seed/sql/300/200" },
-  { id: 9, title: "Introduction to DevOps", description: "Understand the culture, practices, and tools for faster software delivery.", progress: 5, image: "https://picsum.photos/seed/devops/300/200" },
-  { id: 10, title: "Machine Learning Basics", description: "Get introduced to the core concepts of machine learning.", progress: 25, image: "https://picsum.photos/seed/ml/300/200" },
-  { id: 11, title: "Networking Essentials", description: "Learn the fundamentals of computer networks and protocols.", progress: 0, image: "https://picsum.photos/seed/network/300/200" },
-  { id: 12, title: "Linux Command Line Basics", description: "Become proficient in using the Linux terminal.", progress: 70, image: "https://picsum.photos/seed/linux/300/200" },
-  { id: 13, title: "Agile Project Management", description: "Learn Agile methodologies like Scrum and Kanban.", progress: 15, image: "https://picsum.photos/seed/agile/300/200" },
-  { id: 14, title: "Introduction to Blockchain", description: "Understand the technology behind cryptocurrencies.", progress: 0, image: "https://picsum.photos/seed/blockchain/300/200" },
-  { id: 15, title: "API Design and Development", description: "Learn how to design, build, and document RESTful APIs.", progress: 35, image: "https://picsum.photos/seed/api/300/200" },
-  { id: 16, title: "Ethical Hacking Fundamentals", description: "Explore techniques used to find vulnerabilities ethically.", progress: 20, image: "https://picsum.photos/seed/hacking/300/200" },
+  { id: 1, title: "Introduction to Web Development", description: "Learn HTML, CSS, and JavaScript fundamentals.", progress: 65, image: "https://picsum.photos/seed/webdevintro/300/200" },
+  { id: 2, title: "Advanced React Concepts", description: "Deep dive into hooks, state management, and performance.", progress: 30, image: "https://picsum.photos/seed/reactadvanced/300/200" },
+  { id: 3, title: "Data Structures and Algorithms", description: "Master essential computer science concepts.", progress: 0, image: "https://picsum.photos/seed/datastructures/300/200" },
+  { id: 4, title: "Python for Data Science", description: "Explore data analysis and ML with Python.", progress: 15, image: "https://picsum.photos/seed/datasciencepy/300/200" },
+  { id: 5, title: "Cloud Computing Basics (AWS)", description: "Understand fundamentals of AWS cloud services.", progress: 0, image: "https://picsum.photos/seed/awsbasics/300/200" },
+  { id: 6, title: "UI/UX Design Principles", description: "Learn core concepts of user interface design.", progress: 50, image: "https://picsum.photos/seed/uiuxdesign/300/200" },
+  { id: 7, title: "Cybersecurity Fundamentals", description: "Basics of cybersecurity threats and defenses.", progress: 10, image: "https://picsum.photos/seed/cybersecurity/300/200" },
+  { id: 8, title: "Database Management (SQL)", description: "Master SQL for querying relational databases.", progress: 40, image: "https://picsum.photos/seed/sqlbasics/300/200" },
+  { id: 9, title: "Introduction to DevOps", description: "Understand CI/CD, IaC, and monitoring.", progress: 5, image: "https://picsum.photos/seed/devopsintro/300/200" },
+  { id: 10, title: "Machine Learning Basics", description: "Core concepts of supervised/unsupervised learning.", progress: 25, image: "https://picsum.photos/seed/machinelearning/300/200" },
+  { id: 11, title: "Networking Essentials", description: "Fundamentals of networks, protocols, OSI model.", progress: 0, image: "https://picsum.photos/seed/networking/300/200" },
+  { id: 12, title: "Linux Command Line Basics", description: "Become proficient in using the Linux terminal.", progress: 70, image: "https://picsum.photos/seed/linuxcli/300/200" },
+  { id: 13, title: "Agile Project Management", description: "Learn Scrum and Kanban methodologies.", progress: 15, image: "https://picsum.photos/seed/agilepm/300/200" },
+  { id: 14, title: "Introduction to Blockchain", description: "Understand distributed ledger technology.", progress: 0, image: "https://picsum.photos/seed/blockchain/300/200" },
+  { id: 15, title: "API Design and Development", description: "Learn RESTful API design best practices.", progress: 35, image: "https://picsum.photos/seed/apidesign/300/200" },
+  { id: 16, title: "Ethical Hacking Fundamentals", description: "Explore techniques to find vulnerabilities ethically.", progress: 20, image: "https://picsum.photos/seed/ethicalhacking/300/200" },
+  { id: 17, title: "Advanced CSS and Sass", description: "Master modern CSS features and Sass preprocessor.", progress: 0, image: "https://picsum.photos/seed/advancedcss/300/200" },
+  { id: 18, title: "Node.js Backend Development", description: "Build scalable server-side applications with Node.js.", progress: 45, image: "https://picsum.photos/seed/nodejsdev/300/200" },
+  { id: 19, title: "Mobile App Development (React Native)", description: "Create cross-platform mobile apps.", progress: 10, image: "https://picsum.photos/seed/reactnative/300/200" },
+  { id: 20, title: "Cloud Security Best Practices", description: "Secure cloud infrastructure on major platforms.", progress: 0, image: "https://picsum.photos/seed/cloudsecurity/300/200" },
+  { id: 21, title: "Introduction to Docker & Kubernetes", description: "Learn containerization and orchestration.", progress: 20, image: "https://picsum.photos/seed/dockerk8s/300/200" },
+  { id: 22, title: "Software Testing Fundamentals", description: "Understand different testing methodologies.", progress: 5, image: "https://picsum.photos/seed/softwaretesting/300/200" },
+  { id: 23, title: "Version Control with Git & GitHub", description: "Master Git for collaboration and code management.", progress: 80, image: "https://picsum.photos/seed/gitgithub/300/200" },
+  { id: 24, title: "Building RESTful APIs with Python (Flask)", description: "Develop web APIs using the Flask framework.", progress: 0, image: "https://picsum.photos/seed/pythonflaskapi/300/200" },
 ];
 
 
@@ -35,8 +43,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08, // Slightly faster stagger for cards
-      delayChildren: 0.1, // Start cards animation slightly earlier
+      staggerChildren: 0.05, // Slightly faster stagger for more items
+      delayChildren: 0.1,
     },
   },
 };
@@ -49,7 +57,7 @@ const itemVariants = {
     transition: {
       type: "spring",
       stiffness: 100,
-      damping: 12, // Adjust damping for smoother spring
+      damping: 12,
     },
   },
 };
@@ -86,8 +94,8 @@ export default function CoursesPage() {
                       width={300}
                       height={200}
                       className="rounded-t-lg w-full object-cover aspect-[3/2]"
-                      loading={index < 4 ? "eager" : "lazy"} // Eager load first few images, lazy load others
-                      priority={index < 4} // Prioritize loading first few images
+                      loading={index < 8 ? "eager" : "lazy"} // Eager load first 8 images, lazy load others
+                      priority={index < 4} // Prioritize loading first 4 images (above the fold approx)
                     />
                   </CardHeader>
                   {/* Responsive Card Content */}

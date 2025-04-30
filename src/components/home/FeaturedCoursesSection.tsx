@@ -9,11 +9,11 @@ import Image from 'next/image';
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-// Mock course data - Keep it local to this component
+// Mock course data - Keep it local to this component, using relevant seeds from the main list
 const featuredCourses = [
-  { id: 1, title: "Introduction to Web Development", description: "Learn the fundamentals of HTML, CSS, and JavaScript.", progress: 65, image: "https://picsum.photos/seed/webdev/300/200" },
-  { id: 7, title: "Cybersecurity Fundamentals", description: "Learn the basics of protecting systems and networks.", progress: 5, image: "https://picsum.photos/seed/cybersecurity/300/200" },
-  { id: 5, title: "Cloud Computing Basics (AWS)", description: "Understand the fundamentals of cloud services on AWS.", progress: 0, image: "https://picsum.photos/seed/awscloud/300/200" },
+  { id: 1, title: "Introduction to Web Development", description: "Learn HTML, CSS, and JavaScript fundamentals.", progress: 65, image: "https://picsum.photos/seed/webdevintro/300/200" },
+  { id: 7, title: "Cybersecurity Fundamentals", description: "Basics of cybersecurity threats and defenses.", progress: 10, image: "https://picsum.photos/seed/cybersecurity/300/200" },
+  { id: 21, title: "Introduction to Docker & Kubernetes", description: "Learn containerization and orchestration.", progress: 20, image: "https://picsum.photos/seed/dockerk8s/300/200" },
 ];
 
 const containerVariants = {
