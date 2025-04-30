@@ -148,6 +148,8 @@ export function Header() {
          console.log('Submitting search for:', searchQuery);
          // Example: router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
       }
+       // Optionally close mobile menu after search submit
+      setIsMobileMenuOpen(false);
    };
 
 
@@ -158,9 +160,10 @@ export function Header() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm"
     >
+      {/* Ensure container padding is responsive */}
       <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
         {/* Logo and Title */}
-        <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0">
+        <Link href="/" className="mr-2 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0">
            {/* Enhanced Logo SVG */}
            <motion.svg
             xmlns="http://www.w3.org/2000/svg"
@@ -182,14 +185,15 @@ export function Header() {
                  <path d="M12 14.5V19"/>
            </motion.svg>
           <span className="font-bold text-lg sm:text-xl inline-block text-primary group-hover:text-accent transition-colors duration-300">
-            EduHub Portal
+            EduHub {/* Shorten name on mobile if needed, or keep full */}
+             <span className="hidden sm:inline"> Portal</span>
           </span>
         </Link>
 
-         {/* Animated Search Bar - Conditionally Rendered */}
+         {/* Animated Search Bar - Conditionally Rendered & Hidden on Mobile */}
          {!shouldHideSearch && (
             <motion.div
-                className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens, define max width
+                className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens (mobile)
                 initial={false} // Don't animate initially
                 animate={{ maxWidth: isSearchFocused ? '100%' : '24rem' }} // Animate max-width on focus
                 transition={{ type: 'spring', stiffness: 120, damping: 15 }}
@@ -207,7 +211,7 @@ export function Header() {
                 </motion.div>
                 <Input
                     type="search"
-                    placeholder={isSearchFocused ? "Enter keywords to search..." : "Search courses..."} // Dynamic placeholder
+                    placeholder={isSearchFocused ? "Enter keywords..." : "Search courses..."} // Dynamic placeholder
                     value={searchQuery}
                     onChange={handleSearchChange}
                     onFocus={() => setIsSearchFocused(true)}
@@ -217,7 +221,7 @@ export function Header() {
                 />
                 {/* Animated clear button */}
                     <AnimatePresence>
-                        {searchQuery && ( // Show clear button if there's text, regardless of focus for better UX
+                        {searchQuery && ( // Show clear button if there's text
                             <motion.button
                                 type="button"
                                 onClick={() => setSearchQuery('')}
@@ -236,11 +240,11 @@ export function Header() {
             </motion.div>
          )}
 
-         {/* Spacer to push auth to the right */}
+         {/* Spacer to push auth to the right (Desktop) */}
          <div className="flex-1 hidden md:block"></div>
 
          {/* Responsive Navigation Links (Desktop) */}
-         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium mr-4">
+         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium ml-auto md:ml-0 mr-2 sm:mr-4">
            {filteredNavItems.map((item) => { // Use filtered items
                const isActive = pathname.startsWith(item.href); // Use startsWith for nested routes
                return (
@@ -262,21 +266,23 @@ export function Header() {
         </nav>
 
         {/* Auth Buttons / User Dropdown / Mobile Menu Trigger */}
-        <div className="flex items-center space-x-2 sm:space-x-3 ml-auto">
+        {/* Use ml-auto to push auth buttons to the right on mobile when nav is hidden */}
+        <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 ml-auto md:ml-0">
            {isLoading ? (
               // Skeleton Loader while checking auth status
               <div className="flex items-center space-x-2">
                   <Skeleton className="h-9 w-9 rounded-full" />
-                  <Skeleton className="h-8 w-20 hidden sm:block" />
+                  <Skeleton className="h-8 w-16 hidden sm:block" /> {/* Adjusted skeleton width */}
               </div>
            ) : isLoggedIn ? (
             <>
-                {/* User Dropdown (Visible on all screens) */}
+                {/* User Dropdown (Visible on all screens when logged in) */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button variant="ghost" className="relative h-9 w-9 rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                            <Avatar className="h-9 w-9 border border-primary/20">
+                        {/* Adjusted button padding for better mobile tap target */}
+                        <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                             <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
                             {/* Use avatarUrl state */}
                             <AvatarImage src={avatarUrl} alt={userName} />
                             <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
@@ -310,15 +316,17 @@ export function Header() {
                     </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+
                 {/* Mobile Menu Trigger (Only visible on mobile) */}
+                {/* Use md:hidden to hide only on medium screens and up */}
                 <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                     <SheetTrigger asChild className="md:hidden">
-                         <Button variant="ghost" size="icon">
-                             <Menu className="h-6 w-6" />
+                         <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:h-10"> {/* Ensure consistent size */}
+                             <Menu className="h-5 w-5 sm:h-6 sm:w-6" /> {/* Adjusted icon size */}
                              <span className="sr-only">Toggle Menu</span>
                          </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0">
+                    <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col"> {/* Added flex flex-col */}
                         {/* Mobile Menu Content */}
                         <div className="flex flex-col h-full">
                              {/* Mobile Header */}
@@ -333,12 +341,17 @@ export function Header() {
                                         <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
                                         <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
                                     </motion.svg>
-                                    <span className="font-bold text-lg text-primary">EduHub</span>
+                                    <span className="font-bold text-lg text-primary">EduHub Portal</span>
                                 </Link>
-                                {/* Optional: Close button inside sheet */}
-                                {/* <SheetClose asChild> <Button variant="ghost" size="icon"> <X className="h-5 w-5" /> </Button> </SheetClose> */}
+                                {/* Explicit Close Button */}
+                                <SheetTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                        <X className="h-5 w-5" />
+                                        <span className="sr-only">Close Menu</span>
+                                    </Button>
+                                </SheetTrigger>
                              </div>
-                             {/* Mobile Search (Optional) */}
+                             {/* Mobile Search (Optional but recommended for mobile) */}
                              {!shouldHideSearch && (
                                 <div className="p-4 border-b">
                                     <form onSubmit={handleSearchSubmit} className="relative">
@@ -351,18 +364,29 @@ export function Header() {
                                             className="w-full rounded-lg bg-muted pl-8 pr-3 py-2 h-9 text-sm"
                                             aria-label="Search"
                                         />
+                                         {/* Optional: Add clear button for mobile search too */}
+                                         {searchQuery && (
+                                             <button
+                                                 type="button"
+                                                 onClick={() => setSearchQuery('')}
+                                                 className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                                                 aria-label="Clear search"
+                                             >
+                                             <X className="size-4" />
+                                             </button>
+                                         )}
                                     </form>
                                 </div>
                              )}
                              {/* Mobile Navigation */}
-                             <nav className="flex-1 py-4 space-y-1">
+                             <nav className="flex-1 overflow-y-auto py-4 space-y-1">
                                 {filteredNavItems.map((item) => {
                                     const isActive = pathname.startsWith(item.href);
                                     return (
                                         <Link
                                             key={item.href}
                                             href={item.href}
-                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            onClick={() => setIsMobileMenuOpen(false)} // Close menu on link click
                                             className={cn(
                                                 "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
                                                 isActive ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-muted hover:text-foreground"
@@ -375,7 +399,7 @@ export function Header() {
                                 })}
                              </nav>
                              {/* Optional Footer in Mobile Menu */}
-                              {/* <div className="p-4 border-t"> <Button variant="outline" className="w-full">Settings</Button> </div> */}
+                             {/* <div className="p-4 mt-auto border-t"> <Button variant="outline" className="w-full">Settings</Button> </div> */}
                         </div>
                     </SheetContent>
                 </Sheet>
@@ -384,14 +408,14 @@ export function Header() {
              <>
                 {/* Login/Signup buttons (Visible on all screens when logged out) */}
                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 <Button variant="ghost" size="sm" asChild className="text-sm px-2 sm:px-3">
+                 <Button variant="ghost" size="sm" asChild className="text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
                    <Link href="/login">
                      <LogIn className="mr-1 sm:mr-2 h-4 w-4" /> Login
                    </Link>
                  </Button>
                </motion.div>
                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow text-sm px-2 sm:px-3">
+                 <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
                    <Link href="/signup">
                      <UserPlus className="mr-1 sm:mr-2 h-4 w-4" /> Sign Up
                    </Link>
