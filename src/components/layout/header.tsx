@@ -16,7 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion, AnimatePresence } from 'framer-motion'; // Import AnimatePresence
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton
 
@@ -29,7 +29,11 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState(''); // State for search input
   const [isSearchFocused, setIsSearchFocused] = useState(false); // State for search focus animation
   const router = useRouter();
+  const pathname = usePathname(); // Get current path
   const { toast } = useToast();
+
+  // Routes where the search bar should be hidden
+  const hideSearchOnRoutes = ['/login', '/signup'];
 
   // Check login status on component mount and when localStorage changes
   useEffect(() => {
@@ -166,53 +170,56 @@ export function Header() {
           </span>
         </Link>
 
-         {/* Animated Search Bar */}
-        <motion.div
-            className="flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Define max width
-            initial={false} // Don't animate initially
-            animate={{ maxWidth: isSearchFocused ? '100%' : '24rem' }} // Animate max-width on focus
-            transition={{ type: 'spring', stiffness: 120, damping: 15 }}
-        >
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
-               <motion.div
-                  className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                  initial={{ scale: 1 }}
-                  animate={{ scale: isSearchFocused ? 1.1 : 1 }} // Slightly grow icon on focus
-                  transition={{ type: 'spring', stiffness: 180, damping: 10 }} // Bouncier spring
-               >
-                   <Search
-                       className="h-4 w-4 text-muted-foreground"
-                   />
-               </motion.div>
-               <Input
-                  type="search"
-                  placeholder={isSearchFocused ? "Enter keywords to search..." : "Search courses..."} // Dynamic placeholder
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setIsSearchFocused(false)}
-                  className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background" // Added transitions, shadow, bg change
-                  aria-label="Search courses"
-               />
-               {/* Animated clear button */}
-                <AnimatePresence>
-                    {searchQuery && isSearchFocused && (
-                        <motion.button
-                            type="button"
-                            onClick={() => setSearchQuery('')}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
-                            aria-label="Clear search"
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.5 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }} // Smoother ease
-                        >
-                           <X className="size-4" />
-                        </motion.button>
-                    )}
-                </AnimatePresence>
-            </form>
-        </motion.div>
+         {/* Animated Search Bar - Conditionally Rendered */}
+         {!hideSearchOnRoutes.includes(pathname) && (
+            <motion.div
+                className="flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Define max width
+                initial={false} // Don't animate initially
+                animate={{ maxWidth: isSearchFocused ? '100%' : '24rem' }} // Animate max-width on focus
+                transition={{ type: 'spring', stiffness: 120, damping: 15 }}
+            >
+                <form onSubmit={handleSearchSubmit} className="relative w-full">
+                <motion.div
+                    className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                    initial={{ scale: 1 }}
+                    animate={{ scale: isSearchFocused ? 1.1 : 1 }} // Slightly grow icon on focus
+                    transition={{ type: 'spring', stiffness: 180, damping: 10 }} // Bouncier spring
+                >
+                    <Search
+                        className="h-4 w-4 text-muted-foreground"
+                    />
+                </motion.div>
+                <Input
+                    type="search"
+                    placeholder={isSearchFocused ? "Enter keywords to search..." : "Search courses..."} // Dynamic placeholder
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                    className="w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-2 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background" // Added transitions, shadow, bg change
+                    aria-label="Search courses"
+                />
+                {/* Animated clear button */}
+                    <AnimatePresence>
+                        {searchQuery && isSearchFocused && (
+                            <motion.button
+                                type="button"
+                                onClick={() => setSearchQuery('')}
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
+                                aria-label="Clear search"
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }} // Smoother ease
+                            >
+                            <X className="size-4" />
+                            </motion.button>
+                        )}
+                    </AnimatePresence>
+                </form>
+            </motion.div>
+         )}
+
 
          {/* Responsive Navigation Links */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium mr-4">
@@ -315,4 +322,3 @@ export function Header() {
     </motion.header>
   );
 }
-
