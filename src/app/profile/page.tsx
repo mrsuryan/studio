@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2, Upload } from "lucide-react"; // Added Upload
+import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2, Upload, Lock, KeyRound } from "lucide-react"; // Added Lock, KeyRound
 import { motion, AnimatePresence } from "framer-motion"; // Import AnimatePresence
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +25,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"; // Import Alert Dialog components
+import * as z from "zod"; // Import Zod
+import { useForm } from "react-hook-form"; // Import useForm
+import { zodResolver } from "@hookform/resolvers/zod"; // Import zodResolver
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"; // Import Form components
 
 
 const containerVariants = {
@@ -82,12 +86,32 @@ const defaultUser: UserProfile = {
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
 
+// Zod schema for password change form
+const passwordSchema = z.object({
+    currentPassword: z.string().min(6, "Current password is required."),
+    newPassword: z.string().min(8, "New password must be at least 8 characters."),
+    confirmPassword: z.string().min(8, "Confirm password is required."),
+  }).refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"], // Error applies to the confirm field
+  });
+
 export default function ProfilePage() {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile>(defaultUser);
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
   const { toast } = useToast();
+
+  // Form hook for password change
+  const passwordForm = useForm<z.infer<typeof passwordSchema>>({
+      resolver: zodResolver(passwordSchema),
+      defaultValues: {
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      },
+    });
 
   // Load user data from localStorage on mount
   useEffect(() => {
@@ -126,7 +150,7 @@ export default function ProfilePage() {
 
   }, []); // Empty dependency array ensures this runs only once on mount
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleProfileInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setProfile((prevProfile) => ({
       ...prevProfile,
@@ -134,52 +158,81 @@ export default function ProfilePage() {
     }));
   };
 
- const handleSwitchChange = (checked: boolean, id: keyof UserProfile) => {
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [id]: checked,
-    }));
+ const handleSwitchChange = (checked: boolean, id: keyof UserProfile | 'darkMode' | 'emailNotifications') => {
+    if (id === 'darkMode' || id === 'emailNotifications') {
+        setProfile((prevProfile) => ({
+            ...prevProfile,
+            [id]: checked,
+        }));
 
-     // Apply dark mode immediately and save to localStorage
-    if (id === 'darkMode') {
-      if (checked) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-       if (typeof window !== 'undefined') {
-           localStorage.setItem('userDarkMode', String(checked));
-           // Trigger storage event to ensure header theme updates if it listens
-           window.dispatchEvent(new Event('storage'));
-       }
+        // Apply dark mode immediately and save to localStorage
+        if (id === 'darkMode') {
+            if (checked) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('userDarkMode', String(checked));
+                // Trigger storage event to ensure header theme updates if it listens
+                window.dispatchEvent(new Event('storage'));
+            }
+        }
+        // Save notification preference to localStorage
+        if (id === 'emailNotifications' && typeof window !== 'undefined') {
+            localStorage.setItem('userEmailNotifications', String(checked));
+            // Optional: Trigger storage event if needed elsewhere
+            // window.dispatchEvent(new Event('storage'));
+        }
     }
-    // Save notification preference to localStorage
-     if (id === 'emailNotifications' && typeof window !== 'undefined') {
-        localStorage.setItem('userEmailNotifications', String(checked));
-        // Optional: Trigger storage event if needed elsewhere
-        // window.dispatchEvent(new Event('storage'));
-     }
  };
 
-  const handleSave = () => {
+  const handleProfileSave = () => {
     console.log("Saving profile:", profile);
      if (typeof window !== 'undefined') {
         localStorage.setItem('userName', profile.name);
-        // Avoid saving potentially edited email directly if it shouldn't be changeable
-        // localStorage.setItem('userEmail', profile.email);
+        // Don't save email here; handle separately if allowed
         localStorage.setItem('userBio', profile.bio);
-        localStorage.setItem('userEmailNotifications', String(profile.emailNotifications));
-        localStorage.setItem('userDarkMode', String(profile.darkMode)); // Ensure dark mode is saved
-        localStorage.setItem('userAvatarUrl', profile.avatarUrl); // Save avatar URL
+        // Save avatar URL just in case it changed via file upload but wasn't auto-saved
+        localStorage.setItem('userAvatarUrl', profile.avatarUrl);
         // Trigger storage event to update header etc.
         window.dispatchEvent(new Event('storage'));
      }
-    setIsEditing(false);
+    setIsEditingProfile(false);
     toast({
       title: "Profile Updated",
       description: "Your profile information has been saved successfully.",
     });
   };
+
+  // Handle password change form submission
+  function onPasswordSubmit(values: z.infer<typeof passwordSchema>) {
+      console.log("Password change submitted:", values);
+      // --- Simulate password change ---
+      // In a real app, send 'values.currentPassword' and 'values.newPassword' to the backend
+      // The backend would verify the current password and update it.
+
+      // Simulate success
+      toast({
+          title: "Password Updated",
+          description: "Your password has been changed successfully.",
+       });
+      passwordForm.reset(); // Clear the form after submission
+    }
+
+    // Simulate Email Change Request
+    const handleEmailChangeRequest = () => {
+      // In a real app:
+      // 1. Prompt the user for the new email address.
+      // 2. Send the request to the backend.
+      // 3. Backend sends a verification email to the new address.
+      // 4. User clicks link in email to confirm.
+      // 5. Backend updates the email address.
+      toast({
+        title: "Change Email",
+        description: "Functionality to change email is not fully implemented in this demo.",
+      });
+    };
 
    const handleDeleteAccount = () => {
      console.log("Attempting to delete account...");
@@ -272,9 +325,9 @@ export default function ProfilePage() {
       >
          {/* Animated Icon */}
          <motion.div whileHover={{ rotate: 10, scale: 1.1 }}>
-             <UserCircle className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" />
+             <Settings className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" /> {/* Changed Icon to Settings */}
          </motion.div>
-         My Profile {/* Responsive Icon */}
+         Settings & Profile {/* Updated Title */}
       </motion.h1>
 
       {/* Responsive Grid */}
@@ -342,12 +395,13 @@ export default function ProfilePage() {
                 <AnimatePresence mode="wait"> {/* Animate presence for swapping Input/Title */}
                   {isLoading ? (
                     <Skeleton key="name-skeleton" className="h-7 sm:h-8 md:h-9 w-3/4 mt-4 mx-auto" />
-                  ) : isEditing ? (
+                  ) : isEditingProfile ? (
                     <motion.div key="name-input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                       <Label htmlFor="name" className="sr-only">Name</Label>
                        <Input
                          id="name"
                          value={profile.name}
-                         onChange={handleInputChange}
+                         onChange={handleProfileInputChange}
                           className="text-xl sm:text-2xl md:text-3xl font-semibold mt-4 text-center h-auto py-1 px-2" // Responsive text/height/padding
                          placeholder="Your Name"
                        />
@@ -358,13 +412,19 @@ export default function ProfilePage() {
                      </motion.div>
                    )}
                 </AnimatePresence>
-               {/* Email - Read-only */}
+               {/* Email - Read-only with Change Button */}
                {isLoading ? (
                   <Skeleton className="h-5 sm:h-6 md:h-7 w-1/2 mt-2 mx-auto" />
                ) : (
-                  <CardDescription className="text-sm sm:text-base md:text-lg flex items-center justify-center gap-1 sm:gap-1.5 mt-1 md:mt-2">
-                     <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> {profile.email} {/* Responsive Icon */}
-                  </CardDescription>
+                  <div className="mt-1 md:mt-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+                    <CardDescription className="text-sm sm:text-base md:text-lg flex items-center gap-1 sm:gap-1.5">
+                       <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> {profile.email} {/* Responsive Icon */}
+                    </CardDescription>
+                     {/* Add a small button to trigger email change flow */}
+                     <Button variant="link" size="sm" onClick={handleEmailChangeRequest} className="text-xs p-0 h-auto text-accent hover:underline">
+                         Change Email
+                      </Button>
+                  </div>
                )}
              </CardHeader>
              <CardContent className="text-center p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
@@ -376,12 +436,13 @@ export default function ProfilePage() {
                         <Skeleton className="h-4 sm:h-5 w-5/6" />
                         <Skeleton className="h-4 sm:h-5 w-3/4" />
                       </div>
-                    ) : isEditing ? (
+                    ) : isEditingProfile ? (
                        <motion.div key="bio-textarea" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                         <Label htmlFor="bio" className="sr-only">Bio</Label>
                          <Textarea
                            id="bio"
                            value={profile.bio}
-                           onChange={handleInputChange}
+                           onChange={handleProfileInputChange}
                            className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary mt-2 md:mt-3" // Responsive styles
                            placeholder="Tell us about yourself..."
                          />
@@ -399,7 +460,7 @@ export default function ProfilePage() {
                          <Skeleton key="button-skeleton" className="h-9 md:h-10 w-full" />
                     ) : (
                          <motion.div
-                              key={isEditing ? 'save-button' : 'edit-button'}
+                              key={isEditingProfile ? 'save-button' : 'edit-button'}
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
@@ -408,19 +469,19 @@ export default function ProfilePage() {
                               whileTap={{ scale: 0.97 }}   // Scale down on tap
                          >
                             <Button
-                             variant={isEditing ? "default" : "outline"}
+                             variant={isEditingProfile ? "default" : "outline"}
                              size="sm"
-                             onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+                             onClick={() => (isEditingProfile ? handleProfileSave() : setIsEditingProfile(true))}
                              className="w-full group transition-all text-xs sm:text-sm md:text-base md:py-2.5" // Responsive text size & padding
                              disabled={isLoading}
                            >
-                             {isEditing ? (
+                             {isEditingProfile ? (
                                <>
-                                 <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Changes {/* Responsive Icon */}
+                                 <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Profile {/* Updated Text */}
                                </>
                              ) : (
                                <>
-                                 <Edit3 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:animate-pulse" /> Edit Profile {/* Responsive Icon */}
+                                 <Edit3 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:animate-pulse" /> Edit Profile
                                </>
                              )}
                            </Button>
@@ -431,18 +492,105 @@ export default function ProfilePage() {
            </Card>
         </motion.div>
 
-        {/* Settings & Preferences Card */}
+        {/* Settings & Security Section */}
         <motion.div className="lg:col-span-2 space-y-6 md:space-y-8 lg:space-y-10" variants={itemVariants}>
-           {/* Animate Card Content */}
+
+          {/* Change Password Card */}
+          <Card className="shadow-md border-secondary/10 rounded-lg overflow-hidden">
+             <CardHeader className="p-4 sm:p-6 md:p-8">
+               <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2">
+                 <motion.div whileHover={{ rotate: -15 }}> <Lock className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-secondary-foreground" /> </motion.div>
+                 Change Password
+               </CardTitle>
+               <CardDescription className="text-sm md:text-base">Update your account password.</CardDescription>
+             </CardHeader>
+             <motion.div
+                 className="p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
+                 variants={cardContentVariant} // Use content variant
+                 initial="hidden"
+                 animate="visible"
+              >
+                {isLoading ? (
+                   <div className="space-y-4">
+                     <Skeleton className="h-10 md:h-12 w-full" />
+                     <Skeleton className="h-10 md:h-12 w-full" />
+                     <Skeleton className="h-10 md:h-12 w-full" />
+                     <Skeleton className="h-9 md:h-10 w-1/3 mt-2" />
+                   </div>
+                ) : (
+                 <Form {...passwordForm}>
+                     <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4 sm:space-y-6">
+                       <motion.div variants={itemVariants}>
+                         <FormField
+                           control={passwordForm.control}
+                           name="currentPassword"
+                           render={({ field }) => (
+                             <FormItem>
+                               <FormLabel className="text-sm sm:text-base md:text-lg">Current Password</FormLabel>
+                               <FormControl>
+                                 <Input type="password" placeholder="••••••••" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
+                               </FormControl>
+                               <FormMessage />
+                             </FormItem>
+                           )}
+                         />
+                       </motion.div>
+                        <motion.div variants={itemVariants}>
+                           <FormField
+                             control={passwordForm.control}
+                             name="newPassword"
+                             render={({ field }) => (
+                               <FormItem>
+                                 <FormLabel className="text-sm sm:text-base md:text-lg">New Password</FormLabel>
+                                 <FormControl>
+                                   <Input type="password" placeholder="New Password (min. 8 chars)" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
+                                 </FormControl>
+                                 <FormMessage />
+                               </FormItem>
+                             )}
+                           />
+                       </motion.div>
+                        <motion.div variants={itemVariants}>
+                           <FormField
+                             control={passwordForm.control}
+                             name="confirmPassword"
+                             render={({ field }) => (
+                               <FormItem>
+                                 <FormLabel className="text-sm sm:text-base md:text-lg">Confirm New Password</FormLabel>
+                                 <FormControl>
+                                   <Input type="password" placeholder="Confirm New Password" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
+                                 </FormControl>
+                                 <FormMessage />
+                               </FormItem>
+                             )}
+                           />
+                       </motion.div>
+                       <motion.div
+                          variants={itemVariants}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          className="pt-2"
+                        >
+                           <Button type="submit" size="sm" className="text-xs sm:text-sm md:text-base md:py-2.5">
+                               <KeyRound className="mr-2 h-4 w-4"/> Update Password
+                            </Button>
+                       </motion.div>
+                     </form>
+                   </Form>
+                )}
+             </motion.div>
+           </Card>
+
+           {/* Preferences Card */}
            <Card className="shadow-md border-accent/10 rounded-lg overflow-hidden"> {/* Added rounded-lg and overflow */}
              <CardHeader className="p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
                <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2">
                   <motion.div whileHover={{ rotate: 15 }}> {/* Animate Icon */}
                       <Settings className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-accent" />
                   </motion.div>
-                  Account Settings {/* Responsive Icon */}
+                  Preferences {/* Responsive Icon */}
                </CardTitle>
-               <CardDescription className="text-sm md:text-base">Manage your account preferences and notification settings.</CardDescription>
+               <CardDescription className="text-sm md:text-base">Manage your account preferences.</CardDescription>
              </CardHeader>
              <motion.div
                  className="space-y-4 md:space-y-5 p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
@@ -454,10 +602,6 @@ export default function ProfilePage() {
                     <>
                         <Skeleton className="h-10 md:h-12 w-full" />
                         <Skeleton className="h-10 md:h-12 w-full" />
-                        <div className="flex flex-wrap gap-2 pt-2 md:pt-4">
-                            <Skeleton className="h-9 md:h-10 w-32 md:w-40" />
-                            <Skeleton className="h-9 md:h-10 w-36 md:w-44" />
-                        </div>
                     </>
                 ) : (
                   <>
@@ -493,86 +637,64 @@ export default function ProfilePage() {
                            </motion.div>
                        </div>
                     </motion.div>
-                     {/* Buttons with responsive text and wrapping */}
-                     <motion.div variants={itemVariants} className="pt-4 md:pt-6 flex flex-wrap gap-2 sm:gap-3">
-                         {/* Animated Button */}
-                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Button variant="outline" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">Change Password</Button>
-                         </motion.div>
-                          {/* Delete Account with Confirmation */}
-                          <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                 {/* Animated Button */}
-                                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                     <Button variant="destructive" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">
-                                         <Trash2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> Delete Account {/* Responsive Icon */}
-                                     </Button>
-                                  </motion.div>
-                              </AlertDialogTrigger>
-                              {/* Animated Dialog Content */}
-                              <AlertDialogContent as={motion.div} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
-                                 <AlertDialogHeader>
-                                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                 <AlertDialogDescription>
-                                     This action cannot be undone. This will permanently delete your
-                                     account and remove your data from our servers.
-                                 </AlertDialogDescription>
-                                 </AlertDialogHeader>
-                                 <AlertDialogFooter>
-                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                 <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
-                                     Yes, delete account
-                                 </AlertDialogAction>
-                                 </AlertDialogFooter>
-                             </AlertDialogContent>
-                         </AlertDialog>
-                     </motion.div>
                   </>
                 )}
              </motion.div>
            </Card>
 
-            {/* Learning Statistics Placeholder */}
-            <Card className="shadow-md border-secondary/10 rounded-lg overflow-hidden"> {/* Added rounded-lg and overflow */}
-             <CardHeader className="p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
-               <CardTitle className="text-lg sm:text-xl md:text-2xl">Learning Statistics</CardTitle>
-               <CardDescription className="text-sm md:text-base">Your progress overview.</CardDescription>
-             </CardHeader>
-               <motion.div
-                   className="p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
-                   variants={cardContentVariant}
-                   initial="hidden"
-                   animate="visible"
-                >
-                  {isLoading ? (
-                     <Skeleton className="h-24 sm:h-32 md:h-40 w-full mt-4" /> // Responsive height
-                  ) : (
-                      <>
-                          <motion.p variants={itemVariants} className="text-muted-foreground text-sm sm:text-base md:text-lg">Course completion charts and activity summaries will appear here.</motion.p>
-                           <motion.div
-                               variants={itemVariants}
-                               className="mt-4 h-24 sm:h-32 md:h-40 bg-muted/50 rounded-md flex items-center justify-center text-muted-foreground border border-dashed text-xs sm:text-sm md:text-base relative overflow-hidden" // Added relative and overflow
-                            >
-                                {/* Subtle animated lines background */}
-                                <motion.div
-                                   className="absolute inset-0 flex opacity-10"
-                                   style={{
-                                      backgroundImage: `linear-gradient(45deg, hsl(var(--border)) 25%, transparent 25%, transparent 75%, hsl(var(--border)) 75%, hsl(var(--border))), linear-gradient(45deg, hsl(var(--border)) 25%, transparent 25%, transparent 75%, hsl(var(--border)) 75%, hsl(var(--border)))`,
-                                      backgroundSize: `20px 20px`,
-                                      backgroundPosition: `0 0, 10px 10px`,
-                                    }}
-                                   animate={{ backgroundPosition: ['0 0, 10px 10px', '20px 20px, 30px 30px'] }}
-                                   transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                                />
-                                <span className="relative z-10">Statistics Area (Coming Soon)</span>
-                           </motion.div>
-                      </>
-                  )}
-               </motion.div>
-          </Card>
-
+            {/* Danger Zone Card */}
+            <Card className="shadow-md border-destructive/20 rounded-lg overflow-hidden">
+                 <CardHeader className="p-4 sm:p-6 md:p-8 bg-destructive/5">
+                   <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2 text-destructive">
+                     <Trash2 className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+                     Danger Zone
+                   </CardTitle>
+                   <CardDescription className="text-sm md:text-base text-destructive/80">
+                     Manage potentially destructive account actions.
+                   </CardDescription>
+                 </CardHeader>
+                 <motion.div
+                     className="p-4 sm:p-6 md:p-8 pt-4" // Responsive padding
+                     variants={cardContentVariant}
+                     initial="hidden"
+                     animate="visible"
+                 >
+                     {isLoading ? (
+                         <Skeleton className="h-9 md:h-10 w-36 md:w-44" />
+                     ) : (
+                         <motion.div variants={itemVariants} className="flex flex-wrap gap-2 sm:gap-3">
+                             {/* Delete Account with Confirmation */}
+                             <AlertDialog>
+                                 <AlertDialogTrigger asChild>
+                                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                         <Button variant="destructive" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">
+                                             <Trash2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> Delete Account
+                                         </Button>
+                                     </motion.div>
+                                 </AlertDialogTrigger>
+                                 <AlertDialogContent as={motion.div} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
+                                     <AlertDialogHeader>
+                                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                         <AlertDialogDescription>
+                                             This action cannot be undone. This will permanently delete your
+                                             account and remove your data from our servers.
+                                         </AlertDialogDescription>
+                                     </AlertDialogHeader>
+                                     <AlertDialogFooter>
+                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                         <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                                             Yes, delete account
+                                         </AlertDialogAction>
+                                     </AlertDialogFooter>
+                                 </AlertDialogContent>
+                             </AlertDialog>
+                         </motion.div>
+                     )}
+                 </motion.div>
+             </Card>
         </motion.div>
       </motion.div>
     </motion.div>
   );
 }
+
