@@ -2,11 +2,7 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
-<<<<<<< HEAD
-import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, X } from 'lucide-react'; // Added Search, X
-=======
-import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, Rocket } from 'lucide-react'; // Added Search, Rocket
->>>>>>> 9fbd3ce (then create a page to intractive from the user and then user friendly increase web portal loading page)
+import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, Rocket, X } from 'lucide-react'; // Added Search, Rocket, X
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'; // Added Input
 import {
@@ -319,3 +315,4 @@ export function Header() {
     </motion.header>
   );
 }
+
