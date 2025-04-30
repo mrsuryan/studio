@@ -2,7 +2,11 @@
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
+<<<<<<< HEAD
 import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, X } from 'lucide-react'; // Added Search, X
+=======
+import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, Rocket } from 'lucide-react'; // Added Search, Rocket
+>>>>>>> 9fbd3ce (then create a page to intractive from the user and then user friendly increase web portal loading page)
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input'; // Added Input
 import {
@@ -121,6 +125,16 @@ export function Header() {
       }
    };
 
+  // Navigation items - Filtered based on login state later
+  const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
+    { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
+    { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true },
+    { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
+    { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true }, // Added Demo Link
+  ];
+
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -203,22 +217,15 @@ export function Header() {
 
          {/* Responsive Navigation Links */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium mr-4">
-           {[
-              { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-              { href: "/courses", label: "Courses", icon: BookOpen },
-              { href: "/assignments", label: "Assignments", icon: ClipboardList },
-              { href: "/activities", label: "Activities", icon: Activity },
-           ].map((item) => (
-               isLoggedIn ? ( // Only show nav items if logged in
-                   <Link
-                       key={item.href}
-                       href={item.href}
-                       className="flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200"
-                   >
-                       <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
-                       {item.label}
-                   </Link>
-               ) : null // Render nothing if not logged in
+           {navItems.filter(item => !item.requiresLogin || isLoggedIn).map((item) => ( // Filter based on login state
+               <Link
+                   key={item.href}
+                   href={item.href}
+                   className="flex items-center gap-1.5 transition-colors hover:text-primary text-foreground/70 hover:-translate-y-0.5 transform duration-200"
+               >
+                   <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
+                   {item.label}
+               </Link>
             ))}
         </nav>
         {/* Mobile Navigation Trigger (Example Placeholder - Not fully functional) */}
@@ -263,12 +270,7 @@ export function Header() {
                   <DropdownMenuSeparator />
                    {/* Mobile Only Nav Links */}
                     <div className="md:hidden">
-                       {[
-                          { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-                          { href: "/courses", label: "Courses", icon: BookOpen },
-                          { href: "/assignments", label: "Assignments", icon: ClipboardList },
-                          { href: "/activities", label: "Activities", icon: Activity },
-                       ].map((item) => (
+                       {navItems.filter(item => !item.requiresLogin || isLoggedIn).map((item) => ( // Filter for mobile dropdown too
                           <DropdownMenuItem key={item.href} asChild className="cursor-pointer">
                               <Link href={item.href}>
                                  <item.icon className="mr-2 h-4 w-4" />
