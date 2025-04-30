@@ -135,7 +135,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                  <CardHeader className="p-0 relative overflow-hidden"> {/* Add overflow hidden */}
                       {/* Responsive Image Handling with hover effect */}
                       <motion.div
-                          className="aspect-video w-full"
+                          className="aspect-video w-full relative" // Added relative positioning
                           whileHover={{ scale: 1.03 }} // Gentle scale on hover
                           transition={{ duration: 0.3 }}
                       >
