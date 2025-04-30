@@ -352,8 +352,8 @@ export function Header() {
                     {/* Use md:hidden to hide only on medium screens and up */}
                     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                         <SheetTrigger asChild className="md:hidden">
-                             {/* Removed motion.div wrapper */}
-                            <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:h-10"> {/* Ensure consistent size */}
+                             {/* Button directly inside SheetTrigger */}
+                             <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:h-10">
                                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                                     <Menu className="h-5 w-5 sm:h-6 sm:w-6" /> {/* Adjusted icon size */}
                                 </motion.div>
