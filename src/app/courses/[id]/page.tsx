@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import { ArrowLeft, PlayCircle, CheckCircle, BookText, ArrowRight } from "lucide-react"; // Added ArrowRight
 import { motion } from "framer-motion";
-import { useToast } from "@/hooks/use-toast"; // Import useToast
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 // Expanded mock course data - Ensure this list matches the one on courses/page.tsx
 const allCourses = [
@@ -86,20 +86,14 @@ const moduleItemVariants = {
 };
 
 export default function CourseDetailPage({ params }: CoursePageProps) {
-  const { toast } = useToast(); // Initialize toast hook
+  const router = useRouter(); // Initialize router
   const courseId = parseInt(params.id, 10);
   // In a real app, fetch course data based on ID. For now, find in mock data.
   const course = allCourses.find(c => c.id === courseId);
 
-  const handleModuleAction = (moduleTitle: string, completed: boolean) => {
-    // Log the action and show a toast message instead of navigating
-    console.log(`Action clicked for module: ${moduleTitle} (Completed: ${completed})`);
-    toast({
-      title: "Coming Soon!",
-      description: `Navigating to the '${moduleTitle}' module content is not yet implemented.`,
-      variant: "default", // or 'info' if you add such a variant
-    });
-    // In a real app, you would navigate: router.push(`/courses/${courseId}/modules/${moduleId}`);
+  const handleModuleAction = (moduleId: string) => {
+    // Navigate to the specific module page
+    router.push(`/courses/${courseId}/modules/${moduleId}`);
   };
 
 
@@ -206,7 +200,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                              animate="visible" // Apply visible for stagger
                              custom={index} // Pass index for potential custom delay logic
                              transition={{ delay: index * 0.06 }} // Slightly adjusted delay
-                             onClick={() => handleModuleAction(module.title, module.completed)} // Make the whole div clickable
+                             onClick={() => handleModuleAction(module.id)} // Make the whole div clickable and pass module ID
                           >
                               <div className="flex items-center gap-3 sm:gap-4 md:gap-5"> {/* Adjusted gap */}
                                  {module.completed ? (

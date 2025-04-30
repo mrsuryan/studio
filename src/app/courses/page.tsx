@@ -8,35 +8,7 @@ import Link from "next/link";
 import Image from 'next/image';
 import { ArrowRight, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
-
-// Expanded mock course data with more diverse IT topics and relevant image seeds
-const allCourses = [
-  { id: 1, title: "Introduction to Web Development", description: "Learn HTML, CSS, and JavaScript fundamentals.", progress: 65, image: "https://picsum.photos/seed/webdevintro/300/200" },
-  { id: 2, title: "Advanced React Concepts", description: "Deep dive into hooks, state management, and performance.", progress: 30, image: "https://picsum.photos/seed/reactadvanced/300/200" },
-  { id: 3, title: "Data Structures and Algorithms", description: "Master essential computer science concepts.", progress: 0, image: "https://picsum.photos/seed/datastructures/300/200" },
-  { id: 4, title: "Python for Data Science", description: "Explore data analysis and ML with Python.", progress: 15, image: "https://picsum.photos/seed/datasciencepy/300/200" },
-  { id: 5, title: "Cloud Computing Basics (AWS)", description: "Understand fundamentals of AWS cloud services.", progress: 0, image: "https://picsum.photos/seed/awsbasics/300/200" },
-  { id: 6, title: "UI/UX Design Principles", description: "Learn core concepts of user interface design.", progress: 50, image: "https://picsum.photos/seed/uiuxdesign/300/200" },
-  { id: 7, title: "Cybersecurity Fundamentals", description: "Basics of cybersecurity threats and defenses.", progress: 10, image: "https://picsum.photos/seed/cybersecurity/300/200" },
-  { id: 8, title: "Database Management (SQL)", description: "Master SQL for querying relational databases.", progress: 40, image: "https://picsum.photos/seed/sqlbasics/300/200" },
-  { id: 9, title: "Introduction to DevOps", description: "Understand CI/CD, IaC, and monitoring.", progress: 5, image: "https://picsum.photos/seed/devopsintro/300/200" },
-  { id: 10, title: "Machine Learning Basics", description: "Core concepts of supervised/unsupervised learning.", progress: 25, image: "https://picsum.photos/seed/machinelearning/300/200" },
-  { id: 11, title: "Networking Essentials", description: "Fundamentals of networks, protocols, OSI model.", progress: 0, image: "https://picsum.photos/seed/networking/300/200" },
-  { id: 12, title: "Linux Command Line Basics", description: "Become proficient in using the Linux terminal.", progress: 70, image: "https://picsum.photos/seed/linuxcli/300/200" },
-  { id: 13, title: "Agile Project Management", description: "Learn Scrum and Kanban methodologies.", progress: 15, image: "https://picsum.photos/seed/agilepm/300/200" },
-  { id: 14, title: "Introduction to Blockchain", description: "Understand distributed ledger technology.", progress: 0, image: "https://picsum.photos/seed/blockchain/300/200" },
-  { id: 15, title: "API Design and Development", description: "Learn RESTful API design best practices.", progress: 35, image: "https://picsum.photos/seed/apidesign/300/200" },
-  { id: 16, title: "Ethical Hacking Fundamentals", description: "Explore techniques to find vulnerabilities ethically.", progress: 20, image: "https://picsum.photos/seed/ethicalhacking/300/200" },
-  { id: 17, title: "Advanced CSS and Sass", description: "Master modern CSS features and Sass preprocessor.", progress: 0, image: "https://picsum.photos/seed/advancedcss/300/200" },
-  { id: 18, title: "Node.js Backend Development", description: "Build scalable server-side applications with Node.js.", progress: 45, image: "https://picsum.photos/seed/nodejsdev/300/200" },
-  { id: 19, title: "Mobile App Development (React Native)", description: "Create cross-platform mobile apps.", progress: 10, image: "https://picsum.photos/seed/reactnative/300/200" },
-  { id: 20, title: "Cloud Security Best Practices", description: "Secure cloud infrastructure on major platforms.", progress: 0, image: "https://picsum.photos/seed/cloudsecurity/300/200" },
-  { id: 21, title: "Introduction to Docker & Kubernetes", description: "Learn containerization and orchestration.", progress: 20, image: "https://picsum.photos/seed/dockerk8s/300/200" },
-  { id: 22, title: "Software Testing Fundamentals", description: "Understand different testing methodologies.", progress: 5, image: "https://picsum.photos/seed/softwaretesting/300/200" },
-  { id: 23, title: "Version Control with Git & GitHub", description: "Master Git for collaboration and code management.", progress: 80, image: "https://picsum.photos/seed/gitgithub/300/200" },
-  { id: 24, title: "Building RESTful APIs with Python (Flask)", description: "Develop web APIs using the Flask framework.", progress: 0, image: "https://picsum.photos/seed/pythonflaskapi/300/200" },
-];
-
+import { allCourses } from '@/data/courses'; // Import shared course data
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -95,7 +67,7 @@ export default function CoursesPage() {
                 variants={itemVariants}
                 whileHover="hover" // Apply hover animation variant
              >
-                 <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 ease-in-out border border-primary/10 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 rounded-lg"> {/* Added focus ring and rounded-lg */}
+                 <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out border border-primary/10 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 rounded-lg hover:shadow-xl hover:border-primary/30"> {/* Added focus ring and rounded-lg */}
                   <CardHeader className="p-0 relative overflow-hidden"> {/* Added relative and overflow hidden */}
                      <motion.div
                           className="aspect-[3/2] w-full"
@@ -115,8 +87,8 @@ export default function CoursesPage() {
                   </CardHeader>
                   {/* Responsive Card Content */}
                   <CardContent className="p-4 sm:p-5 flex-grow">
-                    <CardTitle className="text-lg sm:text-xl md:text-2xl mb-2">{course.title}</CardTitle>
-                    <CardDescription className="text-sm sm:text-base md:text-lg">{course.description}</CardDescription>
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl mb-2 line-clamp-2">{course.title}</CardTitle> {/* Added line-clamp */}
+                    <CardDescription className="text-sm sm:text-base md:text-lg line-clamp-3">{course.description}</CardDescription> {/* Added line-clamp */}
                   </CardContent>
                   {/* Responsive Card Footer */}
                   <CardFooter className="flex flex-col items-start gap-3 p-4 sm:p-5 border-t border-border/60 bg-muted/30">
