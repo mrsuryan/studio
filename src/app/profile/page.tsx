@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2, Upload } from "lucide-react"; // Added Upload
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // Import AnimatePresence
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -32,8 +32,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.15, // Adjusted delay
+      staggerChildren: 0.08, // Faster stagger
+      delayChildren: 0.1, // Adjusted delay
     },
   },
 };
@@ -50,6 +50,16 @@ const itemVariants = {
     },
   },
 };
+
+const cardContentVariant = {
+   hidden: { opacity: 0, y: 10 },
+   visible: {
+     opacity: 1,
+     y: 0,
+     transition: { staggerChildren: 0.05, delayChildren: 0.1 }
+   }
+ };
+
 
 // Default user structure
 interface UserProfile {
@@ -260,22 +270,26 @@ export default function ProfilePage() {
          className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3" // Responsive heading
         variants={itemVariants}
       >
-        <UserCircle className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" /> My Profile {/* Responsive Icon */}
+         {/* Animated Icon */}
+         <motion.div whileHover={{ rotate: 10, scale: 1.1 }}>
+             <UserCircle className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" />
+         </motion.div>
+         My Profile {/* Responsive Icon */}
       </motion.h1>
 
       {/* Responsive Grid */}
       <motion.div
          className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12" // Adjusted breakpoint and gap
-        variants={containerVariants}
+        variants={containerVariants} // Stagger children within the grid
       >
         {/* Profile Information Card */}
         <motion.div className="lg:col-span-1" variants={itemVariants}>
-          <Card className="shadow-lg border-primary/10">
+          <Card className="shadow-lg border-primary/10 rounded-lg overflow-hidden"> {/* Added rounded-lg and overflow */}
              <CardHeader className="items-center text-center p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 150 }} // Adjusted delay
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.1, type: "spring", stiffness: 150 }} // Adjusted delay
                   className="relative group" // Add relative positioning for overlay
                 >
                   {/* Hidden File Input */}
@@ -289,7 +303,7 @@ export default function ProfilePage() {
                   />
                  {/* Responsive Avatar */}
                  <Avatar
-                     className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 border-4 border-primary/20 cursor-pointer"
+                     className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 border-4 border-primary/20 cursor-pointer transition-transform duration-300 group-hover:scale-105" // Added hover scale
                      onClick={triggerFileInput} // Make avatar clickable
                      role="button"
                      tabIndex={0}
@@ -299,7 +313,7 @@ export default function ProfilePage() {
                      <Skeleton className="h-full w-full rounded-full" />
                    ) : (
                      <>
-                      <AvatarImage src={profile.avatarUrl} alt={profile.name} />
+                      <AvatarImage src={profile.avatarUrl} alt={profile.name} className="transition-opacity duration-300" />
                       {/* Fallback with initials */}
                       <AvatarFallback className="text-lg sm:text-xl md:text-2xl font-semibold">
                         {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
@@ -309,28 +323,41 @@ export default function ProfilePage() {
                  </Avatar>
                   {/* Edit Icon Overlay */}
                   <div
-                     className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                     className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer" // Darker overlay
                      onClick={triggerFileInput}
                      role="button"
                      aria-label="Change profile picture"
                    >
-                     <Upload className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 text-white" /> {/* Responsive Icon */}
+                      {/* Animated Upload Icon */}
+                      <motion.div
+                          initial={{ y: 10, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.1, duration: 0.2 }}
+                      >
+                         <Upload className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 text-white" /> {/* Responsive Icon */}
+                     </motion.div>
                    </div>
                 </motion.div>
                 {/* Name - Editable */}
-                {isLoading ? (
-                   <Skeleton className="h-7 sm:h-8 md:h-9 w-3/4 mt-4 mx-auto" />
-                ) : isEditing ? (
-                 <Input
-                   id="name"
-                   value={profile.name}
-                   onChange={handleInputChange}
-                    className="text-xl sm:text-2xl md:text-3xl font-semibold mt-4 text-center h-auto py-1 px-2" // Responsive text/height/padding
-                   placeholder="Your Name"
-                 />
-               ) : (
-                  <CardTitle className="text-xl sm:text-2xl md:text-3xl mt-4">{profile.name}</CardTitle>
-               )}
+                <AnimatePresence mode="wait"> {/* Animate presence for swapping Input/Title */}
+                  {isLoading ? (
+                    <Skeleton key="name-skeleton" className="h-7 sm:h-8 md:h-9 w-3/4 mt-4 mx-auto" />
+                  ) : isEditing ? (
+                    <motion.div key="name-input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                       <Input
+                         id="name"
+                         value={profile.name}
+                         onChange={handleInputChange}
+                          className="text-xl sm:text-2xl md:text-3xl font-semibold mt-4 text-center h-auto py-1 px-2" // Responsive text/height/padding
+                         placeholder="Your Name"
+                       />
+                    </motion.div>
+                   ) : (
+                     <motion.div key="name-title" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                       <CardTitle className="text-xl sm:text-2xl md:text-3xl mt-4">{profile.name}</CardTitle>
+                     </motion.div>
+                   )}
+                </AnimatePresence>
                {/* Email - Read-only */}
                {isLoading ? (
                   <Skeleton className="h-5 sm:h-6 md:h-7 w-1/2 mt-2 mx-auto" />
@@ -342,60 +369,87 @@ export default function ProfilePage() {
              </CardHeader>
              <CardContent className="text-center p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
                 {/* Bio - Editable */}
-                {isLoading ? (
-                  <div className="space-y-1 mt-1 md:mt-2">
-                    <Skeleton className="h-4 sm:h-5 w-full" />
-                    <Skeleton className="h-4 sm:h-5 w-5/6" />
-                    <Skeleton className="h-4 sm:h-5 w-3/4" />
-                  </div>
-                ) : isEditing ? (
-                  <Textarea
-                    id="bio"
-                    value={profile.bio}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary mt-2 md:mt-3" // Responsive styles
-                    placeholder="Tell us about yourself..."
-                  />
-                ) : (
-                  <p className="text-xs sm:text-sm md:text-base text-muted-foreground italic mt-2 md:mt-3">"{profile.bio || 'No bio yet.'}"</p>
-                )}
+                <AnimatePresence mode="wait">
+                    {isLoading ? (
+                      <div key="bio-skeleton" className="space-y-1 mt-1 md:mt-2">
+                        <Skeleton className="h-4 sm:h-5 w-full" />
+                        <Skeleton className="h-4 sm:h-5 w-5/6" />
+                        <Skeleton className="h-4 sm:h-5 w-3/4" />
+                      </div>
+                    ) : isEditing ? (
+                       <motion.div key="bio-textarea" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                         <Textarea
+                           id="bio"
+                           value={profile.bio}
+                           onChange={handleInputChange}
+                           className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary mt-2 md:mt-3" // Responsive styles
+                           placeholder="Tell us about yourself..."
+                         />
+                       </motion.div>
+                    ) : (
+                       <motion.div key="bio-text" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                          <p className="text-xs sm:text-sm md:text-base text-muted-foreground italic mt-2 md:mt-3">"{profile.bio || 'No bio yet.'}"</p>
+                       </motion.div>
+                    )}
+                </AnimatePresence>
                <Separator className="my-4 md:my-6" />
                 {/* Edit/Save Button */}
-                {isLoading ? (
-                    <Skeleton className="h-9 md:h-10 w-full" />
-                ) : (
-                    <Button
-                     variant={isEditing ? "default" : "outline"}
-                     size="sm"
-                     onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-                     className="w-full group transition-all text-xs sm:text-sm md:text-base md:py-2.5" // Responsive text size & padding
-                     disabled={isLoading}
-                   >
-                     {isEditing ? (
-                       <>
-                         <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Changes {/* Responsive Icon */}
-                       </>
-                     ) : (
-                       <>
-                         <Edit3 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:animate-pulse" /> Edit Profile {/* Responsive Icon */}
-                       </>
-                     )}
-                   </Button>
-                )}
+                <AnimatePresence mode="wait">
+                    {isLoading ? (
+                         <Skeleton key="button-skeleton" className="h-9 md:h-10 w-full" />
+                    ) : (
+                         <motion.div
+                              key={isEditing ? 'save-button' : 'edit-button'}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.2 }}
+                              whileHover={{ scale: 1.03 }} // Scale button on hover
+                              whileTap={{ scale: 0.97 }}   // Scale down on tap
+                         >
+                            <Button
+                             variant={isEditing ? "default" : "outline"}
+                             size="sm"
+                             onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+                             className="w-full group transition-all text-xs sm:text-sm md:text-base md:py-2.5" // Responsive text size & padding
+                             disabled={isLoading}
+                           >
+                             {isEditing ? (
+                               <>
+                                 <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Changes {/* Responsive Icon */}
+                               </>
+                             ) : (
+                               <>
+                                 <Edit3 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:animate-pulse" /> Edit Profile {/* Responsive Icon */}
+                               </>
+                             )}
+                           </Button>
+                         </motion.div>
+                    )}
+                 </AnimatePresence>
              </CardContent>
            </Card>
         </motion.div>
 
         {/* Settings & Preferences Card */}
         <motion.div className="lg:col-span-2 space-y-6 md:space-y-8 lg:space-y-10" variants={itemVariants}>
-          <Card className="shadow-md border-accent/10">
+           {/* Animate Card Content */}
+           <Card className="shadow-md border-accent/10 rounded-lg overflow-hidden"> {/* Added rounded-lg and overflow */}
              <CardHeader className="p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
                <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2">
-                 <Settings className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-accent" /> Account Settings {/* Responsive Icon */}
+                  <motion.div whileHover={{ rotate: 15 }}> {/* Animate Icon */}
+                      <Settings className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-accent" />
+                  </motion.div>
+                  Account Settings {/* Responsive Icon */}
                </CardTitle>
                <CardDescription className="text-sm md:text-base">Manage your account preferences and notification settings.</CardDescription>
              </CardHeader>
-             <CardContent className="space-y-4 md:space-y-5 p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
+             <motion.div
+                 className="space-y-4 md:space-y-5 p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
+                 variants={cardContentVariant} // Use content variant
+                 initial="hidden"
+                 animate="visible"
+              >
                 {isLoading ? (
                     <>
                         <Skeleton className="h-10 md:h-12 w-full" />
@@ -407,43 +461,56 @@ export default function ProfilePage() {
                     </>
                 ) : (
                   <>
-                    <div className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
+                    <motion.div variants={itemVariants} className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
                       <Label htmlFor="emailNotifications" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
                         <Bell className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground"/> Email Notifications {/* Responsive Icon */}
                       </Label>
-                      <Switch
-                        id="emailNotifications"
-                        checked={profile.emailNotifications}
-                        onCheckedChange={(checked) => handleSwitchChange(checked, 'emailNotifications')}
-                        aria-label="Toggle email notifications"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
+                       {/* Animated Switch */}
+                       <motion.div whileTap={{ scale: 0.9 }}>
+                         <Switch
+                           id="emailNotifications"
+                           checked={profile.emailNotifications}
+                           onCheckedChange={(checked) => handleSwitchChange(checked, 'emailNotifications')}
+                           aria-label="Toggle email notifications"
+                         />
+                       </motion.div>
+                    </motion.div>
+                    <motion.div variants={itemVariants} className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
                       <Label htmlFor="darkMode" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
                         <Moon className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" /> {/* Responsive Icon */}
                          Theme
                        </Label>
                        <div className="flex items-center gap-2">
                           <span className="text-muted-foreground text-xs sm:text-sm">{profile.darkMode ? "Dark" : "Light"}</span>
-                           <Switch
-                                id="darkMode"
-                                checked={profile.darkMode}
-                                onCheckedChange={(checked) => handleSwitchChange(checked, 'darkMode')}
-                                aria-label="Toggle dark mode"
-                            />
+                           {/* Animated Switch */}
+                           <motion.div whileTap={{ scale: 0.9 }}>
+                             <Switch
+                                  id="darkMode"
+                                  checked={profile.darkMode}
+                                  onCheckedChange={(checked) => handleSwitchChange(checked, 'darkMode')}
+                                  aria-label="Toggle dark mode"
+                              />
+                           </motion.div>
                        </div>
-                    </div>
+                    </motion.div>
                      {/* Buttons with responsive text and wrapping */}
-                     <div className="pt-4 md:pt-6 flex flex-wrap gap-2 sm:gap-3">
-                         <Button variant="outline" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">Change Password</Button>
+                     <motion.div variants={itemVariants} className="pt-4 md:pt-6 flex flex-wrap gap-2 sm:gap-3">
+                         {/* Animated Button */}
+                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <Button variant="outline" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">Change Password</Button>
+                         </motion.div>
                           {/* Delete Account with Confirmation */}
                           <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                 <Button variant="destructive" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">
-                                     <Trash2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> Delete Account {/* Responsive Icon */}
-                                 </Button>
+                                 {/* Animated Button */}
+                                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                     <Button variant="destructive" size="sm" className="text-xs sm:text-sm md:text-base md:py-2 md:px-4">
+                                         <Trash2 className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> Delete Account {/* Responsive Icon */}
+                                     </Button>
+                                  </motion.div>
                               </AlertDialogTrigger>
-                              <AlertDialogContent>
+                              {/* Animated Dialog Content */}
+                              <AlertDialogContent as={motion.div} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
                                  <AlertDialogHeader>
                                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                  <AlertDialogDescription>
@@ -459,30 +526,49 @@ export default function ProfilePage() {
                                  </AlertDialogFooter>
                              </AlertDialogContent>
                          </AlertDialog>
-                     </div>
+                     </motion.div>
                   </>
                 )}
-             </CardContent>
+             </motion.div>
            </Card>
 
             {/* Learning Statistics Placeholder */}
-            <Card className="shadow-md border-secondary/10">
+            <Card className="shadow-md border-secondary/10 rounded-lg overflow-hidden"> {/* Added rounded-lg and overflow */}
              <CardHeader className="p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
                <CardTitle className="text-lg sm:text-xl md:text-2xl">Learning Statistics</CardTitle>
                <CardDescription className="text-sm md:text-base">Your progress overview.</CardDescription>
              </CardHeader>
-              <CardContent className="p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
+               <motion.div
+                   className="p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
+                   variants={cardContentVariant}
+                   initial="hidden"
+                   animate="visible"
+                >
                   {isLoading ? (
                      <Skeleton className="h-24 sm:h-32 md:h-40 w-full mt-4" /> // Responsive height
                   ) : (
                       <>
-                          <p className="text-muted-foreground text-sm sm:text-base md:text-lg">Course completion charts and activity summaries will appear here.</p>
-                          <div className="mt-4 h-24 sm:h-32 md:h-40 bg-muted/50 rounded-md flex items-center justify-center text-muted-foreground border border-dashed text-xs sm:text-sm md:text-base">
-                              Statistics Area (Coming Soon)
-                          </div>
+                          <motion.p variants={itemVariants} className="text-muted-foreground text-sm sm:text-base md:text-lg">Course completion charts and activity summaries will appear here.</motion.p>
+                           <motion.div
+                               variants={itemVariants}
+                               className="mt-4 h-24 sm:h-32 md:h-40 bg-muted/50 rounded-md flex items-center justify-center text-muted-foreground border border-dashed text-xs sm:text-sm md:text-base relative overflow-hidden" // Added relative and overflow
+                            >
+                                {/* Subtle animated lines background */}
+                                <motion.div
+                                   className="absolute inset-0 flex opacity-10"
+                                   style={{
+                                      backgroundImage: `linear-gradient(45deg, hsl(var(--border)) 25%, transparent 25%, transparent 75%, hsl(var(--border)) 75%, hsl(var(--border))), linear-gradient(45deg, hsl(var(--border)) 25%, transparent 25%, transparent 75%, hsl(var(--border)) 75%, hsl(var(--border)))`,
+                                      backgroundSize: `20px 20px`,
+                                      backgroundPosition: `0 0, 10px 10px`,
+                                    }}
+                                   animate={{ backgroundPosition: ['0 0, 10px 10px', '20px 20px, 30px 30px'] }}
+                                   transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                                />
+                                <span className="relative z-10">Statistics Area (Coming Soon)</span>
+                           </motion.div>
                       </>
                   )}
-             </CardContent>
+               </motion.div>
           </Card>
 
         </motion.div>
