@@ -352,13 +352,13 @@ export function Header() {
                     {/* Use md:hidden to hide only on medium screens and up */}
                     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                         <SheetTrigger asChild className="md:hidden">
-                             {/* Add motion to the trigger for a subtle effect */}
-                             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:h-10"> {/* Ensure consistent size */}
+                             {/* Removed motion.div wrapper */}
+                            <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:h-10"> {/* Ensure consistent size */}
+                                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                                     <Menu className="h-5 w-5 sm:h-6 sm:w-6" /> {/* Adjusted icon size */}
-                                    <span className="sr-only">Toggle Menu</span>
-                                </Button>
-                             </motion.div>
+                                </motion.div>
+                                <span className="sr-only">Toggle Menu</span>
+                            </Button>
                         </SheetTrigger>
                          {/* Use SheetClose for the explicit close button */}
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background"> {/* Set background explicitly */}
