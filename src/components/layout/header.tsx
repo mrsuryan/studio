@@ -60,12 +60,12 @@ export function Header() {
   }, []);
 
 
-  // Check login status on component mount and when localStorage changes
+  // Check login status and theme on component mount and when localStorage changes
   useEffect(() => {
     // Only run on the client after mounting
     if (!hasMounted) return;
 
-    const checkLoginStatus = () => {
+    const checkStatusAndTheme = () => {
       setIsLoadingAuth(true);
       // We know window is defined because hasMounted is true
       const loggedInStatus = localStorage.getItem('isLoggedIn');
@@ -81,9 +81,9 @@ export function Header() {
           ? (storedAvatarUrl || `https://picsum.photos/seed/${storedUserEmail || 'default'}/100`)
           : ''); // Clear avatar URL if not logged in
 
-      // Apply dark mode based on stored preference or system preference if not set
+      // Apply theme based *only* on stored preference
       const storedDarkMode = localStorage.getItem('userDarkMode');
-      if (storedDarkMode === 'true' || (!storedDarkMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      if (storedDarkMode === 'true') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
@@ -92,18 +92,15 @@ export function Header() {
       setIsLoadingAuth(false); // Set loading false after checking
     };
 
-    checkLoginStatus();
+    checkStatusAndTheme();
 
     // Listen for storage changes from other tabs/windows or same tab updates
-    window.addEventListener('storage', checkLoginStatus);
-    // Listen for system color scheme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', checkLoginStatus);
+    // This listener will handle updates triggered by the profile page switch
+    window.addEventListener('storage', checkStatusAndTheme);
 
-
+    // Cleanup listener on component unmount
     return () => {
-      window.removeEventListener('storage', checkLoginStatus);
-      mediaQuery.removeEventListener('change', checkLoginStatus);
+      window.removeEventListener('storage', checkStatusAndTheme);
     };
   }, [hasMounted]); // Rerun when hasMounted becomes true
 
@@ -129,10 +126,12 @@ export function Header() {
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userBio');
         localStorage.removeItem('userEmailNotifications');
-        localStorage.removeItem('userDarkMode');
+        localStorage.removeItem('userDarkMode'); // Keep dark mode preference? Or clear it? Currently clearing.
         localStorage.removeItem('userAvatarUrl'); // Clear avatar URL on logout
         // Dispatch storage event to notify other components (like profile page)
         window.dispatchEvent(new Event('storage'));
+         // Explicitly remove dark class on logout if clearing preference
+         document.documentElement.classList.remove('dark');
      }
     // No need to manually set state here, the storage event listener will trigger checkLoginStatus
     toast({

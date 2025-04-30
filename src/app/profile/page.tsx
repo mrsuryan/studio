@@ -67,7 +67,7 @@ const defaultUser: UserProfile = {
     avatarUrl: `https://picsum.photos/seed/default-user/200`, // Consistent default placeholder
     bio: "Learning enthusiast.",
     emailNotifications: true,
-    darkMode: false,
+    darkMode: false, // Default to light mode
 };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
@@ -98,10 +98,11 @@ export default function ProfilePage() {
         avatarUrl: storedAvatarUrl || `https://picsum.photos/seed/${storedEmail || 'default-user'}/200`,
         bio: storedBio || defaultUser.bio,
         emailNotifications: storedNotifications ? storedNotifications === 'true' : defaultUser.emailNotifications,
-        darkMode: storedDarkMode ? storedDarkMode === 'true' : defaultUser.darkMode,
+        // Explicitly check stored dark mode preference
+        darkMode: storedDarkMode === 'true',
       };
 
-      // Apply initial dark mode
+      // Apply initial dark mode based *only* on stored preference
       if (loadedProfile.darkMode) {
         document.documentElement.classList.add('dark');
       } else {
@@ -129,7 +130,7 @@ export default function ProfilePage() {
       [id]: checked,
     }));
 
-     // Apply dark mode immediately and save
+     // Apply dark mode immediately and save to localStorage
     if (id === 'darkMode') {
       if (checked) {
         document.documentElement.classList.add('dark');
@@ -138,13 +139,15 @@ export default function ProfilePage() {
       }
        if (typeof window !== 'undefined') {
            localStorage.setItem('userDarkMode', String(checked));
-           // Trigger storage event to potentially update other components like header
+           // Trigger storage event to ensure header theme updates if it listens
            window.dispatchEvent(new Event('storage'));
        }
     }
-    // Save notification preference
+    // Save notification preference to localStorage
      if (id === 'emailNotifications' && typeof window !== 'undefined') {
         localStorage.setItem('userEmailNotifications', String(checked));
+        // Optional: Trigger storage event if needed elsewhere
+        // window.dispatchEvent(new Event('storage'));
      }
  };
 
@@ -156,7 +159,7 @@ export default function ProfilePage() {
         // localStorage.setItem('userEmail', profile.email);
         localStorage.setItem('userBio', profile.bio);
         localStorage.setItem('userEmailNotifications', String(profile.emailNotifications));
-        localStorage.setItem('userDarkMode', String(profile.darkMode));
+        localStorage.setItem('userDarkMode', String(profile.darkMode)); // Ensure dark mode is saved
         localStorage.setItem('userAvatarUrl', profile.avatarUrl); // Save avatar URL
         // Trigger storage event to update header etc.
         window.dispatchEvent(new Event('storage'));
@@ -173,7 +176,7 @@ export default function ProfilePage() {
       if (typeof window !== 'undefined') {
         localStorage.clear(); // Clear all local storage data
         window.dispatchEvent(new Event('storage')); // Notify header/other components
-        document.documentElement.classList.remove('dark'); // Reset dark mode just in case
+        document.documentElement.classList.remove('dark'); // Reset dark mode visually
       }
      toast({
        title: "Account Deleted",
@@ -182,7 +185,7 @@ export default function ProfilePage() {
      });
      // Redirect to signup page after a short delay
      setTimeout(() => {
-         window.location.href = '/signup';
+         window.location.href = '/signup'; // Use standard redirect after clearing storage
      }, 1500); // Delay to allow toast visibility
    };
 
@@ -418,14 +421,17 @@ export default function ProfilePage() {
                     <div className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
                       <Label htmlFor="darkMode" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
                         <Moon className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" /> {/* Responsive Icon */}
-                         Dark Mode
+                         Theme
                        </Label>
-                       <Switch
-                        id="darkMode"
-                        checked={profile.darkMode}
-                        onCheckedChange={(checked) => handleSwitchChange(checked, 'darkMode')}
-                        aria-label="Toggle dark mode"
-                      />
+                       <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground text-xs sm:text-sm">{profile.darkMode ? "Dark" : "Light"}</span>
+                           <Switch
+                                id="darkMode"
+                                checked={profile.darkMode}
+                                onCheckedChange={(checked) => handleSwitchChange(checked, 'darkMode')}
+                                aria-label="Toggle dark mode"
+                            />
+                       </div>
                     </div>
                      {/* Buttons with responsive text and wrapping */}
                      <div className="pt-4 md:pt-6 flex flex-wrap gap-2 sm:gap-3">
