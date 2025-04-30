@@ -76,7 +76,7 @@ export default function CoursesPage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8" // Added xl breakpoint, adjusted gaps
             variants={containerVariants}
         >
-          {allCourses.map((course) => (
+          {allCourses.map((course, index) => ( // Added index for potential priority logic
              <motion.div key={course.id} variants={itemVariants}>
                  <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02] border border-primary/10">
                   <CardHeader className="p-0">
@@ -86,6 +86,8 @@ export default function CoursesPage() {
                       width={300}
                       height={200}
                       className="rounded-t-lg w-full object-cover aspect-[3/2]"
+                      loading={index < 4 ? "eager" : "lazy"} // Eager load first few images, lazy load others
+                      priority={index < 4} // Prioritize loading first few images
                     />
                   </CardHeader>
                   {/* Responsive Card Content */}

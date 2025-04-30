@@ -1,19 +1,18 @@
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist } from 'next/font/google'; // Removed Geist_Mono if not needed
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Toaster } from '@/components/ui/toaster';
+import { SpeedInsights } from "@vercel/speed-insights/next" // Import Vercel Speed Insights
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap', // Use 'swap' for faster initial text render
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+// Removed geistMono if not essential for reducing font asset loading
 
 export const metadata: Metadata = {
   title: 'EduHub Portal - Your Learning Gateway', // Enhanced title
@@ -27,8 +26,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+       <head>
+         {/* Preconnect to important origins */}
+         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+         <link rel="preconnect" href="https://picsum.photos" />
+         {/* Preload the main font */}
+         {/* Note: Next/font handles preloading automatically, but this is an example if using link tags */}
+         {/* <link rel="preload" href="/path/to/geist.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /> */}
+       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-gradient-to-br from-background to-blue-50/50 dark:from-background dark:to-blue-950/20`} // Added subtle gradient
+        // Use only necessary font variables
+        className={`${geistSans.variable} antialiased flex flex-col min-h-screen bg-gradient-to-br from-background to-blue-50/50 dark:from-background dark:to-blue-950/20`}
       >
         <Header />
          {/* Adjusted padding for different screen sizes */}
@@ -39,6 +47,8 @@ export default function RootLayout({
             </div>
         </footer>
         <Toaster />
+         {/* Add Vercel Speed Insights */}
+         <SpeedInsights />
       </body>
     </html>
   );

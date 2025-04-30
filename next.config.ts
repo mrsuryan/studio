@@ -1,7 +1,11 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Enable standalone output for smaller deployments
+  output: 'standalone',
+  // Ensure SWC minification is explicitly enabled (default in newer Next.js)
+  swcMinify: true,
   typescript: {
     ignoreBuildErrors: true,
   },
