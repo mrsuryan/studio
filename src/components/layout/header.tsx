@@ -458,18 +458,18 @@ export function Header() {
                 <>
                     {/* Login/Signup buttons (Visible on all screens when logged out) */}
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button variant="ghost" size="sm" asChild className="text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
-                        <Link href="/login">
-                            <LogIn className="mr-1 sm:mr-2 h-4 w-4" /> Login
+                        <Link href="/login" passHref>
+                            <Button variant="ghost" size="sm" className="text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
+                                <LogIn className="mr-1 sm:mr-2 h-4 w-4" /> Login
+                            </Button>
                         </Link>
-                        </Button>
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
-                        <Link href="/signup">
-                            <UserPlus className="mr-1 sm:mr-2 h-4 w-4" /> Sign Up
+                        <Link href="/signup" passHref>
+                            <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow text-xs px-1.5 sm:text-sm sm:px-3"> {/* Adjusted padding */}
+                                <UserPlus className="mr-1 sm:mr-2 h-4 w-4" /> Sign Up
+                            </Button>
                         </Link>
-                        </Button>
                     </motion.div>
                 </>
               )
