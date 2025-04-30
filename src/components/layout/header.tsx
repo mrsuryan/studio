@@ -97,7 +97,7 @@ export function Header() {
   // Filter nav items only after mount and auth check is complete
   const filteredNavItems = hasMounted && !isLoadingAuth
     ? navItems.filter(item => !item.requiresLogin || isLoggedIn)
-    : []; // Render no nav items initially or while loading to avoid mismatch
+    : navItems.filter(item => !item.requiresLogin); // Render non-auth items initially on server
 
 
   // Close mobile menu on navigation
@@ -166,37 +166,35 @@ export function Header() {
       <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
         {/* Logo and Title */}
         <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0"> {/* Adjusted mr-2 to mr-4 */}
-           {/* Enhanced Logo SVG - Render only after mount */}
-           {hasMounted && (
-                <motion.svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-7 w-7 sm:h-8 sm:w-8 text-primary transition-transform duration-300 group-hover:rotate-[10deg]" // Slightly larger icon
-                initial={{ rotate: -15, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
+           {/* Enhanced Logo SVG - Render consistently */}
+            <motion.svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-7 w-7 sm:h-8 sm:w-8 text-primary transition-transform duration-300 group-hover:rotate-[10deg]" // Slightly larger icon
+              initial={{ rotate: -15, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 150 }}
             >
-                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                    {/* Adding a small 'graduation cap' like element */}
-                    <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
-                    <path d="m6.5 14 5.5 3 5.5-3"/>
-                    <path d="M12 14.5V19"/>
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+              {/* Adding a small 'graduation cap' like element */}
+              <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+              <path d="m6.5 14 5.5 3 5.5-3"/>
+              <path d="M12 14.5V19"/>
             </motion.svg>
-           )}
-           {/* Ensure text rendering is consistent after mount */}
+           {/* Ensure text rendering is consistent */}
           <span className="font-bold text-lg sm:text-xl inline-block text-primary group-hover:text-accent transition-colors duration-300">
               EduHub
-              {hasMounted && <span className="hidden sm:inline"> Portal</span>}
+              <span className="hidden sm:inline"> Portal</span>
           </span>
         </Link>
 
          {/* Animated Search Bar - Conditionally Rendered & Hidden on Mobile */}
-         {hasMounted && !shouldHideSearch && ( // Ensure search bar only renders after mount if not hidden
+         {hasMounted && !shouldHideSearch && ( // Keep hasMounted check for purely client-side elements like search based on auth state
             <motion.div
                 className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens (mobile)
                 initial={false} // Don't animate initially
@@ -250,7 +248,7 @@ export function Header() {
 
          {/* Responsive Navigation Links (Desktop) - Render only after mount and auth check */}
          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 text-sm lg:text-base font-medium ml-auto md:ml-0 mr-2 sm:mr-4">
-           {filteredNavItems.map((item) => { // Use filtered items which already depends on hasMounted and !isLoadingAuth
+           {filteredNavItems.map((item) => {
                const isActive = pathname.startsWith(item.href); // Use startsWith for nested routes
                return (
                    <Link
@@ -344,18 +342,16 @@ export function Header() {
                                 {/* Mobile Header */}
                                 <div className="flex items-center justify-between p-4 border-b">
                                     <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
-                                        {/* Re-use logo SVG - Render only after mount */}
-                                        {hasMounted && (
-                                            <motion.svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 24 24"
-                                                fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                                                className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
-                                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                                                <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
-                                                <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
-                                            </motion.svg>
-                                        )}
+                                        {/* Re-use logo SVG */}
+                                        <motion.svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                            className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
+                                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                                            <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+                                            <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
+                                        </motion.svg>
                                         <span className="font-bold text-lg text-primary">EduHub Portal</span>
                                     </Link>
                                     {/* Explicit Close Button */}
@@ -367,7 +363,7 @@ export function Header() {
                                     </SheetTrigger>
                                 </div>
                                 {/* Mobile Search (Optional but recommended for mobile) */}
-                                {!shouldHideSearch && (
+                                {hasMounted && !shouldHideSearch && (
                                     <div className="p-4 border-b">
                                         <form onSubmit={handleSearchSubmit} className="relative">
                                             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -445,4 +441,3 @@ export function Header() {
   );
 }
 
-    
