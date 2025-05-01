@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import Card components
+import { CursorGlowEffect } from "@/components/effects/CursorGlowEffect"; // Import the new effect
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -82,7 +82,10 @@ export default function Home() {
   const studentCount = 12345; // Example count
 
   return (
-    <div className="space-y-16 md:space-y-20 lg:space-y-24"> {/* Increased spacing */}
+    // Add relative positioning to contain the absolute glow effect if desired
+    <div className="space-y-16 md:space-y-20 lg:space-y-24 relative isolate">
+      <CursorGlowEffect /> {/* Add the glow effect component */}
+
       {/* Hero Section */}
       <motion.section
         className="text-center py-16 sm:py-20 md:py-24 px-4 rounded-xl bg-gradient-to-br from-primary/10 via-background to-accent/10 shadow-lg overflow-hidden relative" // Increased padding, added relative and overflow hidden
@@ -90,8 +93,8 @@ export default function Home() {
         initial="hidden"
         animate="visible"
       >
-        {/* Background Glow Effect */}
-         <motion.div
+        {/* Background Glow Effect (Existing) - Keep this or adjust */}
+         {/* <motion.div
            className="absolute inset-0 opacity-20 dark:opacity-30 blur-3xl"
            initial={{ scale: 0.5, rotate: -30 }}
            animate={{ scale: 1.5, rotate: 15, x: ["-20%", "20%", "-20%"], y: ["-15%", "15%", "-15%"] }}
@@ -99,7 +102,7 @@ export default function Home() {
            style={{
              background: 'radial-gradient(circle, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, transparent 70%)',
            }}
-         />
+         /> */}
 
         {/* Content aligned above the background effect */}
         <div className="relative z-10">
@@ -151,6 +154,7 @@ export default function Home() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        className="relative z-10" // Ensure features are above the general glow
       >
          <motion.h2
              className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-8 md:mb-12 text-center text-primary" // Centered heading
@@ -195,6 +199,7 @@ export default function Home() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        className="relative z-10" // Ensure courses are above the general glow
       >
         <motion.h2
            className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-6 md:mb-8 text-primary flex items-center gap-2" // Responsive Heading
@@ -224,4 +229,3 @@ export default function Home() {
     </div>
   );
 }
-
