@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react'; // Import React
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from 'next/image';
-import { ArrowLeft, PlayCircle, CheckCircle, BookText, ArrowRight } from "lucide-react"; // Added ArrowRight
+import { ArrowLeft, PlayCircle, CheckCircle, BookText, ArrowRight, Award } from "lucide-react"; // Added Award icon
 import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation'; // Import useRouter
 import { allCourses } from '@/data/courses'; // Import shared course data
@@ -71,6 +70,9 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
     router.push(`/courses/${courseId}/modules/${moduleId}`);
   };
 
+  // Mock logic: Consider course complete if progress is 100% or all modules are completed
+  const isCourseComplete = course && (course.progress === 100 || course.modules.every(m => m.completed));
+
 
   if (!course) {
     return (
@@ -124,6 +126,26 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
             </motion.div>
              {course.title} {/* Responsive Icon */}
        </motion.h1>
+
+       {/* Certificate Button (Conditional) */}
+       {isCourseComplete && (
+          <motion.div variants={itemVariants} className="flex justify-end">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+             <Button
+                variant="default"
+                size="lg"
+                asChild
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 px-6 sm:px-8 md:px-10 rounded-full group"
+             >
+                <Link href={`/certificate/${courseId}`}>
+                    <Award className="mr-2 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+                    View Certificate
+                </Link>
+            </Button>
+            </motion.div>
+          </motion.div>
+       )}
+
       {/* Responsive Grid for Course Details and Modules */}
        <motion.section
         className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12" // Adjusted gaps, changed breakpoint to lg
@@ -219,4 +241,3 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
     </motion.div>
   );
 }
-
