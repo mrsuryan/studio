@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import Card components
-import { CursorGlowEffect } from "@/components/effects/CursorGlowEffect"; // Import the new effect
+// Removed CursorGlowEffect import
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -82,9 +82,9 @@ export default function Home() {
   const studentCount = 12345; // Example count
 
   return (
-    // Add relative positioning to contain the absolute glow effect if desired
-    <div className="space-y-16 md:space-y-20 lg:space-y-24 relative isolate">
-      <CursorGlowEffect /> {/* Add the glow effect component */}
+    // Remove relative positioning if not needed after removing the glow effect
+    <div className="space-y-16 md:space-y-20 lg:space-y-24">
+      {/* Removed the glow effect component */}
 
       {/* Hero Section */}
       <motion.section
@@ -93,17 +93,6 @@ export default function Home() {
         initial="hidden"
         animate="visible"
       >
-        {/* Background Glow Effect (Existing) - Keep this or adjust */}
-         {/* <motion.div
-           className="absolute inset-0 opacity-20 dark:opacity-30 blur-3xl"
-           initial={{ scale: 0.5, rotate: -30 }}
-           animate={{ scale: 1.5, rotate: 15, x: ["-20%", "20%", "-20%"], y: ["-15%", "15%", "-15%"] }}
-           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
-           style={{
-             background: 'radial-gradient(circle, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, transparent 70%)',
-           }}
-         /> */}
-
         {/* Content aligned above the background effect */}
         <div className="relative z-10">
              <motion.h1
@@ -129,7 +118,7 @@ export default function Home() {
                  {/* Get Started Button */}
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 px-6 sm:px-8 md:px-10 rounded-full group">
-                        <Link href="/courses"> {/* Changed href from /signup to /courses */}
+                        <Link href="/courses">
                             Get Started Now <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform duration-200" />
                         </Link>
                     </Button>
@@ -154,7 +143,7 @@ export default function Home() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-10" // Ensure features are above the general glow
+        className="relative z-10" // Keep relative if other absolute elements are needed
       >
          <motion.h2
              className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-8 md:mb-12 text-center text-primary" // Centered heading
@@ -199,7 +188,7 @@ export default function Home() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-10" // Ensure courses are above the general glow
+        className="relative z-10" // Keep relative if other absolute elements are needed
       >
         <motion.h2
            className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-6 md:mb-8 text-primary flex items-center gap-2" // Responsive Heading
