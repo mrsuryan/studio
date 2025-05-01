@@ -1,4 +1,3 @@
-
 'use client'; // Add this directive for client components
 
 import Link from 'next/link';
@@ -171,8 +170,8 @@ export function Header() {
 
   // Search Bar Animation Variants
   const searchContainerVariants = {
-    unfocused: { width: '24rem' }, // Default width
-    focused: { width: '100%' }, // Expanded width
+    unfocused: { width: '25%' }, // Default width (adjust percentage as needed)
+    focused: { width: '50%' }, // Expanded width (adjust percentage as needed)
   };
 
   const searchIconVariants = {
@@ -226,15 +225,15 @@ export function Header() {
          {/* Animated Search Bar - Conditionally Rendered & Hidden on Mobile */}
          {hasMounted && !isLoadingAuth && !shouldHideSearch && isLoggedIn && ( // Only show search when mounted, loaded, not on specific routes, and logged in
                  <motion.div
-                    className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens (mobile)
+                    className="hidden md:flex flex-1 justify-center mx-4 md:mx-6" // Use flex-1 and justify-center
                     variants={searchContainerVariants}
                     initial="unfocused"
                     animate={isSearchFocused ? 'focused' : 'unfocused'}
                     transition={{ type: 'spring', stiffness: 120, damping: 18 }} // Adjusted spring params
                   >
-                    <form onSubmit={handleSearchSubmit} className="relative w-full">
+                    <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md"> {/* Added max-w */}
                       <motion.div
-                        className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10" // Ensure icon is above input visually
                         variants={searchIconVariants}
                         animate={isSearchFocused ? 'focused' : 'unfocused'}
                         transition={{ type: "spring", stiffness: 180, damping: 12 }} // Smoother spring for icon
@@ -249,7 +248,7 @@ export function Header() {
                         onFocus={() => setIsSearchFocused(true)}
                         onBlur={() => setIsSearchFocused(false)}
                         className={cn(
-                          "w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background",
+                          "w-full rounded-full bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-inner hover:shadow-md focus:shadow-lg focus:bg-background focus:ring-2", // Rounded-full, inner shadow, focus ring
                           isSearchFocused ? "pr-8" : "pr-4" // Adjust right padding based on focus for clear button
                         )}
                         aria-label="Search courses"
@@ -260,7 +259,7 @@ export function Header() {
                           <motion.button
                             type="button"
                             onClick={() => setSearchQuery("")}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted/50 z-10" // Ensure button is clickable
                             aria-label="Clear search"
                             variants={clearIconVariants}
                             initial="hidden"
@@ -291,7 +290,7 @@ export function Header() {
                        href={item.href}
                        className={cn(
                           "relative flex items-center gap-1.5 transition-colors hover:text-primary pb-1 group", // Use group for hover effects on underline
-                          isActive ? "text-primary" : "text-foreground/70",
+                          isActive ? "text-primary font-semibold" : "text-foreground/70", // Make active link bolder
                           // Animated Underline effect using ::after pseudo-element
                           "after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-full after:bg-primary after:origin-center after:transition-transform after:duration-300 after:ease-out",
                            isActive ? "after:scale-x-100" : "after:scale-x-0 group-hover:after:scale-x-50" // Animate scaleX for underline on active/hover
@@ -409,7 +408,7 @@ export function Header() {
                                  <div className="p-4 border-b">
                                      <form onSubmit={handleSearchSubmit} className="relative">
                                          <motion.div
-                                            className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                                            className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" // Ensure icon is visible
                                              variants={searchIconVariants} // Reuse variants
                                              animate={isSearchFocused ? 'focused' : 'unfocused'}
                                              transition={{ type: "spring", stiffness: 180, damping: 12 }}
@@ -424,7 +423,7 @@ export function Header() {
                                                 onFocus={() => setIsSearchFocused(true)}
                                                 onBlur={() => setIsSearchFocused(false)}
                                                 className={cn(
-                                                    "w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background",
+                                                    "w-full rounded-full bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-inner hover:shadow-md focus:shadow-lg focus:bg-background focus:ring-2", // Consistent styling
                                                     isSearchFocused ? "pr-8" : "pr-4"
                                                 )}
                                                 aria-label="Search courses"
@@ -435,7 +434,7 @@ export function Header() {
                                                   <motion.button
                                                       type="button"
                                                       onClick={() => setSearchQuery('')}
-                                                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                                                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground z-10" // Ensure clickable
                                                       aria-label="Clear search"
                                                       variants={clearIconVariants} // Reuse variants
                                                       initial="hidden"
@@ -461,7 +460,7 @@ export function Header() {
                                              onClick={() => setIsMobileMenuOpen(false)} // Close menu on link click
                                              className={cn(
                                                  "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
-                                                 isActive ? "bg-primary/10 text-primary" : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                                                 isActive ? "bg-primary/10 text-primary font-semibold" : "text-foreground/80 hover:bg-muted hover:text-foreground" // Highlight active
                                              )}
                                          >
                                              <item.icon className="h-5 w-5" />
@@ -512,5 +511,3 @@ export function Header() {
     </motion.header>
   );
 }
-
-    
