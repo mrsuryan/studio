@@ -6,9 +6,10 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from 'next/image';
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen, Clock, Star } from "lucide-react"; // Added Clock, Star icons
 import { motion } from "framer-motion";
 import { allCourses } from '@/data/courses'; // Import shared course data
+import { Badge } from "@/components/ui/badge"; // Import Badge
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -38,6 +39,9 @@ const itemVariants = {
     transition: { duration: 0.2, ease: "easeInOut" } // Smoother hover transition
   }
 };
+
+// Helper function to format rating (e.g., 4.7)
+const formatRating = (rating: number) => rating.toFixed(1);
 
 export default function CoursesPage() {
   return (
@@ -84,11 +88,24 @@ export default function CoursesPage() {
                            priority={index < 4} // Prioritize loading first 4 images (above the fold approx)
                          />
                       </motion.div>
+                      {/* Display Rating */}
+                      <Badge
+                         variant="default"
+                         className="absolute top-2 right-2 bg-primary/80 text-primary-foreground backdrop-blur-sm text-xs sm:text-sm px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md"
+                       >
+                         <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-yellow-300" /> {/* Star Icon */}
+                         {formatRating(course.rating)}
+                       </Badge>
                   </CardHeader>
                   {/* Responsive Card Content */}
                   <CardContent className="p-4 sm:p-5 flex-grow">
                     <CardTitle className="text-lg sm:text-xl md:text-2xl mb-2 line-clamp-2">{course.title}</CardTitle> {/* Added line-clamp */}
-                    <CardDescription className="text-sm sm:text-base md:text-lg line-clamp-3">{course.description}</CardDescription> {/* Added line-clamp */}
+                    <CardDescription className="text-sm sm:text-base md:text-lg line-clamp-3 mb-2">{course.description}</CardDescription> {/* Added line-clamp and margin */}
+                    {/* Display Duration */}
+                     <div className="flex items-center text-xs sm:text-sm text-muted-foreground mt-2">
+                       <Clock className="h-3.5 w-3.5 mr-1.5" />
+                       <span>{course.duration}</span>
+                     </div>
                   </CardContent>
                   {/* Responsive Card Footer */}
                   <CardFooter className="flex flex-col items-start gap-3 p-4 sm:p-5 border-t border-border/60 bg-muted/30">
