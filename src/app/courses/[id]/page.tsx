@@ -142,6 +142,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                          <Image
                              src={course.image}
                              alt={course.title}
+                             data-ai-hint="online course learning"
                              fill // Use fill for responsive images with aspect ratio container
                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 67vw, 50vw" // Updated sizes based on layout (approx 2/3 width on lg+)
                              className="rounded-t-lg object-cover" // Removed hover effect from here
@@ -218,3 +219,4 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
     </motion.div>
   );
 }
+

@@ -215,3 +215,4 @@ export default function ModulePage({ params }: ModulePageProps) {
     </motion.div>
   );
 }
+
