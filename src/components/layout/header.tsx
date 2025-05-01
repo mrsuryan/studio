@@ -169,6 +169,23 @@ export function Header() {
    };
 
 
+  // Search Bar Animation Variants
+  const searchContainerVariants = {
+    unfocused: { width: '24rem' }, // Default width
+    focused: { width: '100%' }, // Expanded width
+  };
+
+  const searchIconVariants = {
+    unfocused: { x: 0, opacity: 0.5, scale: 1 },
+    focused: { x: 5, opacity: 1, scale: 1.1, rotate: 5 }, // Move slightly, increase scale and opacity, subtle rotate
+  };
+
+  const clearIconVariants = {
+    hidden: { opacity: 0, scale: 0, x: 10 },
+    visible: { opacity: 1, scale: 1, x: 0 },
+  };
+
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -209,57 +226,54 @@ export function Header() {
          {/* Animated Search Bar - Conditionally Rendered & Hidden on Mobile */}
          {hasMounted && !isLoadingAuth && !shouldHideSearch && isLoggedIn && ( // Only show search when mounted, loaded, not on specific routes, and logged in
                  <motion.div
-                className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens (mobile)
-                initial={{ width: '24rem' }} // Start with fixed width
-                 animate={{ width: isSearchFocused ? '100%' : '24rem' }} // Animate width on focus
-                 transition={{ type: 'spring', stiffness: 120, damping: 18 }} // Adjusted spring params
-
-            >
-                <form onSubmit={handleSearchSubmit} className="relative w-full">
-                  <motion.div
-                    className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                     initial={{ x: -10, opacity: 0, scale: 0.8 }}
-                     animate={{ x: 0, opacity: isSearchFocused ? 1 : 0.5, scale: isSearchFocused ? 1.1 : 1 }}
-                     transition={{ type: "spring", stiffness: 150, damping: 10 }} // Added damping
-
-                >\n                    <Search
-                        className="h-4 w-4 text-muted-foreground"
-                    />
-                </motion.div>
-                <Input
-
-                    type="search"
-                    placeholder="Search courses..."
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
-                    className={cn(
-                      "w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background",
-                      isSearchFocused ? "pr-8" : "pr-4" // Adjust right padding based on focus for clear button
-                    )}
-                    aria-label="Search courses"
-                />
-                {/* Animated clear button */}
-                    <AnimatePresence>
-                        {searchQuery && isSearchFocused && ( // Show clear button only when focused and has query
-                            <motion.button
-                                type="button"
-                                onClick={() => setSearchQuery("")}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
-                                aria-label="Clear search"
-                                initial={{ opacity: 0, scale: 0 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0 }} // Immediate exit animation
-                                transition={{ duration: 0.15 }} // Faster transition
-
-                            >
-                            <X className="size-4" />
-                            </motion.button>
+                    className="hidden md:flex flex-1 mx-4 md:mx-6 max-w-xs md:max-w-sm lg:max-w-md" // Hide on small screens (mobile)
+                    variants={searchContainerVariants}
+                    initial="unfocused"
+                    animate={isSearchFocused ? 'focused' : 'unfocused'}
+                    transition={{ type: 'spring', stiffness: 120, damping: 18 }} // Adjusted spring params
+                  >
+                    <form onSubmit={handleSearchSubmit} className="relative w-full">
+                      <motion.div
+                        className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                        variants={searchIconVariants}
+                        animate={isSearchFocused ? 'focused' : 'unfocused'}
+                        transition={{ type: "spring", stiffness: 180, damping: 12 }} // Smoother spring for icon
+                      >
+                        <Search className="h-4 w-4 text-muted-foreground" />
+                      </motion.div>
+                      <Input
+                        type="search"
+                        placeholder={isSearchFocused ? "Enter keywords..." : "Search courses..."} // Dynamic placeholder
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        onFocus={() => setIsSearchFocused(true)}
+                        onBlur={() => setIsSearchFocused(false)}
+                        className={cn(
+                          "w-full rounded-lg bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-sm hover:shadow focus:shadow-md focus:bg-background",
+                          isSearchFocused ? "pr-8" : "pr-4" // Adjust right padding based on focus for clear button
                         )}
-                    </AnimatePresence>
-                </form>
-               </motion.div>
+                        aria-label="Search courses"
+                      />
+                      {/* Animated clear button */}
+                      <AnimatePresence>
+                        {searchQuery && isSearchFocused && ( // Show clear button only when focused and has query
+                          <motion.button
+                            type="button"
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
+                            aria-label="Clear search"
+                            variants={clearIconVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden" // Animate exit as well
+                            transition={{ duration: 0.15, type: "spring", stiffness: 200, damping: 15 }} // Springy pop
+                          >
+                            <X className="size-4" />
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+                    </form>
+                  </motion.div>
           )}
 
          {/* Spacer to push auth to the right (Desktop) */}
@@ -396,15 +410,15 @@ export function Header() {
                                      <form onSubmit={handleSearchSubmit} className="relative">
                                          <motion.div
                                             className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
-                                            initial={{ x: -10, opacity: 0, scale: 0.8 }}
-                                            animate={{ x: 0, opacity: isSearchFocused ? 1 : 0.5, scale: isSearchFocused ? 1.1 : 1 }}
-                                            transition={{ type: "spring", stiffness: 150, damping: 10 }}
+                                             variants={searchIconVariants} // Reuse variants
+                                             animate={isSearchFocused ? 'focused' : 'unfocused'}
+                                             transition={{ type: "spring", stiffness: 180, damping: 12 }}
                                          >
                                                 <Search className="h-4 w-4 text-muted-foreground" />
                                             </motion.div>
                                             <Input
                                                 type="search"
-                                                placeholder="Search courses..."
+                                                placeholder={isSearchFocused ? "Enter keywords..." : "Search courses..."}
                                                 value={searchQuery}
                                                 onChange={handleSearchChange}
                                                 onFocus={() => setIsSearchFocused(true)}
@@ -423,10 +437,11 @@ export function Header() {
                                                       onClick={() => setSearchQuery('')}
                                                       className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
                                                       aria-label="Clear search"
-                                                      initial={{ opacity: 0, scale: 0 }}
-                                                      animate={{ opacity: 1, scale: 1 }}
-                                                      exit={{ opacity: 0, scale: 0 }}
-                                                      transition={{ duration: 0.15 }}
+                                                      variants={clearIconVariants} // Reuse variants
+                                                      initial="hidden"
+                                                      animate="visible"
+                                                      exit="hidden"
+                                                      transition={{ duration: 0.15, type: "spring", stiffness: 200, damping: 15 }}
                                                    >
                                                      <X className="size-4" />
                                                   </motion.button>
@@ -497,3 +512,5 @@ export function Header() {
     </motion.header>
   );
 }
+
+    
