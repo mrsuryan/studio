@@ -126,7 +126,7 @@ export default function Home() {
                  {/* Get Started Button */}
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                     <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 px-6 sm:px-8 md:px-10 rounded-full group">
-                        <Link href="/signup"> {/* Link to signup or courses */}
+                        <Link href="/courses"> {/* Changed href from /signup to /courses */}
                             Get Started Now <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform duration-200" />
                         </Link>
                     </Button>
