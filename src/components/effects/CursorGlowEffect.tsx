@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -38,26 +39,29 @@ export function CursorGlowEffect() {
         // Use lg:absolute if you only want it within a specific container on larger screens
       )}
       style={{
-        background: `radial-gradient(circle at ${position.x}px ${position.y}px, hsla(var(--primary)/0.15), transparent 50%)`, // Adjusted opacity and size
+        // Reduced spread (40% instead of 50%), slightly lower opacity
+        background: `radial-gradient(circle at ${position.x}px ${position.y}px, hsla(var(--primary)/0.1), transparent 40%)`,
       }}
       animate={{
-        x: position.x - 500, // Center the large gradient (adjust offset as needed)
-        y: position.y - 500, // Center the large gradient (adjust offset as needed)
+        // Adjust offset based on new gradient size (300px radius approx)
+        x: position.x - 300,
+        y: position.y - 300,
       }}
       transition={{
         type: 'tween', // Use tween for smoother following
-        ease: 'backOut', // Use backOut for a slight overshoot effect
-        duration: 0.6, // Slower duration for smoother movement
+        ease: 'easeOut', // Keep easeOut for smooth ending
+        duration: 0.4, // Faster duration for more sensitivity
       }}
     >
-      {/* Optional: Add a smaller, more defined inner glow */}
+      {/* Smaller, more defined inner glow */}
        <div
-         className="absolute w-48 h-48 rounded-full blur-3xl opacity-50" // Smaller, more defined blur
+         className="absolute w-32 h-32 rounded-full blur-2xl opacity-60" // Reduced size, slightly less blur, increased opacity
          style={{
            left: position.x,
            top: position.y,
            transform: 'translate(-50%, -50%)', // Center precisely on cursor
-           background: `radial-gradient(circle, hsla(var(--accent)/0.3), transparent 70%)`,
+           // More visible accent color glow
+           background: `radial-gradient(circle, hsla(var(--accent)/0.4), transparent 65%)`,
          }}
        />
     </motion.div>
