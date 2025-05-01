@@ -24,6 +24,9 @@ import {
   SheetContent,
   SheetTrigger,
   SheetClose, // Import SheetClose
+  SheetHeader, // Import SheetHeader
+  SheetTitle, // Import SheetTitle
+  SheetFooter, // Import SheetFooter
 } from "@/components/ui/sheet" // Import Sheet components
 
 export function Header() {
@@ -218,7 +221,7 @@ export function Header() {
             </motion.svg>
            {/* Ensure text rendering is consistent */}
           <span className="font-bold text-lg sm:text-xl inline-block text-primary group-hover:text-accent transition-colors duration-300">
-              EduHub Portal
+             EduHub Portal
           </span>
         </Link>
 
@@ -379,9 +382,10 @@ export function Header() {
                                 <span className="sr-only">Toggle Menu</span>
                             </Button>
                         </SheetTrigger>
-                         {/* Use SheetClose for the explicit close button */}
+                         {/* Put menu content inside SheetContent */}
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background"> {/* Set background explicitly */}
-                             <div className="flex items-center justify-between p-4 border-b">
+                             {/* Visible Header for the Sheet */}
+                             <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
                                 <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
                                      {/* Re-use logo SVG */}
                                       <motion.svg
@@ -393,16 +397,11 @@ export function Header() {
                                           <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
                                           <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
                                       </motion.svg>
-                                     <span className="font-bold text-lg text-primary">EduHub Portal</span>
+                                     <SheetTitle className="font-bold text-lg text-primary">EduHub Portal</SheetTitle>
                                  </Link>
-                                 {/* Use SheetClose for the button */}
-                                 <SheetClose asChild>
-                                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                                          <X className="h-5 w-5" />
-                                          <span className="sr-only">Close Menu</span>
-                                      </Button>
-                                  </SheetClose>
-                             </div>
+                                  {/* SheetClose button is already part of SheetContent */}
+                             </SheetHeader>
+
                               {/* Mobile Search (Optional but recommended for mobile) */}
                              {!shouldHideSearch && ( // Hide search on login/signup in mobile too
                                  <div className="p-4 border-b">
@@ -454,23 +453,24 @@ export function Header() {
                                  {filteredNavItems.map((item) => { // Use filtered items here too
                                      const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'));
                                      return (
-                                         <Link
-                                             key={item.href}
-                                             href={item.href}
-                                             onClick={() => setIsMobileMenuOpen(false)} // Close menu on link click
-                                             className={cn(
-                                                 "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
-                                                 isActive ? "bg-primary/10 text-primary font-semibold" : "text-foreground/80 hover:bg-muted hover:text-foreground" // Highlight active
-                                             )}
-                                         >
-                                             <item.icon className="h-5 w-5" />
-                                             {item.label}
-                                         </Link>
+                                         <SheetClose asChild key={item.href}>
+                                             <Link
+                                                 href={item.href}
+                                                 // onClick={() => setIsMobileMenuOpen(false)} // No longer needed due to SheetClose
+                                                 className={cn(
+                                                     "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
+                                                     isActive ? "bg-primary/10 text-primary font-semibold" : "text-foreground/80 hover:bg-muted hover:text-foreground" // Highlight active
+                                                 )}
+                                             >
+                                                 <item.icon className="h-5 w-5" />
+                                                 {item.label}
+                                             </Link>
+                                         </SheetClose>
                                      );
                                  })}
                              </nav>
-                              {/* Optional Footer in Mobile Menu (e.g., Logout button) */}
-                             <div className="p-4 mt-auto border-t">
+                              {/* Footer in Mobile Menu */}
+                             <SheetFooter className="p-4 mt-auto border-t">
                                  <Button
                                      variant="outline"
                                      className="w-full flex items-center justify-center gap-2 text-destructive border-destructive hover:bg-destructive/10"
@@ -482,7 +482,7 @@ export function Header() {
                                      <LogOut className="mr-2 h-4 w-4" />
                                      <span>Log out</span>
                                  </Button>
-                             </div>
+                             </SheetFooter>
                         </SheetContent>
                     </Sheet>
                 </>

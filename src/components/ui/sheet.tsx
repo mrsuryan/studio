@@ -66,13 +66,16 @@ const SheetContent = React.forwardRef<
       className={cn(sheetVariants({ side }), className)}
       {...props}
     >
-      {/* Add a visually hidden title for accessibility */}
+      {/* Add a visually hidden title for accessibility, always present */}
       <SheetHeader className="sr-only">
+         {/* Ensure Title has text content */}
         <SheetTitle>Menu</SheetTitle>
+         <SheetDescription>Mobile navigation menu</SheetDescription>
       </SheetHeader>
       {children}
       {/* Keep close button, ensure it's positioned correctly relative to the content area */}
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+       {/* Ensure Close is inside Content */}
+       <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>
@@ -87,7 +90,7 @@ const SheetHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      // Add padding here
+      // Add padding here unless sr-only is applied
       "flex flex-col space-y-2 text-center sm:text-left p-6 pb-4", // Adjusted padding
       className
     )}
@@ -149,4 +152,3 @@ export {
   SheetTitle,
   SheetDescription,
 }
-
