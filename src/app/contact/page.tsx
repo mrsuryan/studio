@@ -4,7 +4,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Send, User, MessageSquare, Star } from 'lucide-react'; // Added Star icon
 
 import { Button } from '@/components/ui/button';
@@ -96,7 +96,7 @@ export default function ContactPage() {
                  animate={{ scale: 1, opacity: 1, rotate: 0 }}
                  transition={{ delay: 0.2, type: "spring", stiffness: 150, damping: 10 }}
                >
-                  <Mail className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mx-auto text-primary" />
+                  <Mail className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:h-14 mx-auto text-primary" />
                 </motion.div>
                 <motion.div variants={itemVariants}>
                    <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">Contact Us</CardTitle>
@@ -124,7 +124,11 @@ export default function ContactPage() {
                            <FormControl>
                              <Input placeholder="Your Name" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
-                           <FormMessage />
+                           <AnimatePresence>
+                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                               <FormMessage/>
+                              </motion.div>
+                           </AnimatePresence>
                          </FormItem>
                        )}
                      />
@@ -139,7 +143,11 @@ export default function ContactPage() {
                            <FormControl>
                              <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
-                           <FormMessage />
+                           <AnimatePresence>
+                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                               <FormMessage/>
+                              </motion.div>
+                           </AnimatePresence>
                          </FormItem>
                        )}
                      />
@@ -154,7 +162,11 @@ export default function ContactPage() {
                             <FormControl>
                               <Input placeholder="What is your message about?" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                             </FormControl>
-                            <FormMessage />
+                            <AnimatePresence>
+                              <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                                <FormMessage/>
+                               </motion.div>
+                            </AnimatePresence>
                           </FormItem>
                         )}
                       />
@@ -169,7 +181,11 @@ export default function ContactPage() {
                            <FormControl>
                              <Textarea placeholder="Your message..." {...field} className="min-h-[100px] sm:min-h-[120px] md:min-h-[150px] text-sm sm:text-base md:text-lg" />
                            </FormControl>
-                           <FormMessage />
+                           <AnimatePresence>
+                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                               <FormMessage/>
+                              </motion.div>
+                           </AnimatePresence>
                          </FormItem>
                        )}
                      />
@@ -185,7 +201,11 @@ export default function ContactPage() {
                            <FormControl>
                              <Textarea placeholder="Share your thoughts or suggestions..." {...field} className="min-h-[80px] sm:min-h-[100px] md:min-h-[120px] text-sm sm:text-base md:text-lg" />
                            </FormControl>
-                           <FormMessage />
+                           <AnimatePresence>
+                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                               <FormMessage/>
+                              </motion.div>
+                           </AnimatePresence>
                          </FormItem>
                        )}
                      />
@@ -208,4 +228,3 @@ export default function ContactPage() {
     </motion.div>
   );
 }
-

@@ -163,7 +163,9 @@ export default function LoginPage() {
                              <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence> {/* Animate error message appearance */}
-                              <FormMessage as={motion.p} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}/>
+                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                               <FormMessage/>
+                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}
@@ -181,7 +183,9 @@ export default function LoginPage() {
                              <Input type="password" placeholder="••••••••" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence>
-                              <FormMessage as={motion.p} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}/>
+                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                               <FormMessage/>
+                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}
