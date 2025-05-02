@@ -219,8 +219,8 @@ export function Header() {
 
   // --- Animation Variants ---
   const searchContainerVariants = {
-    unfocused: { width: '40%' }, // Adjusted unfocused width
-    focused: { width: '70%' }, // Increase focused width further
+    unfocused: { width: '60%' }, // Start wider
+    focused: { width: '80%' }, // Even wider when focused
   };
 
   const searchIconVariants = {
@@ -304,7 +304,7 @@ export function Header() {
                }}>
                   <PopoverAnchor asChild>
                       <motion.div
-                         className="w-full max-w-2xl" // INCREASED max-width for the container
+                         className="w-full max-w-3xl" // INCREASED max-width for the container
                          variants={searchContainerVariants}
                          initial="unfocused"
                          animate={isSearchFocused ? 'focused' : 'unfocused'}
@@ -359,7 +359,7 @@ export function Header() {
                   </PopoverAnchor>
 
                   <PopoverContent
-                      className="w-[--radix-popover-trigger-width] max-h-[400px] overflow-y-auto p-0 mt-1" // Match width, scrollable
+                      className="w-[--radix-popover-trigger-width] max-w-[600px] max-h-[400px] overflow-y-auto p-0 mt-1" // Increase width and max-width
                       align="start" // Align with start of the anchor
                       onOpenAutoFocus={(e) => e.preventDefault()} // Prevent stealing focus
                       onCloseAutoFocus={(e) => e.preventDefault()} // Prevent focus jump on close
@@ -496,13 +496,15 @@ export function Header() {
                                       </motion.svg>
                                      <span className="font-bold text-lg text-primary">EduHub Portal</span>
                                  </Link>
-                                 <SheetClose asChild>
+                                <SheetClose asChild>
                                     <Button variant="ghost" size="icon" className="rounded-full">
                                         <X className="h-4 w-4" />
                                         <span className="sr-only">Close</span>
                                     </Button>
                                 </SheetClose>
                              </SheetHeader>
+                              <SheetTitle className="sr-only">Main Menu</SheetTitle>
+                             <SheetDescription className="sr-only">Navigation links for the EduHub Portal.</SheetDescription>
                              {/* Mobile Search */}
                              {!shouldHideSearch && isLoggedIn && (
                                  <div className="p-4 border-b">
@@ -648,6 +650,8 @@ export function Header() {
                                     </Button>
                                 </SheetClose>
                              </SheetHeader>
+                              <SheetTitle className="sr-only">Main Menu</SheetTitle>
+                             <SheetDescription className="sr-only">Navigation links for the EduHub Portal.</SheetDescription>
                              <nav className="flex-1 overflow-y-auto py-4 space-y-1">
                                  {navItems.filter(item => !item.requiresLogin).map((item) => {
                                      const isActive = pathname === item.href;
@@ -693,6 +697,3 @@ export function Header() {
     </motion.header>
   );
 }
-
-
-    
