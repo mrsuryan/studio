@@ -53,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning> {/* Added suppressHydrationWarning as a safety net if minor mismatches persist */}
+    <html lang="en" suppressHydrationWarning>{/* Added suppressHydrationWarning as a safety net if minor mismatches persist */}
       {/* Add preconnect links for performance */}
       <head>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
