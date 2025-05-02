@@ -124,6 +124,7 @@ export function Header() {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setIsSuggestionsVisible(false);
+        setIsSearchFocused(false); // Also unfocus when clicking outside
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -207,17 +208,19 @@ export function Header() {
          setIsSuggestionsVisible(false); // Hide suggestions on submit
       }
       setIsMobileMenuOpen(false); // Close mobile menu after search submit
+      setIsSearchFocused(false); // Unfocus after submit
    };
 
    const handleSuggestionClick = () => {
       setIsSuggestionsVisible(false);
       setSearchQuery(''); // Clear search query after selecting a suggestion
+      setIsSearchFocused(false); // Unfocus after clicking suggestion
    };
 
   // --- Animation Variants ---
   const searchContainerVariants = {
-    unfocused: { width: '30%' }, // Keep unfocused width smaller
-    focused: { width: '60%' }, // Increase focused width
+    unfocused: { width: '40%' }, // Adjusted unfocused width
+    focused: { width: '70%' }, // Increase focused width further
   };
 
   const searchIconVariants = {
@@ -238,6 +241,7 @@ export function Header() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
         <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
           <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0">
+             {/* Consistent SVG rendering */}
              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 sm:h-8 sm:w-8 text-primary">
                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 0 0 1 0-5H20"/>
                  <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
@@ -300,7 +304,7 @@ export function Header() {
                }}>
                   <PopoverAnchor asChild>
                       <motion.div
-                         className="w-full max-w-lg" // INCREASED max-width for the container
+                         className="w-full max-w-2xl" // INCREASED max-width for the container
                          variants={searchContainerVariants}
                          initial="unfocused"
                          animate={isSearchFocused ? 'focused' : 'unfocused'}
@@ -317,11 +321,10 @@ export function Header() {
                            </motion.div>
                            <Input
                              type="search"
-                             placeholder={isSearchFocused ? "Search courses..." : "Search courses..."}
+                             placeholder="Search courses..." // Keep placeholder consistent
                              value={searchQuery}
                              onChange={handleSearchChange}
-                             onFocus={() => {setIsSearchFocused(true); setIsSuggestionsVisible(searchQuery.trim().length > 0);}} // Show suggestions on focus if there's text
-                             // onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)} // Delay blur slightly to allow suggestion click
+                             onFocus={() => {setIsSearchFocused(true); if(searchQuery.trim().length > 0) setIsSuggestionsVisible(true);}} // Show suggestions on focus if there's text
                              className={cn(
                                "w-full rounded-full bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-inner hover:shadow-md focus:shadow-lg focus:bg-background focus:ring-2",
                                isSearchFocused ? "pr-8" : "pr-4"
@@ -481,7 +484,6 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                {/* Removed SheetTitle and SheetDescription as they were causing accessibility warnings */}
                                 <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
                                      <motion.svg
                                           xmlns="http://www.w3.org/2000/svg"
@@ -515,11 +517,10 @@ export function Header() {
                                             </motion.div>
                                             <Input
                                                 type="search"
-                                                placeholder={isSearchFocused ? "Search..." : "Search..."}
+                                                placeholder="Search..." // Simpler placeholder for mobile
                                                 value={searchQuery}
                                                 onChange={handleSearchChange}
-                                                onFocus={() => {setIsSearchFocused(true); setIsSuggestionsVisible(searchQuery.trim().length > 0);}}
-                                                // onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)} // Delay blur
+                                                onFocus={() => {setIsSearchFocused(true); if(searchQuery.trim().length > 0) setIsSuggestionsVisible(true);}}
                                                 className={cn(
                                                     "w-full rounded-full bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-inner hover:shadow-md focus:shadow-lg focus:bg-background focus:ring-2",
                                                     isSearchFocused ? "pr-8" : "pr-4"
@@ -628,7 +629,6 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                {/* Removed SheetTitle and SheetDescription as they were causing accessibility warnings */}
                                 <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
                                      <motion.svg
                                           xmlns="http://www.w3.org/2000/svg"
@@ -693,3 +693,6 @@ export function Header() {
     </motion.header>
   );
 }
+
+
+    
