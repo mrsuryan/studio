@@ -33,7 +33,8 @@ import {
 } from "@/components/ui/sheet";
 import { allCourses, Course } from '@/data/courses'; // Import course data and type
 import Image from 'next/image'; // Import Image for suggestions
-import { Command as CommandPrimitive, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"; // Use Command for suggestions UI
+// Correctly import the Command wrapper and its parts
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import * as React from "react"; // Import React
 
 export function Header() {
@@ -265,7 +266,7 @@ export function Header() {
     >
       <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
         {/* Logo and Title */}
-        <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0">
+        <Link href="/" className="mr-4 md:mr-6 flex items-center space-x-1.5 sm:space-x-2 group shrink-0"> {/* Adjusted mr-2 to mr-4 */}
            {/* Enhanced Logo SVG - Render consistently */}
             <motion.svg
               xmlns="http://www.w3.org/2000/svg"
@@ -319,7 +320,7 @@ export function Header() {
                              placeholder={isSearchFocused ? "Search courses..." : "Search courses..."}
                              value={searchQuery}
                              onChange={handleSearchChange}
-                             onFocus={() => setIsSearchFocused(true)}
+                             onFocus={() => {setIsSearchFocused(true); setIsSuggestionsVisible(searchQuery.trim().length > 0);}} // Show suggestions on focus if there's text
                              // onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)} // Delay blur slightly to allow suggestion click
                              className={cn(
                                "w-full rounded-full bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-inner hover:shadow-md focus:shadow-lg focus:bg-background focus:ring-2",
@@ -360,7 +361,8 @@ export function Header() {
                       onOpenAutoFocus={(e) => e.preventDefault()} // Prevent stealing focus
                       onCloseAutoFocus={(e) => e.preventDefault()} // Prevent focus jump on close
                   >
-                     <CommandPrimitive.Root shouldFilter={false}> {/* Disable internal filtering */}
+                      {/* Use the Command component for the suggestions list */}
+                     <Command shouldFilter={false}> {/* Disable internal filtering */}
                          <CommandList>
                            <CommandEmpty>{searchResults.length === 0 && searchQuery ? 'No courses found.' : 'Type to search...'}</CommandEmpty>
                            <CommandGroup heading="Suggested Courses">
@@ -392,7 +394,7 @@ export function Header() {
                              ))}
                            </CommandGroup>
                          </CommandList>
-                       </CommandPrimitive.Root>
+                       </Command>
                   </PopoverContent>
                </Popover>
             </div>
@@ -479,8 +481,7 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                                <SheetDescription className="sr-only">Main navigation links and user options.</SheetDescription>
+                                {/* Removed SheetTitle and SheetDescription as they were causing accessibility warnings */}
                                 <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
                                      <motion.svg
                                           xmlns="http://www.w3.org/2000/svg"
@@ -517,8 +518,8 @@ export function Header() {
                                                 placeholder={isSearchFocused ? "Search..." : "Search..."}
                                                 value={searchQuery}
                                                 onChange={handleSearchChange}
-                                                onFocus={() => setIsSearchFocused(true)}
-                                                onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)} // Delay blur
+                                                onFocus={() => {setIsSearchFocused(true); setIsSuggestionsVisible(searchQuery.trim().length > 0);}}
+                                                // onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)} // Delay blur
                                                 className={cn(
                                                     "w-full rounded-full bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-inner hover:shadow-md focus:shadow-lg focus:bg-background focus:ring-2",
                                                     isSearchFocused ? "pr-8" : "pr-4"
@@ -627,8 +628,7 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                                <SheetDescription className="sr-only">Main navigation links and user options.</SheetDescription>
+                                {/* Removed SheetTitle and SheetDescription as they were causing accessibility warnings */}
                                 <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
                                      <motion.svg
                                           xmlns="http://www.w3.org/2000/svg"
