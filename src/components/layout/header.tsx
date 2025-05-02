@@ -401,7 +401,12 @@ export function Header() {
                                          <span className="font-bold text-lg text-primary">EduHub Portal</span>
                                      </Link>
                                  </SheetTitle>
-                                 {/* SheetClose is implicitly handled by SheetContent */}
+                                 <SheetClose asChild>
+                                    <Button variant="ghost" size="icon" className="rounded-full">
+                                        <X className="h-4 w-4" />
+                                        <span className="sr-only">Close</span>
+                                    </Button>
+                                </SheetClose>
                              </SheetHeader>
                              {/* Mobile Search */}
                              {!shouldHideSearch && (
@@ -473,16 +478,18 @@ export function Header() {
                              </nav>
                              {/* Mobile Logout Button */}
                              <SheetFooter className="p-4 mt-auto border-t">
-                                 <SheetClose asChild>
-                                     <Button
-                                         variant="outline"
-                                         className="w-full flex items-center justify-center gap-2 text-destructive border-destructive hover:bg-destructive/10"
-                                         onClick={handleLogout}
-                                      >
-                                         <LogOut className="mr-2 h-4 w-4" />
-                                         <span>Log out</span>
-                                     </Button>
-                                 </SheetClose>
+                                  {/* Removed asChild here to fix the error */}
+                                  <Button
+                                     variant="outline"
+                                     className="w-full flex items-center justify-center gap-2 text-destructive border-destructive hover:bg-destructive/10"
+                                     onClick={() => {
+                                         handleLogout();
+                                         setIsMobileMenuOpen(false); // Close sheet after logout
+                                     }}
+                                  >
+                                     <LogOut className="mr-2 h-4 w-4" />
+                                     <span>Log out</span>
+                                 </Button>
                              </SheetFooter>
                         </SheetContent>
                     </Sheet>
