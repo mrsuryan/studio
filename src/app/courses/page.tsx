@@ -1,16 +1,16 @@
-
-'use client';
+"use client"; // Mark as Client Component for Framer Motion and Link
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import Image from 'next/image';
+import Link from "next/link"; // Import Next.js Link
+import Image from 'next/image'; // Use Next.js Image component
 import { ArrowRight, BookOpen, Clock, Star } from "lucide-react"; // Added Clock, Star icons
 import { motion } from "framer-motion";
 import { allCourses } from '@/data/courses'; // Import shared course data
 import { Badge } from "@/components/ui/badge"; // Import Badge
 
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -81,11 +81,11 @@ export default function CoursesPage() {
                          <Image
                            src={course.image}
                            alt={course.title}
-                           width={300}
+                           width={300} // Provide width and height for aspect ratio
                            height={200}
                            className="rounded-t-lg w-full h-full object-cover" // Ensure image covers the area
-                           loading={index < 8 ? "eager" : "lazy"} // Eager load first 8 images, lazy load others
-                           priority={index < 4} // Prioritize loading first 4 images (above the fold approx)
+                           data-ai-hint="online course learning" // Add hint for AI
+                           priority={index < 4} // Prioritize loading for the first few images
                          />
                       </motion.div>
                       {/* Display Rating */}

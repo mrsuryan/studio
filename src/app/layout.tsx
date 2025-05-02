@@ -1,23 +1,50 @@
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import "./globals.css";
+import { cn } from "@/lib/utils";
+import { Header } from "@/components/layout/header";
+import { Toaster } from "@/components/ui/toaster";
+import { SpeedInsights } from "@vercel/speed-insights/next"; // Import Speed Insights
 
-import type { Metadata } from 'next';
-import { Geist } from 'next/font/google'; // Removed Geist_Mono if not needed
-import './globals.css';
-import { Header } from '@/components/layout/header';
-import { Toaster } from '@/components/ui/toaster';
-import { SpeedInsights } from "@vercel/speed-insights/next" // Import Vercel Speed Insights
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-  display: 'swap', // Use 'swap' for faster initial text render
-});
-
-// Removed geistMono if not essential for reducing font asset loading
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'EduHub Portal - Your Learning Gateway', // Enhanced title
-  description: 'Explore courses, track progress, and enhance your skills on the EduHub Learning Portal.', // Enhanced description
+  title: "EduHub Portal - Your Learning Gateway",
+  description: "Explore courses, track progress, and enhance your skills on the EduHub Learning Portal.",
+  // Add Open Graph and other metadata as needed
+  openGraph: {
+    title: "EduHub Portal",
+    description: "Your gateway to online learning and skill development.",
+    // url: "https://your-eduhub-url.com", // Replace with your actual URL
+    // siteName: "EduHub Portal",
+    // images: [
+    //   {
+    //     url: "https://your-eduhub-url.com/og-image.png", // Replace with your OG image URL
+    //     width: 1200,
+    //     height: 630,
+    //   },
+    // ],
+    // locale: "en_US",
+    type: "website",
+  },
+  // icons: {
+  //   icon: "/favicon.ico", // Ensure favicon exists in /public
+  //   apple: "/apple-touch-icon.png", // Ensure apple touch icon exists in /public
+  // },
 };
+
+export const viewport: Viewport = {
+  themeColor: [ // Add theme color for different modes
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+  // Add other viewport settings if necessary
+  // width: 'device-width',
+  // initialScale: 1,
+  // maximumScale: 1,
+}
 
 export default function RootLayout({
   children,
@@ -26,30 +53,38 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+       {/* Add preconnect links for performance */}
        <head>
-         {/* Preconnect to important origins */}
-         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-         <link rel="preconnect" href="https://picsum.photos" />
-         {/* Preload the main font */}
-         {/* Note: Next/font handles preloading automatically, but this is an example if using link tags */}
-         {/* <link rel="preload" href="/path/to/geist.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /> */}
-       </head>
-      <body
-        // Use only necessary font variables
-        className={`${geistSans.variable} antialiased flex flex-col min-h-screen bg-gradient-to-br from-background to-blue-50/50 dark:from-background dark:to-blue-950/20`}
-      >
-        <Header />
-         {/* Adjusted padding for different screen sizes */}
-        <main className="flex-grow container px-4 sm:px-6 lg:px-8 py-8 md:py-12">{children}</main>
-         <footer className="mt-auto py-4 sm:py-6 border-t border-border/50 bg-background/50">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://picsum.photos" />
+      </head>
+      <body className={cn(
+         GeistSans.variable, // Apply Geist Sans variable
+         GeistMono.variable, // Apply Geist Mono variable
+          "antialiased flex flex-col min-h-screen bg-gradient-to-br from-background to-blue-50/50 dark:from-background dark:to-blue-950/20" // Gradient background
+        )}>
+          {/* Header */}
+          <Header />
+
+          {/* Main Content Area */}
+          {/* Responsive padding using Tailwind classes */}
+          <main className="flex-grow container px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+            {children}
+          </main>
+
+          {/* Footer */}
+          <footer className="mt-auto py-4 sm:py-6 border-t border-border/50 bg-background/50">
             <div className="container text-center text-muted-foreground text-xs sm:text-sm">
-                © {new Date().getFullYear()} EduHub Portal. All rights reserved.
+               {/* Use JavaScript Date object for dynamic year */}
+               © {new Date().getFullYear()} EduHub Portal. All rights reserved.
             </div>
-        </footer>
-        <Toaster />
-         {/* Add Vercel Speed Insights */}
-         <SpeedInsights />
-      </body>
+          </footer>
+
+          {/* Global Toaster for Notifications */}
+          <Toaster />
+           {/* Vercel Speed Insights */}
+          <SpeedInsights />
+        </body>
     </html>
   );
 }

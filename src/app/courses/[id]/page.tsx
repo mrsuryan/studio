@@ -1,19 +1,20 @@
-'use client';
+"use client"; // Mark as Client Component for hooks and interactivity
 
-import * as React from 'react'; // Import React
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter, usePathname, useParams } from "next/navigation"; // Import App Router hooks
 import Image from 'next/image';
 import { ArrowLeft, PlayCircle, CheckCircle, BookText, ArrowRight, Award } from "lucide-react"; // Added Award icon
 import { motion } from "framer-motion";
-import { useRouter } from 'next/navigation'; // Import useRouter
 import { allCourses } from '@/data/courses'; // Import shared course data
+import React from 'react'; // Import React
 
 interface CoursePageProps {
-  params: Promise<{ id: string }>; // params is a Promise
+  // params types handled by useParams hook
 }
 
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -57,16 +58,16 @@ const moduleItemVariants = {
   }
 };
 
-export default function CourseDetailPage({ params }: CoursePageProps) {
+export default function CourseDetailPage() { // Removed props parameter
   const router = useRouter(); // Initialize router
-  // Unwrap the params Promise using React.use()
-  const resolvedParams = React.use(params);
-  const courseId = parseInt(resolvedParams.id, 10);
+  const params = React.use(useParams()); // Unwrap params promise
+  const courseId = parseInt(params.id as string, 10); // Extract and parse the ID
   // In a real app, fetch course data based on ID. For now, find in mock data.
   const course = allCourses.find(c => c.id === courseId);
 
+  // Function to handle clicking a module - navigates to the module page
   const handleModuleAction = (moduleId: string) => {
-    // Navigate to the specific module page
+    // Navigate to the specific module page using App Router's push
     router.push(`/courses/${courseId}/modules/${moduleId}`);
   };
 
@@ -87,7 +88,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 md:mb-8">We couldn't find the course you were looking for.</p>
          {/* Responsive Button with animation */}
          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-             <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105 text-sm sm:text-base md:text-lg md:py-2.5 md:px-5">
+            <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105 text-sm sm:text-base md:text-lg md:py-2.5 md:px-5">
                <Link href="/courses">
                  <ArrowLeft className="mr-2 h-4 w-4 md:h-5 md:w-5" /> Back to All Courses {/* Responsive Icon */}
                </Link>
@@ -131,7 +132,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
        {isCourseComplete && (
           <motion.div variants={itemVariants} className="flex justify-end">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-             <Button
+              <Button
                 variant="default"
                 size="lg"
                 asChild
@@ -161,14 +162,14 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                           whileHover={{ scale: 1.03 }} // Gentle scale on hover
                           transition={{ duration: 0.3 }}
                       >
-                         <Image
+                          <Image
                              src={course.image}
                              alt={course.title}
+                             layout="fill" // Use fill layout for responsiveness
+                             objectFit="cover" // Cover the container
+                             className="rounded-t-lg" // Removed hover effect from here
                              data-ai-hint="online course learning"
-                             fill // Use fill for responsive images with aspect ratio container
-                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 67vw, 50vw" // Updated sizes based on layout (approx 2/3 width on lg+)
-                             className="rounded-t-lg object-cover" // Removed hover effect from here
-                             priority // Add priority for the main course image LCP
+                             priority // Prioritize loading the main course image
                          />
                       </motion.div>
                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-t-lg"></div> {/* Ensure gradient also rounds */}

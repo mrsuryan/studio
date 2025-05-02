@@ -1,5 +1,4 @@
-
-'use client';
+"use client"; // Mark as Client Component because it uses useState
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap, Plus, Minus } from 'lucide-react';
 
+// Animation Variants
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
@@ -20,7 +20,7 @@ const itemVariants = {
   },
   hover: { // Added hover variant for the card
      scale: 1.03,
-     boxShadow: "0 6px 20px rgba(0,0,0,0.07)",
+     boxShadow: "0 6px 20px rgba(0,0,0,0.07)", // Enhanced shadow on hover
      transition: { duration: 0.2, ease: "easeOut" }
   }
 };
@@ -37,7 +37,7 @@ export function CounterCard() {
              {/* Animated Zap Icon */}
              <motion.div
                  initial={{ rotate: -10 }}
-                 animate={{ rotate: [0, 15, -10, 0] }}
+                 animate={{ rotate: [0, 15, -10, 0] }} // Subtle rotation animation
                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut", delay: 0.5 }}
              >
                  <Zap className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
@@ -50,6 +50,7 @@ export function CounterCard() {
          </CardHeader>
          {/* Responsive Card Content */}
          <CardContent className="flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 p-4 sm:p-6 md:p-8">
+           {/* Animated Count Display */}
            <motion.div
              key={count} // Re-trigger animation on count change
              initial={{ y: count > 0 ? -10 : 10, opacity: 0, scale: 0.8 }} // Enter from top or bottom based on change direction
@@ -60,27 +61,28 @@ export function CounterCard() {
            >
              {count}
            </motion.div>
+           {/* Control Buttons */}
            <div className="flex space-x-3 sm:space-x-4">
-             {/* Animated Button */}
+             {/* Animated Button Wrapper */}
              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                <Button
                  variant="outline"
                  size="icon"
                  onClick={() => setCount(count - 1)}
                  aria-label="Decrement count"
-                 className="hover:bg-destructive/10 hover:text-destructive h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full" // Make button round
+                 className="hover:bg-destructive/10 hover:text-destructive h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full" // Make button round, responsive size
                >
                  <Minus className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" /> {/* Responsive Icon */}
                </Button>
              </motion.div>
-             {/* Animated Button */}
+             {/* Animated Button Wrapper */}
              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                <Button
                  variant="outline"
                  size="icon"
                  onClick={() => setCount(count + 1)}
                  aria-label="Increment count"
-                 className="hover:bg-primary/10 hover:text-primary h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full" // Make button round
+                 className="hover:bg-primary/10 hover:text-primary h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-full" // Make button round, responsive size
                >
                  <Plus className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" /> {/* Responsive Icon */}
                </Button>

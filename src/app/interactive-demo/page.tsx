@@ -1,13 +1,17 @@
+"use client"; // Mark as Client Component for Suspense and lazy loading
 
-'use client';
-
-import { useState, useEffect, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Rocket, Zap, Plus, Minus, Loader } from 'lucide-react'; // Added Loader
-import dynamic from 'next/dynamic'; // Import dynamic
+import { Rocket } from 'lucide-react';
+
+// --- Dynamically Imported Components (Using React.lazy) ---
+
+const CounterCard = React.lazy(() => import('@/components/interactive-demo/CounterCard').then(mod => ({ default: mod.CounterCard })));
+const LoadingSimulationCard = React.lazy(() => import('@/components/interactive-demo/LoadingSimulationCard').then(mod => ({ default: mod.LoadingSimulationCard })));
+
+
+// --- Animation Variants ---
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -33,17 +37,6 @@ const itemVariants = {
   },
 };
 
-// --- Dynamically Imported Components ---
-
-const CounterCard = dynamic(() => import('@/components/interactive-demo/CounterCard').then(mod => mod.CounterCard), {
-  loading: () => <Skeleton className="h-[300px] w-full rounded-lg shadow-lg border-accent/10" />, // Taller skeleton
-  ssr: false // This component relies heavily on client state
-});
-
-const LoadingSimulationCard = dynamic(() => import('@/components/interactive-demo/LoadingSimulationCard').then(mod => mod.LoadingSimulationCard), {
-  loading: () => <Skeleton className="h-[300px] w-full rounded-lg shadow-lg border-primary/10" />, // Taller skeleton
-  ssr: false // This component relies heavily on client state
-});
 
 // --- Main Page Component ---
 
@@ -85,12 +78,11 @@ export default function InteractiveDemoPage() {
         className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10" // Responsive gap
         variants={containerVariants} // Apply container for stagger
       >
-        {/* Dynamically load Counter Card */}
+         {/* Use React.Suspense for lazy loading */}
         <Suspense fallback={<Skeleton className="h-[300px] w-full rounded-lg shadow-lg border-accent/10" />}>
           <CounterCard />
         </Suspense>
 
-        {/* Dynamically load Loading Simulation Card */}
         <Suspense fallback={<Skeleton className="h-[300px] w-full rounded-lg shadow-lg border-primary/10" />}>
           <LoadingSimulationCard />
         </Suspense>

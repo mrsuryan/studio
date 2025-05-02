@@ -1,4 +1,4 @@
-'use client';
+"use client"; // Mark as Client Component for Framer Motion and dynamic imports
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -7,7 +7,19 @@ import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import Card components
-// Removed CursorGlowEffect import
+
+// --- Dynamic Imports ---
+
+// Dynamically import the FeaturedCoursesSection with SSR disabled
+const FeaturedCoursesSection = dynamic(
+  () => import('@/components/home/FeaturedCoursesSection').then(mod => mod.FeaturedCoursesSection),
+  {
+    ssr: false, // Disable Server-Side Rendering for this component
+    loading: () => <Skeleton className="h-[400px] w-full rounded-lg" /> // Loading Skeleton
+  }
+);
+
+// --- Animation Variants ---
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -50,21 +62,6 @@ const featureCardVariants = {
    }
  };
 
-// --- Dynamically Imported Component ---
-
-const FeaturedCoursesSection = dynamic(
-  () => import('@/components/home/FeaturedCoursesSection').then(mod => mod.FeaturedCoursesSection),
-  {
-    loading: () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-[400px] w-full rounded-lg" /> // Placeholder for course cards
-        ))}
-      </div>
-    ),
-    ssr: false,
-  }
-);
 
 // Mock Features Data
 const features = [
@@ -82,9 +79,7 @@ export default function Home() {
   const studentCount = 12345; // Example count
 
   return (
-    // Remove relative positioning if not needed after removing the glow effect
     <div className="space-y-16 md:space-y-20 lg:space-y-24">
-      {/* Removed the glow effect component */}
 
       {/* Hero Section */}
       <motion.section
@@ -93,6 +88,8 @@ export default function Home() {
         initial="hidden"
         animate="visible"
       >
+        {/* Removed glowing effect */}
+
         {/* Content aligned above the background effect */}
         <div className="relative z-10">
              <motion.h1
@@ -117,11 +114,11 @@ export default function Home() {
              >
                  {/* Get Started Button */}
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 px-6 sm:px-8 md:px-10 rounded-full group">
-                        <Link href="/courses">
-                            Get Started Now <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform duration-200" />
-                        </Link>
-                    </Button>
+                   <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 px-6 sm:px-8 md:px-10 rounded-full group">
+                      <Link href="/courses">
+                        Get Started Now <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                      </Link>
+                   </Button>
                  </motion.div>
 
                  {/* Student Count */}
@@ -201,17 +198,18 @@ export default function Home() {
         {/* Dynamically Loaded Featured Courses */}
         <FeaturedCoursesSection />
 
+
          <motion.div
             className="text-center mt-10 md:mt-12 lg:mt-16" // Adjusted margin top
             variants={itemVariants}
             transition={{ delay: 0.2 }} // Add delay to this button
          >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                 <Button size="lg" asChild className="transition-transform duration-200 ease-in-out text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 px-6 sm:px-8 md:px-10 rounded-full group border border-primary text-primary hover:bg-primary hover:text-primary-foreground" variant="outline">
-                    <Link href="/courses">
-                        View All Courses <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform duration-200" />
-                    </Link>
-                </Button>
+               <Button size="lg" asChild className="transition-transform duration-200 ease-in-out text-base sm:text-lg md:text-xl py-3 sm:py-3.5 md:py-4 px-6 sm:px-8 md:px-10 rounded-full group border border-primary text-primary hover:bg-primary hover:text-primary-foreground" variant="outline">
+                 <Link href="/courses">
+                   View All Courses <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                 </Link>
+               </Button>
             </motion.div>
         </motion.div>
       </motion.section>

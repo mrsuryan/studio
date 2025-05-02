@@ -1,17 +1,20 @@
-'use client';
+"use client"; // Mark as Client Component for hooks and interactivity
 
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Award, CheckCircle, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState, useEffect } from 'react';
+import { useParams, useRouter } from "next/navigation"; // Use App Router hooks
 import { Skeleton } from '@/components/ui/skeleton';
 import { allCourses } from '@/data/courses'; // Assuming course data is needed
+import { Separator } from '@/components/ui/separator'; // Import Separator
+import { cn } from "@/lib/utils"; // Import cn
+
 
 interface CertificatePageProps {
-  params: Promise<{ courseId: string }>; // params is a Promise
+  // params types handled by useParams hook
 }
 
 // Mock Certificate Data (replace with actual data fetching logic)
@@ -23,8 +26,9 @@ interface CertificateData {
   courseId: number; // Keep courseId for back navigation
 }
 
-const fetchCertificateData = (courseId: number, studentName: string): CertificateData | null => {
-  const course = allCourses.find(c => c.id === courseId);
+// Updated function to use courseId from params
+const fetchCertificateData = (courseIdParam: number, studentName: string): CertificateData | null => {
+  const course = allCourses.find(c => c.id === courseIdParam);
   if (!course) return null;
 
   // Simulate fetching or generating data
@@ -37,10 +41,11 @@ const fetchCertificateData = (courseId: number, studentName: string): Certificat
     courseName: course.title,
     completionDate: completionDate,
     issuingOrg: "EduHub Portal",
-    courseId: courseId,
+    courseId: courseIdParam,
   };
 };
 
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.95 },
   visible: {
@@ -68,17 +73,24 @@ const itemVariants = {
   },
 };
 
-export default function CertificatePage({ params }: CertificatePageProps) {
+export default function CertificatePage() { // Removed props parameter
   const [isLoading, setIsLoading] = useState(true);
   const [certificateData, setCertificateData] = useState<CertificateData | null>(null);
   const [userName, setUserName] = useState<string>('Learner'); // Default name
+  const [hasMounted, setHasMounted] = useState(false); // Track mount state
 
-  // Unwrap the params Promise using React.use()
-  const resolvedParams = React.use(params);
-  const courseId = parseInt(resolvedParams.courseId, 10);
+  const params = useParams(); // Get params using the hook
+  const courseId = parseInt(params.courseId as string, 10); // Extract and parse courseId
 
   useEffect(() => {
-    // Fetch user name from localStorage
+    setHasMounted(true); // Component has mounted
+  }, []);
+
+  useEffect(() => {
+    // Ensure this runs only after mounting on the client
+    if (!hasMounted) return;
+
+    // Fetch user name from localStorage (only runs on client)
     const storedName = localStorage.getItem('userName');
     if (storedName) {
       setUserName(storedName);
@@ -88,10 +100,11 @@ export default function CertificatePage({ params }: CertificatePageProps) {
     setIsLoading(true);
     const data = fetchCertificateData(courseId, storedName || 'Learner');
     setCertificateData(data);
-    setTimeout(() => setIsLoading(false), 500); // Simulate loading time
-  }, [courseId]); // Depend on courseId
+    // Simulate loading time
+    setTimeout(() => setIsLoading(false), 500); // Reduced delay
+  }, [courseId, hasMounted]); // Depend on courseId from useParams and hasMounted
 
-  if (isLoading) {
+  if (!hasMounted || isLoading) { // Show skeleton during loading or before mount
     return (
       <motion.div
         className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]"
@@ -130,7 +143,7 @@ export default function CertificatePage({ params }: CertificatePageProps) {
         <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl md:text-4xl font-semibold text-destructive mb-4 md:mb-5">Certificate Not Found</motion.h1>
         <motion.p variants={itemVariants} className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 md:mb-8">We couldn't find the certificate for this course.</motion.p>
          <motion.div variants={itemVariants} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-           <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105 text-sm sm:text-base md:text-lg md:py-2.5 md:px-5">
+            <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105 text-sm sm:text-base md:text-lg md:py-2.5 md:px-5">
              <Link href={`/courses/${courseId}`}> {/* Use actual courseId */}
                 <ArrowLeft className="mr-2 h-4 w-4 md:h-5 md:w-5" /> Back to Course
              </Link>
@@ -142,6 +155,7 @@ export default function CertificatePage({ params }: CertificatePageProps) {
 
   const handleDownload = () => {
     // In a real app, this would trigger a download of a PDF or image certificate
+    // This might involve calling a backend endpoint that generates the certificate
     alert('Download functionality not implemented in this demo.');
     console.log('Downloading certificate for:', certificateData.courseName);
   };
@@ -225,9 +239,3 @@ export default function CertificatePage({ params }: CertificatePageProps) {
     </motion.div>
   );
 }
-
-
-// Separator component (can be moved to ui if reused)
-const Separator = ({ className }: { className?: string }) => (
-  <hr className={cn("border-t border-border/30", className)} />
-);

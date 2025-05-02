@@ -1,5 +1,4 @@
-
-'use client';
+"use client"; // Mark as Client Component because it uses useState
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Import AnimatePresence
@@ -8,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader, Check } from 'lucide-react'; // Added Check icon
 
+// Animation Variants
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
@@ -21,7 +21,7 @@ const itemVariants = {
   },
    hover: { // Added hover variant for the card
      scale: 1.03,
-     boxShadow: "0 6px 20px rgba(0,0,0,0.07)",
+     boxShadow: "0 6px 20px rgba(0,0,0,0.07)", // Enhanced shadow on hover
      transition: { duration: 0.2, ease: "easeOut" }
    }
 };
@@ -73,7 +73,7 @@ export function LoadingSimulationCard() {
              <Button
                onClick={handleFetchData}
                disabled={isLoading}
-               className="w-full sm:w-auto text-sm sm:text-base md:text-lg py-2.5 sm:py-3 md:py-3.5 px-4 sm:px-6 md:px-8 transition-colors duration-200" // Added transition
+               className="w-full sm:w-auto text-sm sm:text-base md:text-lg py-2.5 sm:py-3 md:py-3.5 px-4 sm:px-6 md:px-8 transition-colors duration-200" // Added transition, responsive styles
              >
                {isLoading ? (
                  <>
@@ -95,6 +95,7 @@ export function LoadingSimulationCard() {
            <div className="mt-4 h-24 sm:h-28 md:h-32 w-full p-4 border border-dashed rounded-md flex items-center justify-center bg-muted/30 overflow-hidden">
              <AnimatePresence mode="wait"> {/* Use mode="wait" for smooth transitions between states */}
                {isLoading ? (
+                 // Loading Skeletons
                  <motion.div
                     key="loading"
                     variants={statusAreaVariants}
@@ -107,6 +108,7 @@ export function LoadingSimulationCard() {
                     <Skeleton className="h-4 md:h-5 w-1/2" />
                  </motion.div>
                ) : mockData ? (
+                 // Success Message
                  <motion.div
                     key="success"
                     variants={statusAreaVariants}
@@ -115,12 +117,14 @@ export function LoadingSimulationCard() {
                     exit="exit"
                     className="flex items-center justify-center gap-2 text-center text-sm sm:text-base md:text-lg text-green-600 dark:text-green-400 font-medium"
                   >
+                     {/* Animated Check Icon */}
                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1, type: "spring" }}>
                        <Check className="h-5 w-5 sm:h-6 sm:w-6" />
                      </motion.div>
                      <span>{mockData}</span>
                  </motion.div>
                ) : (
+                 // Initial Prompt
                  <motion.p
                     key="initial"
                     variants={statusAreaVariants}

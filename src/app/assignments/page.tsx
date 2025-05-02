@@ -1,12 +1,11 @@
-
-'use client';
+"use client"; // Mark as Client Component for Framer Motion and Link
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button"; // Ensure Button is imported
 import { ListChecks, CheckCircle, Clock, CircleHelp, FileText } from "lucide-react";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import Link from "next/link"; // Import Next.js Link
 
 // Mock assignment data
 const assignments = [
@@ -25,6 +24,7 @@ type StatusProps = {
   textColorClass: string; // Added text color class for consistency
 };
 
+// Function to get status properties
 const getStatusProps = (status: string): StatusProps => {
   switch (status.toLowerCase()) {
     case 'submitted': return { variant: 'secondary', icon: CheckCircle, borderColorClass: 'border-blue-500', textColorClass: 'text-blue-600 dark:text-blue-400' }; // Blue for submitted
@@ -34,6 +34,7 @@ const getStatusProps = (status: string): StatusProps => {
   }
 };
 
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -117,14 +118,15 @@ export default function AssignmentsPage() {
                    </p>
                     {/* Added hover animation to the button's container */}
                     <motion.div whileHover={{ scale: 1.05 }} className="self-end sm:self-center">
-                        <Link href={`/assignments/${assignment.id}`} passHref>
-                             <Button variant="outline" size="sm" className="group transition-all hover:bg-primary hover:text-primary-foreground text-xs sm:text-sm md:text-base md:py-2 md:px-4"> {/* Responsive button */}
+                         {/* Add link or button to view/submit assignment */}
+                          <Button variant="outline" size="sm" asChild className="group transition-all hover:bg-primary hover:text-primary-foreground text-xs sm:text-sm md:text-base md:py-2 md:px-4"> {/* Responsive button */}
+                             <Link href={`/assignments/${assignment.id}`}>
                                View Details
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3.5 sm:size-4 md:size-5 ml-1.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"> {/* Responsive Icon */}
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                 </svg>
-                             </Button>
-                        </Link>
+                             </Link>
+                          </Button>
                     </motion.div>
                  </CardContent>
               </Card>

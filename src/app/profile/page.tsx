@@ -1,6 +1,6 @@
+"use client"; // Mark as Client Component for state, effects, and interactivity
 
-'use client';
-
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2, Upload, Lock, KeyRound } from "lucide-react"; // Added Lock, KeyRound
+import { UserCircle, Mail, Edit3, Save, Settings, Bell, Moon, Trash2, Upload, Lock, KeyRound, Loader } from "lucide-react"; // Added Loader
 import { motion, AnimatePresence } from "framer-motion"; // Import AnimatePresence
-import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -31,6 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod"; // Import zodResolver
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"; // Import Form components
 
 
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -117,6 +117,7 @@ export default function ProfilePage() {
   useEffect(() => {
     let loadedProfile = { ...defaultUser }; // Start with default
 
+    // Ensure this code only runs on the client
     if (typeof window !== 'undefined') {
       const storedName = localStorage.getItem('userName');
       const storedEmail = localStorage.getItem('userEmail');
@@ -128,11 +129,9 @@ export default function ProfilePage() {
       loadedProfile = {
         name: storedName || defaultUser.name,
         email: storedEmail || defaultUser.email,
-        // Use stored avatar URL if available, otherwise fallback
         avatarUrl: storedAvatarUrl || `https://picsum.photos/seed/${storedEmail || 'default-user'}/200`,
         bio: storedBio || defaultUser.bio,
         emailNotifications: storedNotifications ? storedNotifications === 'true' : defaultUser.emailNotifications,
-        // Explicitly check stored dark mode preference
         darkMode: storedDarkMode === 'true',
       };
 
@@ -159,45 +158,46 @@ export default function ProfilePage() {
   };
 
  const handleSwitchChange = (checked: boolean, id: keyof UserProfile | 'darkMode' | 'emailNotifications') => {
+    // Ensure this runs only on the client
+    if (typeof window === 'undefined') return;
+
     if (id === 'darkMode' || id === 'emailNotifications') {
         setProfile((prevProfile) => ({
             ...prevProfile,
             [id]: checked,
         }));
 
-        // Apply dark mode immediately and save to localStorage
+        // Save preference to localStorage
         if (id === 'darkMode') {
+            localStorage.setItem('userDarkMode', String(checked));
+             // Apply theme change immediately
             if (checked) {
-                document.documentElement.classList.add('dark');
+              document.documentElement.classList.add('dark');
             } else {
-                document.documentElement.classList.remove('dark');
+              document.documentElement.classList.remove('dark');
             }
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('userDarkMode', String(checked));
-                // Trigger storage event to ensure header theme updates if it listens
-                window.dispatchEvent(new Event('storage'));
-            }
-        }
-        // Save notification preference to localStorage
-        if (id === 'emailNotifications' && typeof window !== 'undefined') {
+        } else if (id === 'emailNotifications') {
             localStorage.setItem('userEmailNotifications', String(checked));
-            // Optional: Trigger storage event if needed elsewhere
-            // window.dispatchEvent(new Event('storage'));
         }
+
+        // Trigger storage event to allow header (or other components) to react if needed
+        window.dispatchEvent(new Event('storage'));
     }
  };
 
   const handleProfileSave = () => {
+    // Ensure this runs only on the client
+    if (typeof window === 'undefined') return;
+
     console.log("Saving profile:", profile);
-     if (typeof window !== 'undefined') {
-        // Only save fields that are editable in this section (name, bio)
-        localStorage.setItem('userName', profile.name);
-        localStorage.setItem('userBio', profile.bio);
-        // Ensure avatar URL is saved if it was changed
-        localStorage.setItem('userAvatarUrl', profile.avatarUrl);
-        // Trigger storage event to update header etc.
-        window.dispatchEvent(new Event('storage'));
-     }
+    // Only save fields that are editable in this section (name, bio)
+    localStorage.setItem('userName', profile.name);
+    localStorage.setItem('userBio', profile.bio);
+    // Ensure avatar URL is saved if it was changed
+    localStorage.setItem('userAvatarUrl', profile.avatarUrl);
+    // Trigger storage event to update header etc.
+    window.dispatchEvent(new Event('storage'));
+
     setIsEditingProfile(false);
     toast({
       title: "Profile Updated",
@@ -236,20 +236,23 @@ export default function ProfilePage() {
     };
 
    const handleDeleteAccount = () => {
+     // Ensure this runs only on the client
+     if (typeof window === 'undefined') return;
+
      console.log("Attempting to delete account...");
-      if (typeof window !== 'undefined') {
-        localStorage.clear(); // Clear all local storage data
-        window.dispatchEvent(new Event('storage')); // Notify header/other components
-        document.documentElement.classList.remove('dark'); // Reset dark mode visually
-      }
+    localStorage.clear(); // Clear all local storage data
+    window.dispatchEvent(new Event('storage')); // Notify header/other components
+    document.documentElement.classList.remove('dark'); // Reset dark mode visually
+
      toast({
        title: "Account Deleted",
        description: "Your account and data have been removed. Redirecting...",
        variant: "destructive",
      });
      // Redirect to signup page after a short delay
+     // Using window.location.href for simple client-side redirect after clearing storage
      setTimeout(() => {
-         window.location.href = '/signup'; // Use standard redirect after clearing storage
+         window.location.href = '/signup';
      }, 1500); // Delay to allow toast visibility
    };
 
@@ -291,6 +294,7 @@ export default function ProfilePage() {
            // Trigger storage event to update header
            window.dispatchEvent(new Event('storage'));
        }
+
         toast({
             title: "Avatar Updated",
             description: "Your profile picture has been changed.",
@@ -703,4 +707,3 @@ export default function ProfilePage() {
     </motion.div>
   );
 }
-

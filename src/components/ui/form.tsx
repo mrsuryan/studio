@@ -1,4 +1,3 @@
-"use client"
 
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
@@ -135,7 +134,7 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-[0.8rem] text-muted-foreground", className)} // Adjusted text size
       {...props}
     />
   )
@@ -157,7 +156,7 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
+      className={cn("text-[0.8rem] font-medium text-destructive", className)} // Adjusted text size
       {...props}
     >
       {body}
