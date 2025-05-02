@@ -123,7 +123,7 @@ export default function ProfilePage() {
       const storedEmail = localStorage.getItem('userEmail');
       const storedBio = localStorage.getItem('userBio');
       const storedNotifications = localStorage.getItem('userEmailNotifications');
-      const storedDarkMode = localStorage.getItem('userDarkMode');
+      const storedDarkMode = localStorage.getItem('userDarkMode'); // Load only from storage
       const storedAvatarUrl = localStorage.getItem('userAvatarUrl'); // Load stored avatar URL
 
       loadedProfile = {
@@ -132,10 +132,11 @@ export default function ProfilePage() {
         avatarUrl: storedAvatarUrl || `https://picsum.photos/seed/${storedEmail || 'default-user'}/200`,
         bio: storedBio || defaultUser.bio,
         emailNotifications: storedNotifications ? storedNotifications === 'true' : defaultUser.emailNotifications,
+        // Explicitly set dark mode based ONLY on localStorage preference, defaulting to false
         darkMode: storedDarkMode === 'true',
       };
 
-      // Apply initial dark mode based *only* on stored preference
+       // Apply initial dark mode based *only* on stored preference
       if (loadedProfile.darkMode) {
         document.documentElement.classList.add('dark');
       } else {
@@ -157,33 +158,32 @@ export default function ProfilePage() {
     }));
   };
 
- const handleSwitchChange = (checked: boolean, id: keyof UserProfile | 'darkMode' | 'emailNotifications') => {
+ // Handle switch change for notifications and dark mode
+ const handleSwitchChange = (checked: boolean, id: 'darkMode' | 'emailNotifications') => {
     // Ensure this runs only on the client
     if (typeof window === 'undefined') return;
 
-    if (id === 'darkMode' || id === 'emailNotifications') {
-        setProfile((prevProfile) => ({
-            ...prevProfile,
-            [id]: checked,
-        }));
+    setProfile((prevProfile) => ({
+        ...prevProfile,
+        [id]: checked,
+    }));
 
-        // Save preference to localStorage
-        if (id === 'darkMode') {
-            localStorage.setItem('userDarkMode', String(checked));
-             // Apply theme change immediately
-            if (checked) {
-              document.documentElement.classList.add('dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-            }
-        } else if (id === 'emailNotifications') {
-            localStorage.setItem('userEmailNotifications', String(checked));
+    // Save preference to localStorage and apply theme change if needed
+    localStorage.setItem(id === 'darkMode' ? 'userDarkMode' : 'userEmailNotifications', String(checked));
+
+    if (id === 'darkMode') {
+        // Apply theme change immediately based on manual switch state
+        if (checked) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
-
-        // Trigger storage event to allow header (or other components) to react if needed
-        window.dispatchEvent(new Event('storage'));
     }
+
+    // Trigger storage event to allow header (or other components) to react if needed
+    window.dispatchEvent(new Event('storage'));
  };
+
 
   const handleProfileSave = () => {
     // Ensure this runs only on the client

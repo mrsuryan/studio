@@ -98,13 +98,8 @@ export default function LoginPage() {
     // Maintain dark mode preference or default to false
     const storedDarkMode = localStorage.getItem('userDarkMode') === 'true';
     localStorage.setItem('userDarkMode', String(storedDarkMode));
-    // Apply theme based on preference
-    // Theme applying logic removed - handled in profile page now
-    // if (storedDarkMode) {
-    //      document.documentElement.classList.add('dark');
-    // } else {
-    //      document.documentElement.classList.remove('dark');
-    // }
+    // Theme application is now handled in the profile page useEffect
+
     // Set a default avatar URL based on email hash
     localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`);
 

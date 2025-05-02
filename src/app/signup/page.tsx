@@ -91,10 +91,7 @@ export default function SignupPage() {
      // Trigger storage event to update header immediately
      window.dispatchEvent(new Event('storage'));
 
-     // Apply initial theme based on default (light)
-     // Theme applying logic removed - handled in profile page now
-     // document.documentElement.classList.remove('dark');
-
+     // Theme application is now handled in the profile page useEffect
 
      toast({
       title: "Signup Successful!",
