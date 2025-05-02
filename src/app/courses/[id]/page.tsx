@@ -60,7 +60,7 @@ const moduleItemVariants = {
 
 export default function CourseDetailPage() { // Removed props parameter
   const router = useRouter(); // Initialize router
-  const params = React.use(useParams()); // Unwrap params promise
+  const params = useParams(); // Get params directly
   const courseId = parseInt(params.id as string, 10); // Extract and parse the ID
   // In a real app, fetch course data based on ID. For now, find in mock data.
   const course = allCourses.find(c => c.id === courseId);
