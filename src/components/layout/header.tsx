@@ -1,9 +1,10 @@
+
 "use client"; // Mark as Client Component for hooks and interactivity
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation'; // Use App Router hooks
-import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, Rocket, X, Menu } from 'lucide-react';
+import { BookOpen, LogIn, LogOut, UserPlus, LayoutDashboard, ClipboardList, Activity, User, Search, Rocket, X, Menu, Mail } from 'lucide-react'; // Added Mail for Contact
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -51,15 +52,17 @@ export function Header() {
   const { toast } = useToast();
 
   // Config
-  const hideSearchOnRoutes = ['/login', '/signup'];
+  const hideSearchOnRoutes = ['/login', '/signup', '/contact']; // Hide search on contact too
   const shouldHideSearch = hideSearchOnRoutes.includes(pathname);
 
+  // Updated navItems array
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
     { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
-    { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true }, // Added Assignments link back
+    { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true },
     { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
     { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true },
+    { href: "/contact", label: "Contact", icon: Mail, requiresLogin: false }, // Added Contact link
   ];
 
   // --- Effects ---
@@ -170,7 +173,7 @@ export function Header() {
 
   // --- Animation Variants ---
   const searchContainerVariants = {
-    unfocused: { width: '25%' }, // Start smaller
+    unfocused: { width: '30%' }, // Slightly larger start width
     focused: { width: '50%' },   // Expand on focus
   };
 
@@ -344,16 +347,15 @@ export function Header() {
                 // User Dropdown and Mobile Menu Trigger (Logged In)
                 <>
                     <DropdownMenu>
-                       <DropdownMenuTrigger asChild className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                          {/* Wrap trigger content in a div or span if necessary */}
-                           <div>
+                       <DropdownMenuTrigger asChild>
+                           <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                               <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
                                 <AvatarImage src={avatarUrl} alt={userName} />
                                 <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
                                   {getInitials(userName)}
                                 </AvatarFallback>
                               </Avatar>
-                           </div>
+                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                         <DropdownMenuLabel className="font-normal">
@@ -414,7 +416,7 @@ export function Header() {
                                 </SheetClose>
                              </SheetHeader>
                              {/* Mobile Search */}
-                             {!shouldHideSearch && (
+                             {!shouldHideSearch && isLoggedIn && (
                                  <div className="p-4 border-b">
                                      <form onSubmit={handleSearchSubmit} className="relative">
                                          {/* Search Icon */}
@@ -429,7 +431,7 @@ export function Header() {
                                             {/* Search Input */}
                                             <Input
                                                 type="search"
-                                                placeholder={isSearchFocused ? "Enter keywords..." : "Search courses..."}
+                                                placeholder={isSearchFocused ? "Enter keywords..." : "Search..."}
                                                 value={searchQuery}
                                                 onChange={handleSearchChange}
                                                 onFocus={() => setIsSearchFocused(true)}
@@ -438,7 +440,7 @@ export function Header() {
                                                     "w-full rounded-full bg-muted pl-8 sm:pl-9 pr-8 py-2 h-9 sm:h-10 text-sm sm:text-base focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:ring-1 transition-all duration-300 ease-in-out shadow-inner hover:shadow-md focus:shadow-lg focus:bg-background focus:ring-2",
                                                     isSearchFocused ? "pr-8" : "pr-4"
                                                 )}
-                                                aria-label="Search courses"
+                                                aria-label="Search"
                                             />
                                             {/* Clear Search Button */}
                                           <AnimatePresence>
@@ -499,22 +501,93 @@ export function Header() {
                     </Sheet>
                 </>
               ) : (
-                // Login/Signup Buttons (Logged Out)
+                // Login/Signup Buttons (Logged Out) and Mobile Menu Trigger
                 <>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden sm:block">
                         <Button variant="ghost" size="sm" asChild className="text-xs px-1.5 sm:text-sm sm:px-3">
                           <Link href="/login">
                              <LogIn className="mr-1 sm:mr-2 h-4 w-4" /> Login
                           </Link>
                         </Button>
                     </motion.div>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden sm:block">
                         <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-shadow text-xs px-1.5 sm:text-sm sm:px-3">
                           <Link href="/signup">
                             <UserPlus className="mr-1 sm:mr-2 h-4 w-4" /> Sign Up
                           </Link>
                         </Button>
                     </motion.div>
+                     {/* Mobile Menu Sheet Trigger (Logged Out) */}
+                     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                        <SheetTrigger asChild className="md:hidden">
+                             <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:w-10">
+                                    <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
+                                <span className="sr-only">Toggle Menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
+                             <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
+                                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                                 <SheetDescription className="sr-only">Main navigation links and user options.</SheetDescription>
+                                <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
+                                     <motion.svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 24 24"
+                                          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                          className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
+                                          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                                          <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+                                          <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
+                                      </motion.svg>
+                                     <span className="font-bold text-lg text-primary">EduHub Portal</span>
+                                 </Link>
+                                 <SheetClose asChild>
+                                    <Button variant="ghost" size="icon" className="rounded-full">
+                                        <X className="h-4 w-4" />
+                                        <span className="sr-only">Close</span>
+                                    </Button>
+                                </SheetClose>
+                             </SheetHeader>
+                             {/* Mobile Navigation (Logged Out) */}
+                             <nav className="flex-1 overflow-y-auto py-4 space-y-1">
+                                {/* Only show non-login required items */}
+                                 {navItems.filter(item => !item.requiresLogin).map((item) => {
+                                     const isActive = pathname === item.href;
+                                     return (
+                                         <SheetClose asChild key={item.href}>
+                                              <Link
+                                                 href={item.href}
+                                                 className={cn(
+                                                     "flex items-center gap-3 px-4 py-2.5 rounded-md text-base font-medium transition-colors",
+                                                     isActive ? "bg-primary/10 text-primary font-semibold" : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                                                 )}
+                                             >
+                                                 <item.icon className="h-5 w-5" />
+                                                 {item.label}
+                                             </Link>
+                                         </SheetClose>
+                                     );
+                                 })}
+                             </nav>
+                             {/* Mobile Login/Signup Buttons */}
+                             <SheetFooter className="p-4 mt-auto border-t grid grid-cols-2 gap-2">
+                                  <SheetClose asChild>
+                                      <Button variant="outline" asChild>
+                                          <Link href="/login">
+                                            <LogIn className="mr-2 h-4 w-4" /> Login
+                                          </Link>
+                                       </Button>
+                                   </SheetClose>
+                                   <SheetClose asChild>
+                                       <Button variant="default" asChild>
+                                           <Link href="/signup">
+                                             <UserPlus className="mr-2 h-4 w-4" /> Sign Up
+                                           </Link>
+                                       </Button>
+                                   </SheetClose>
+                             </SheetFooter>
+                        </SheetContent>
+                    </Sheet>
                 </>
               )
            }
