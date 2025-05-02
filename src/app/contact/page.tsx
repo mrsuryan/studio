@@ -1,10 +1,11 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { motion } from 'framer-motion';
-import { Mail, Send, User, MessageSquare } from 'lucide-react'; // Import relevant icons
+import { Mail, Send, User, MessageSquare, Star } from 'lucide-react'; // Added Star icon
 
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +34,7 @@ const formSchema = z.object({
   message: z.string().min(10, {
     message: 'Message must be at least 10 characters.',
   }),
+  feedback: z.string().optional(), // Added optional feedback field
 });
 
 // Animation variants
@@ -65,15 +67,16 @@ export default function ContactPage() {
       email: '',
       subject: '',
       message: '',
+      feedback: '', // Initialize feedback field
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('Contact form submitted:', values);
+    console.log('Contact form submitted:', values); // Include feedback in log
     // Simulate sending the message
     toast({
       title: 'Message Sent!',
-      description: 'Thank you for contacting us. We will get back to you soon.',
+      description: 'Thank you for contacting us and providing feedback. We will get back to you soon.', // Updated toast message
     });
     form.reset(); // Reset form after submission
   }
@@ -99,7 +102,7 @@ export default function ContactPage() {
                    <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">Contact Us</CardTitle>
                 </motion.div>
                 <motion.div variants={itemVariants} transition={{ delay: 0.1 }}>
-                   <CardDescription className="text-base sm:text-lg md:text-xl">Have questions? Fill out the form below.</CardDescription>
+                   <CardDescription className="text-base sm:text-lg md:text-xl">Have questions or feedback? Fill out the form below.</CardDescription> {/* Updated description */}
                 </motion.div>
              </CardHeader>
              <CardContent className="p-6 sm:p-8">
@@ -171,6 +174,22 @@ export default function ContactPage() {
                        )}
                      />
                    </motion.div>
+                   {/* Added Feedback Field */}
+                   <motion.div variants={itemVariants}>
+                     <FormField
+                       control={form.control}
+                       name="feedback"
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel className="text-sm sm:text-base md:text-lg flex items-center gap-1.5"><Star className="h-4 w-4" /> Feedback (Optional)</FormLabel>
+                           <FormControl>
+                             <Textarea placeholder="Share your thoughts or suggestions..." {...field} className="min-h-[80px] sm:min-h-[100px] md:min-h-[120px] text-sm sm:text-base md:text-lg" />
+                           </FormControl>
+                           <FormMessage />
+                         </FormItem>
+                       )}
+                     />
+                   </motion.div>
                    <motion.div
                      variants={itemVariants}
                      whileHover={{ scale: 1.02 }}
@@ -189,3 +208,4 @@ export default function ContactPage() {
     </motion.div>
   );
 }
+
