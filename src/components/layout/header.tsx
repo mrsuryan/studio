@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion, AnimatePresence } from 'framer-motion';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
@@ -344,8 +344,8 @@ export function Header() {
                 // User Dropdown and Mobile Menu Trigger (Logged In)
                 <>
                     <DropdownMenu>
+                         {/* Ensure DropdownMenuTrigger has only one direct child */}
                         <DropdownMenuTrigger asChild>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                                 <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
                                 <AvatarImage src={avatarUrl} alt={userName} />
@@ -354,7 +354,6 @@ export function Header() {
                                 </AvatarFallback>
                                 </Avatar>
                             </Button>
-                            </motion.div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                         <DropdownMenuLabel className="font-normal">
@@ -382,17 +381,16 @@ export function Header() {
 
                     {/* Mobile Menu Sheet */}
                     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                         {/* Ensure SheetTrigger has only one direct child */}
                         <SheetTrigger asChild className="md:hidden">
                              <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:w-10">
-                                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                                     <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
-                                </motion.div>
                                 <span className="sr-only">Toggle Menu</span>
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                <SheetTitle asChild>
+                                <SheetTitle>
                                     <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
                                          {/* Use the same motion SVG as the main header */}
                                          <motion.svg
@@ -407,7 +405,7 @@ export function Header() {
                                          <span className="font-bold text-lg text-primary">EduHub Portal</span>
                                      </Link>
                                  </SheetTitle>
-                                 {/* Close button is implicitly added by SheetContent */}
+                                 {/* SheetClose is implicitly handled by SheetContent */}
                              </SheetHeader>
                              {/* Mobile Search */}
                              {!shouldHideSearch && (
