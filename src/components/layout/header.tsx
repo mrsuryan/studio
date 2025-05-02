@@ -34,7 +34,7 @@ import {
 import { allCourses, Course } from '@/data/courses'; // Import course data and type
 import Image from 'next/image'; // Import Image for suggestions
 // Correctly import the Command wrapper and its parts
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import * as React from "react"; // Import React
 
 export function Header() {
@@ -216,8 +216,8 @@ export function Header() {
 
   // --- Animation Variants ---
   const searchContainerVariants = {
-    unfocused: { width: '30%' },
-    focused: { width: '50%' },
+    unfocused: { width: '30%' }, // Keep unfocused width smaller
+    focused: { width: '60%' }, // Increase focused width
   };
 
   const searchIconVariants = {
@@ -300,7 +300,7 @@ export function Header() {
                }}>
                   <PopoverAnchor asChild>
                       <motion.div
-                         className="w-full max-w-md" // Container for PopoverAnchor and Input
+                         className="w-full max-w-lg" // INCREASED max-width for the container
                          variants={searchContainerVariants}
                          initial="unfocused"
                          animate={isSearchFocused ? 'focused' : 'unfocused'}
