@@ -57,7 +57,7 @@ export function Header() {
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
     { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
-    { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true },
+    // { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true }, // Removed Assignments link
     { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
     { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true },
   ];
@@ -344,13 +344,16 @@ export function Header() {
                 // User Dropdown and Mobile Menu Trigger (Logged In)
                 <>
                     <DropdownMenu>
-                       <DropdownMenuTrigger className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                          <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
-                            <AvatarImage src={avatarUrl} alt={userName} />
-                            <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                              {getInitials(userName)}
-                            </AvatarFallback>
-                          </Avatar>
+                       <DropdownMenuTrigger asChild className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                          {/* Wrap trigger content in a div or span if necessary */}
+                           <div>
+                              <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
+                                <AvatarImage src={avatarUrl} alt={userName} />
+                                <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                                  {getInitials(userName)}
+                                </AvatarFallback>
+                              </Avatar>
+                           </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                         <DropdownMenuLabel className="font-normal">
@@ -386,21 +389,23 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                <SheetTitle>
-                                    <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
-                                         {/* Use the same motion SVG as the main header */}
-                                         <motion.svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              viewBox="0 0 24 24"
-                                              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                                              className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
-                                              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                                              <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
-                                              <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
-                                          </motion.svg>
-                                         <span className="font-bold text-lg text-primary">EduHub Portal</span>
-                                     </Link>
-                                 </SheetTitle>
+                                {/* Add an accessible title for screen readers */}
+                                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                                 {/* Optional: Add a description if needed */}
+                                 <SheetDescription className="sr-only">Main navigation links and user options.</SheetDescription>
+                                <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
+                                     {/* Use the same motion SVG as the main header */}
+                                     <motion.svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 24 24"
+                                          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                          className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
+                                          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                                          <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+                                          <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
+                                      </motion.svg>
+                                     <span className="font-bold text-lg text-primary">EduHub Portal</span>
+                                 </Link>
                                  <SheetClose asChild>
                                     <Button variant="ghost" size="icon" className="rounded-full">
                                         <X className="h-4 w-4" />
