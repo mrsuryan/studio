@@ -8,7 +8,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
-import { useToast } from "@/hooks/use-toast" // Correct import path
+import { useToast } from "@/hooks/use-toast"; // Correct import path
 
 
 export function Toaster() {

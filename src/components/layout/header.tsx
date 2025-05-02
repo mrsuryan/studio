@@ -392,21 +392,22 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
-                                     {/* Use the same motion SVG as the main header */}
-                                     <motion.svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          viewBox="0 0 24 24"
-                                          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                                          className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
-                                          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                                          <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
-                                          <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
-                                      </motion.svg>
-                                     {/* Add SheetTitle for accessibility */}
-                                      <SheetTitle className="font-bold text-lg text-primary">EduHub Portal</SheetTitle>
-                                 </Link>
-                                 {/* Close button is implicitly added by SheetContent now */}
+                                <SheetTitle asChild>
+                                    <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
+                                         {/* Use the same motion SVG as the main header */}
+                                         <motion.svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              viewBox="0 0 24 24"
+                                              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                              className="h-7 w-7 text-primary transition-transform duration-300 group-hover:rotate-[10deg]">
+                                              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                                              <path d="M12 11.5 6.5 8.5 12 5.5l5.5 3z"/>
+                                              <path d="m6.5 14 5.5 3 5.5-3"/><path d="M12 14.5V19"/>
+                                          </motion.svg>
+                                         <span className="font-bold text-lg text-primary">EduHub Portal</span>
+                                     </Link>
+                                 </SheetTitle>
+                                 {/* Close button is implicitly added by SheetContent */}
                              </SheetHeader>
                              {/* Mobile Search */}
                              {!shouldHideSearch && (
@@ -478,17 +479,16 @@ export function Header() {
                              </nav>
                              {/* Mobile Logout Button */}
                              <SheetFooter className="p-4 mt-auto border-t">
-                                 <Button
-                                     variant="outline"
-                                     className="w-full flex items-center justify-center gap-2 text-destructive border-destructive hover:bg-destructive/10"
-                                     onClick={() => {
-                                         handleLogout();
-                                         setIsMobileMenuOpen(false); // Close menu on logout
-                                     }}
-                                  >
-                                     <LogOut className="mr-2 h-4 w-4" />
-                                     <span>Log out</span>
-                                 </Button>
+                                 <SheetClose asChild>
+                                     <Button
+                                         variant="outline"
+                                         className="w-full flex items-center justify-center gap-2 text-destructive border-destructive hover:bg-destructive/10"
+                                         onClick={handleLogout}
+                                      >
+                                         <LogOut className="mr-2 h-4 w-4" />
+                                         <span>Log out</span>
+                                     </Button>
+                                 </SheetClose>
                              </SheetFooter>
                         </SheetContent>
                     </Sheet>
