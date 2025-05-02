@@ -1,5 +1,5 @@
+"use client"; // Ensure this component runs only on the client
 
-import { useToast } from "@/hooks/use-toast"
 import {
   Toast,
   ToastClose,
@@ -8,9 +8,11 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
+import { useToast } from "@/hooks/use-toast" // Correct import path
+
 
 export function Toaster() {
-  const { toasts } = useToast()
+  const { toasts } = useToast() // Use the hook
 
   return (
     <ToastProvider>

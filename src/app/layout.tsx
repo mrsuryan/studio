@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/layout/header";
+import { FooterContent } from "@/components/layout/footer-content"; // Import the new component
 import { Toaster } from "@/components/ui/toaster";
 import { SpeedInsights } from "@vercel/speed-insights/next"; // Import Speed Insights
 
@@ -29,10 +30,10 @@ export const metadata: Metadata = {
     // locale: "en_US",
     type: "website",
   },
-  // icons: {
-  //   icon: "/favicon.ico", // Ensure favicon exists in /public
-  //   apple: "/apple-touch-icon.png", // Ensure apple touch icon exists in /public
-  // },
+  icons: { // Correctly placed icons definition
+     icon: "/favicon.ico", // Ensure favicon exists in /public
+     // apple: "/apple-touch-icon.png", // Ensure apple touch icon exists in /public
+   },
 };
 
 export const viewport: Viewport = {
@@ -52,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning> {/* Added suppressHydrationWarning as a safety net if minor mismatches persist */}
        {/* Add preconnect links for performance */}
        <head>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -74,10 +75,8 @@ export default function RootLayout({
 
           {/* Footer */}
           <footer className="mt-auto py-4 sm:py-6 border-t border-border/50 bg-background/50">
-            <div className="container text-center text-muted-foreground text-xs sm:text-sm">
-               {/* Use JavaScript Date object for dynamic year */}
-               © {new Date().getFullYear()} EduHub Portal. All rights reserved.
-            </div>
+             {/* Use the new client component for the footer content */}
+             <FooterContent />
           </footer>
 
           {/* Global Toaster for Notifications */}
