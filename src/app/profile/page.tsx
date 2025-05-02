@@ -28,6 +28,7 @@ import * as z from "zod"; // Import Zod
 import { useForm } from "react-hook-form"; // Import useForm
 import { zodResolver } from "@hookform/resolvers/zod"; // Import zodResolver
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"; // Import Form components
+import * as React from 'react'; // Import React
 
 
 // Animation Variants
@@ -113,7 +114,7 @@ export default function ProfilePage() {
       },
     });
 
-  // Load user data from localStorage on mount
+  // Load user data and apply theme from localStorage on mount
   useEffect(() => {
     let loadedProfile = { ...defaultUser }; // Start with default
 
@@ -168,11 +169,11 @@ export default function ProfilePage() {
         [id]: checked,
     }));
 
-    // Save preference to localStorage and apply theme change if needed
+    // Save preference to localStorage
     localStorage.setItem(id === 'darkMode' ? 'userDarkMode' : 'userEmailNotifications', String(checked));
 
+    // Apply theme change immediately if dark mode was toggled
     if (id === 'darkMode') {
-        // Apply theme change immediately based on manual switch state
         if (checked) {
           document.documentElement.classList.add('dark');
         } else {

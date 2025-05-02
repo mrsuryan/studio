@@ -8,6 +8,7 @@ import { Header } from "@/components/layout/header";
 import { FooterContent } from "@/components/layout/footer-content"; // Import the new component
 import { Toaster } from "@/components/ui/toaster";
 import { SpeedInsights } from "@vercel/speed-insights/next"; // Import Speed Insights
+import * as React from 'react'; // Import React
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -53,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>{/* Added suppressHydrationWarning as a safety net if minor mismatches persist */}
+    <html lang="en">{/* Removed suppressHydrationWarning */}
       {/* Add preconnect links for performance */}
       <head>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
