@@ -54,8 +54,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning> {/* Added suppressHydrationWarning as a safety net if minor mismatches persist */}
-       {/* Add preconnect links for performance */}
-       <head>
+      {/* Add preconnect links for performance */}
+      <head>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://picsum.photos" />
       </head>
