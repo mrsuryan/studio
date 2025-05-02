@@ -304,7 +304,7 @@ export function Header() {
                }}>
                   <PopoverAnchor asChild>
                       <motion.div
-                         className="w-full max-w-xl lg:max-w-3xl" // Adjusted max-width for the container
+                         className="w-full max-w-[1000px]" // Set max-width to 1000px
                          variants={searchContainerVariants}
                          initial="unfocused"
                          animate={isSearchFocused ? 'focused' : 'unfocused'}
@@ -697,5 +697,3 @@ export function Header() {
     </motion.header>
   );
 }
-
-    
