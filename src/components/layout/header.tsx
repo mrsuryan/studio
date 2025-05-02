@@ -52,17 +52,17 @@ export function Header() {
   const { toast } = useToast();
 
   // Config
-  const hideSearchOnRoutes = ['/login', '/signup', '/contact']; // Hide search on contact too
+  const hideSearchOnRoutes = ['/login', '/signup']; // Routes to hide search bar
   const shouldHideSearch = hideSearchOnRoutes.includes(pathname);
 
-  // Updated navItems array
+  // Updated navItems array (Removed Contact)
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
     { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
     { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true },
     { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
     { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true },
-    { href: "/contact", label: "Contact", icon: Mail, requiresLogin: false }, // Added Contact link
+    // Removed: { href: "/contact", label: "Contact", icon: Mail, requiresLogin: false },
   ];
 
   // --- Effects ---
@@ -133,10 +133,6 @@ export function Header() {
 
     // Trigger storage event to notify other components (like this header)
     window.dispatchEvent(new Event('storage'));
-
-    // Reset theme to system default (optional, depends on desired behavior)
-    // Removed automatic dark mode removal on logout
-    // document.documentElement.classList.remove('dark');
 
     toast({
       title: "Logged Out",
@@ -391,12 +387,9 @@ export function Header() {
                         </SheetTrigger>
                         <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 flex flex-col bg-background">
                              <SheetHeader className="p-4 border-b flex flex-row items-center justify-between">
-                                {/* Add an accessible title for screen readers */}
                                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                                 {/* Optional: Add a description if needed */}
                                  <SheetDescription className="sr-only">Main navigation links and user options.</SheetDescription>
                                 <Link href="/" className="flex items-center space-x-2 group" onClick={() => setIsMobileMenuOpen(false)}>
-                                     {/* Use the same motion SVG as the main header */}
                                      <motion.svg
                                           xmlns="http://www.w3.org/2000/svg"
                                           viewBox="0 0 24 24"
