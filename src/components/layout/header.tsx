@@ -344,16 +344,13 @@ export function Header() {
                 // User Dropdown and Mobile Menu Trigger (Logged In)
                 <>
                     <DropdownMenu>
-                         {/* Ensure DropdownMenuTrigger has only one direct child */}
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                                <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
-                                <AvatarImage src={avatarUrl} alt={userName} />
-                                <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
-                                    {getInitials(userName)}
-                                </AvatarFallback>
-                                </Avatar>
-                            </Button>
+                       <DropdownMenuTrigger className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                          <Avatar className="h-9 w-9 sm:h-10 sm:w-10 border border-primary/20">
+                            <AvatarImage src={avatarUrl} alt={userName} />
+                            <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                              {getInitials(userName)}
+                            </AvatarFallback>
+                          </Avatar>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                         <DropdownMenuLabel className="font-normal">
@@ -381,7 +378,6 @@ export function Header() {
 
                     {/* Mobile Menu Sheet */}
                     <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                         {/* Ensure SheetTrigger has only one direct child */}
                         <SheetTrigger asChild className="md:hidden">
                              <Button variant="ghost" size="icon" className="w-9 h-9 sm:w-10 sm:w-10">
                                     <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
