@@ -57,7 +57,7 @@ export function Header() {
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
     { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
-    // { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true }, // Removed Assignments link
+    { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true }, // Added Assignments link back
     { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
     { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true },
   ];
@@ -483,7 +483,6 @@ export function Header() {
                              </nav>
                              {/* Mobile Logout Button */}
                              <SheetFooter className="p-4 mt-auto border-t">
-                                  {/* Removed asChild here to fix the error */}
                                   <Button
                                      variant="outline"
                                      className="w-full flex items-center justify-center gap-2 text-destructive border-destructive hover:bg-destructive/10"
