@@ -1,4 +1,5 @@
 
+
 "use client"; // Mark as Client Component for hooks and interactivity
 
 import { useEffect, useState } from 'react';
@@ -55,14 +56,14 @@ export function Header() {
   const hideSearchOnRoutes = ['/login', '/signup']; // Routes to hide search bar
   const shouldHideSearch = hideSearchOnRoutes.includes(pathname);
 
-  // Updated navItems array (Removed Contact)
+  // Updated navItems array
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, requiresLogin: true },
     { href: "/courses", label: "Courses", icon: BookOpen, requiresLogin: true },
     { href: "/assignments", label: "Assignments", icon: ClipboardList, requiresLogin: true },
     { href: "/activities", label: "Activities", icon: Activity, requiresLogin: true },
     { href: "/interactive-demo", label: "Demo", icon: Rocket, requiresLogin: true },
-    // Removed: { href: "/contact", label: "Contact", icon: Mail, requiresLogin: false },
+    { href: "/contact", label: "Contact", icon: Mail, requiresLogin: false }, // Added Contact back
   ];
 
   // --- Effects ---
