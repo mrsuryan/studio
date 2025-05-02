@@ -219,8 +219,8 @@ export function Header() {
 
   // --- Animation Variants ---
   const searchContainerVariants = {
-    unfocused: { width: '60%' }, // Start wider
-    focused: { width: '80%' }, // Even wider when focused
+    unfocused: { width: '80%' }, // Start wider
+    focused: { width: '100%' }, // Even wider when focused
   };
 
   const searchIconVariants = {
@@ -304,7 +304,7 @@ export function Header() {
                }}>
                   <PopoverAnchor asChild>
                       <motion.div
-                         className="w-full max-w-3xl" // INCREASED max-width for the container
+                         className="w-full max-w-xl lg:max-w-3xl" // Adjusted max-width for the container
                          variants={searchContainerVariants}
                          initial="unfocused"
                          animate={isSearchFocused ? 'focused' : 'unfocused'}
@@ -359,7 +359,7 @@ export function Header() {
                   </PopoverAnchor>
 
                   <PopoverContent
-                      className="w-[--radix-popover-trigger-width] max-w-[600px] max-h-[400px] overflow-y-auto p-0 mt-1" // Increase width and max-width
+                      className="w-[--radix-popover-trigger-width] max-w-[1000px] max-h-[400px] overflow-y-auto p-0 mt-1" // Increase max-width to 1000px
                       align="start" // Align with start of the anchor
                       onOpenAutoFocus={(e) => e.preventDefault()} // Prevent stealing focus
                       onCloseAutoFocus={(e) => e.preventDefault()} // Prevent focus jump on close
@@ -697,3 +697,5 @@ export function Header() {
     </motion.header>
   );
 }
+
+    
