@@ -60,7 +60,7 @@ export default function SignupPage() {
 
   // Redirect if already logged in (client-side check)
    useEffect(() => {
-     if (localStorage.getItem('isLoggedIn') === 'true') {
+     if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
        router.push('/'); // Redirect to homepage
      }
    }, [router]); // Add router to dependency array
@@ -80,18 +80,20 @@ export default function SignupPage() {
      // In a real app, you would send this data to your backend to create the user account
      // For now, simulate success and store info in localStorage
 
-     localStorage.setItem('isLoggedIn', 'true');
-     localStorage.setItem('userName', values.name);
-     localStorage.setItem('userEmail', values.email);
-     localStorage.setItem('userBio', 'New user - ready to learn!'); // Default bio
-     localStorage.setItem('userEmailNotifications', 'true'); // Default notification setting
-     localStorage.setItem('userDarkMode', 'false'); // Default to light mode
-     localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`); // Default avatar on signup
+     if (typeof window !== 'undefined') {
+       localStorage.setItem('isLoggedIn', 'true');
+       localStorage.setItem('userName', values.name);
+       localStorage.setItem('userEmail', values.email);
+       localStorage.setItem('userBio', 'New user - ready to learn!'); // Default bio
+       localStorage.setItem('userEmailNotifications', 'true'); // Default notification setting
+       localStorage.setItem('userDarkMode', 'false'); // Default to light mode
+       localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`); // Default avatar on signup
 
-     // Trigger storage event to update header immediately
-     window.dispatchEvent(new Event('storage'));
+       // Trigger storage event to update header immediately
+       window.dispatchEvent(new Event('storage'));
 
-     // Theme application is now handled in the profile page useEffect
+       // Theme application is now handled in the profile page useEffect
+     }
 
      toast({
       title: "Signup Successful!",
@@ -151,9 +153,7 @@ export default function SignupPage() {
                                <Input placeholder="John Doe" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                              </FormControl>
                              <AnimatePresence>
-                               <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                  <FormMessage/>
-                                </motion.div>
                              </AnimatePresence>
                            </FormItem>
                          )}
@@ -171,9 +171,7 @@ export default function SignupPage() {
                                <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                              </FormControl>
                              <AnimatePresence>
-                               <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                  <FormMessage/>
-                                </motion.div>
                              </AnimatePresence>
                            </FormItem>
                          )}
@@ -191,9 +189,7 @@ export default function SignupPage() {
                                <Input type="password" placeholder="•••••••• (min. 6 characters)" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                              </FormControl>
                              <AnimatePresence>
-                               <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                  <FormMessage/>
-                                </motion.div>
                              </AnimatePresence>
                            </FormItem>
                          )}

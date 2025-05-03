@@ -57,7 +57,7 @@ export default function LoginPage() {
 
    // Redirect if already logged in (client-side check)
    useEffect(() => {
-     if (localStorage.getItem('isLoggedIn') === 'true') {
+     if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
        router.push('/'); // Redirect to homepage
      }
    }, [router]); // Add router to dependency array
@@ -84,27 +84,29 @@ export default function LoginPage() {
       ? nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
       : "User";
 
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', values.email);
-    localStorage.setItem('userName', userName); // Store derived name
-    // Set default bio if none exists
-    if (!localStorage.getItem('userBio')) {
-        localStorage.setItem('userBio', 'Learning enthusiast.');
-    }
-    // Set default notification preference if none exists
-    if (!localStorage.getItem('userEmailNotifications')) {
-        localStorage.setItem('userEmailNotifications', 'true');
-    }
-    // Maintain dark mode preference or default to false
-    const storedDarkMode = localStorage.getItem('userDarkMode') === 'true';
-    localStorage.setItem('userDarkMode', String(storedDarkMode));
-    // Theme application is now handled in the profile page useEffect
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', values.email);
+      localStorage.setItem('userName', userName); // Store derived name
+      // Set default bio if none exists
+      if (!localStorage.getItem('userBio')) {
+          localStorage.setItem('userBio', 'Learning enthusiast.');
+      }
+      // Set default notification preference if none exists
+      if (!localStorage.getItem('userEmailNotifications')) {
+          localStorage.setItem('userEmailNotifications', 'true');
+      }
+      // Maintain dark mode preference or default to false
+      const storedDarkMode = localStorage.getItem('userDarkMode') === 'true';
+      localStorage.setItem('userDarkMode', String(storedDarkMode));
+      // Theme application is now handled in the profile page useEffect
 
-    // Set a default avatar URL based on email hash
-    localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`);
+      // Set a default avatar URL based on email hash
+      localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`);
 
-    // Trigger storage event to update header immediately
-    window.dispatchEvent(new Event('storage'));
+      // Trigger storage event to update header immediately
+      window.dispatchEvent(new Event('storage'));
+    }
 
     toast({
       title: "Login Successful!",
@@ -132,7 +134,7 @@ export default function LoginPage() {
                  transition={{ delay: 0.2, type: "spring", stiffness: 150, damping: 10 }} // Spring animation for icon
                >
                   {/* Responsive Icon Size */}
-                  <LogIn className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mx-auto text-primary" />
+                  <LogIn className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:h-14 mx-auto text-primary" />
                 </motion.div>
                 {/* Responsive Titles */}
                 <motion.div variants={itemVariants}>
@@ -163,9 +165,7 @@ export default function LoginPage() {
                              <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence> {/* Animate error message appearance */}
-                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                <FormMessage/>
-                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}
@@ -183,9 +183,7 @@ export default function LoginPage() {
                              <Input type="password" placeholder="••••••••" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence>
-                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                <FormMessage/>
-                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}

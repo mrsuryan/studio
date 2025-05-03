@@ -125,9 +125,7 @@ export default function ContactPage() {
                              <Input placeholder="Your Name" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence>
-                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                <FormMessage/>
-                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}
@@ -144,9 +142,7 @@ export default function ContactPage() {
                              <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence>
-                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                <FormMessage/>
-                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}
@@ -163,9 +159,7 @@ export default function ContactPage() {
                               <Input placeholder="What is your message about?" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                             </FormControl>
                             <AnimatePresence>
-                              <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                 <FormMessage/>
-                               </motion.div>
                             </AnimatePresence>
                           </FormItem>
                         )}
@@ -182,9 +176,7 @@ export default function ContactPage() {
                              <Textarea placeholder="Your message..." {...field} className="min-h-[100px] sm:min-h-[120px] md:min-h-[150px] text-sm sm:text-base md:text-lg" />
                            </FormControl>
                            <AnimatePresence>
-                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                <FormMessage/>
-                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}
@@ -202,9 +194,7 @@ export default function ContactPage() {
                              <Textarea placeholder="Share your thoughts or suggestions..." {...field} className="min-h-[80px] sm:min-h-[100px] md:min-h-[120px] text-sm sm:text-base md:text-lg" />
                            </FormControl>
                            <AnimatePresence>
-                             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
                                <FormMessage/>
-                              </motion.div>
                            </AnimatePresence>
                          </FormItem>
                        )}

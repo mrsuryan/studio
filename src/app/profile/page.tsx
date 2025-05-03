@@ -101,6 +101,7 @@ export default function ProfilePage() {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile>(defaultUser);
+  const [hasMounted, setHasMounted] = useState(false); // Track mount state
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
   const { toast } = useToast();
 
@@ -114,42 +115,48 @@ export default function ProfilePage() {
       },
     });
 
+  // Track mount state
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   // Load user data and apply theme from localStorage on mount
   useEffect(() => {
+    // Ensure this runs only after mounting on the client
+    if (!hasMounted) return;
+
     let loadedProfile = { ...defaultUser }; // Start with default
 
-    // Ensure this code only runs on the client
-    if (typeof window !== 'undefined') {
-      const storedName = localStorage.getItem('userName');
-      const storedEmail = localStorage.getItem('userEmail');
-      const storedBio = localStorage.getItem('userBio');
-      const storedNotifications = localStorage.getItem('userEmailNotifications');
-      const storedDarkMode = localStorage.getItem('userDarkMode'); // Load only from storage
-      const storedAvatarUrl = localStorage.getItem('userAvatarUrl'); // Load stored avatar URL
+    const storedName = localStorage.getItem('userName');
+    const storedEmail = localStorage.getItem('userEmail');
+    const storedBio = localStorage.getItem('userBio');
+    const storedNotifications = localStorage.getItem('userEmailNotifications');
+    const storedDarkMode = localStorage.getItem('userDarkMode'); // Load only from storage
+    const storedAvatarUrl = localStorage.getItem('userAvatarUrl'); // Load stored avatar URL
 
-      loadedProfile = {
-        name: storedName || defaultUser.name,
-        email: storedEmail || defaultUser.email,
-        avatarUrl: storedAvatarUrl || `https://picsum.photos/seed/${storedEmail || 'default-user'}/200`,
-        bio: storedBio || defaultUser.bio,
-        emailNotifications: storedNotifications ? storedNotifications === 'true' : defaultUser.emailNotifications,
-        // Explicitly set dark mode based ONLY on localStorage preference, defaulting to false
-        darkMode: storedDarkMode === 'true',
-      };
-
-       // Apply initial dark mode based *only* on stored preference
-      if (loadedProfile.darkMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
+    loadedProfile = {
+      name: storedName || defaultUser.name,
+      email: storedEmail || defaultUser.email,
+      avatarUrl: storedAvatarUrl || `https://picsum.photos/seed/${storedEmail || 'default-user'}/200`,
+      bio: storedBio || defaultUser.bio,
+      emailNotifications: storedNotifications ? storedNotifications === 'true' : defaultUser.emailNotifications,
+      // Explicitly set dark mode based ONLY on localStorage preference, defaulting to false
+      darkMode: storedDarkMode === 'true',
+    };
 
     setProfile(loadedProfile);
+
+    // Apply initial dark mode based *only* on stored preference
+    if (loadedProfile.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
     // Simulate loading time or wait for actual data fetch
     setTimeout(() => setIsLoading(false), 300); // Simulate loading for skeletons
 
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, [hasMounted]); // Depend on hasMounted
 
   const handleProfileInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -179,6 +186,8 @@ export default function ProfilePage() {
         } else {
           document.documentElement.classList.remove('dark');
         }
+        // Optional: Toast notification for theme change
+        // toast({ title: `Theme changed to ${checked ? 'Dark' : 'Light'} Mode` });
     }
 
     // Trigger storage event to allow header (or other components) to react if needed
@@ -318,6 +327,71 @@ export default function ProfilePage() {
      fileInputRef.current?.click();
    };
 
+   // Render skeleton while loading or before mount
+   if (!hasMounted || isLoading) {
+     return (
+       <motion.div
+         className="space-y-8 md:space-y-10 lg:space-y-12"
+         initial="hidden" animate="visible" variants={containerVariants}
+       >
+         <Skeleton className="h-9 sm:h-10 md:h-12 w-3/4 max-w-xs mb-6 md:mb-8 lg:mb-10" />
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12">
+           <div className="lg:col-span-1">
+             <Card className="shadow-lg border-primary/10 rounded-lg overflow-hidden">
+               <CardHeader className="items-center text-center p-4 sm:p-6 md:p-8">
+                 <Skeleton className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full border-4 border-primary/20" />
+                 <Skeleton className="h-7 sm:h-8 md:h-9 w-3/4 mt-4 mx-auto" />
+                 <Skeleton className="h-5 sm:h-6 md:h-7 w-1/2 mt-2 mx-auto" />
+               </CardHeader>
+               <CardContent className="text-center p-4 sm:p-6 md:p-8 pt-0">
+                 <Skeleton className="h-4 sm:h-5 w-full mb-1" />
+                 <Skeleton className="h-4 sm:h-5 w-5/6 mb-1" />
+                 <Skeleton className="h-4 sm:h-5 w-3/4 mb-4 md:mb-6" />
+                 <Skeleton className="h-px w-full bg-muted my-4 md:my-6" />
+                 <Skeleton className="h-9 md:h-10 w-full" />
+               </CardContent>
+             </Card>
+           </div>
+           <div className="lg:col-span-2 space-y-6 md:space-y-8 lg:space-y-10">
+             <Card className="shadow-md border-secondary/10 rounded-lg overflow-hidden">
+               <CardHeader className="p-4 sm:p-6 md:p-8">
+                 <Skeleton className="h-6 sm:h-7 md:h-8 w-1/3" />
+                 <Skeleton className="h-4 sm:h-5 w-2/3" />
+               </CardHeader>
+               <div className="p-4 sm:p-6 md:p-8 pt-0">
+                 <div className="space-y-4">
+                   <Skeleton className="h-10 md:h-12 w-full" />
+                   <Skeleton className="h-10 md:h-12 w-full" />
+                   <Skeleton className="h-10 md:h-12 w-full" />
+                   <Skeleton className="h-9 md:h-10 w-1/3 mt-2" />
+                 </div>
+               </div>
+             </Card>
+             <Card className="shadow-md border-accent/10 rounded-lg overflow-hidden">
+               <CardHeader className="p-4 sm:p-6 md:p-8">
+                 <Skeleton className="h-6 sm:h-7 md:h-8 w-1/4" />
+                 <Skeleton className="h-4 sm:h-5 w-1/2" />
+               </CardHeader>
+               <div className="space-y-4 md:space-y-5 p-4 sm:p-6 md:p-8 pt-0">
+                 <Skeleton className="h-10 md:h-12 w-full" />
+                 <Skeleton className="h-10 md:h-12 w-full" />
+               </div>
+             </Card>
+             <Card className="shadow-md border-destructive/20 rounded-lg overflow-hidden">
+               <CardHeader className="p-4 sm:p-6 md:p-8 bg-destructive/5">
+                 <Skeleton className="h-6 sm:h-7 md:h-8 w-1/3" />
+                 <Skeleton className="h-4 sm:h-5 w-3/4" />
+               </CardHeader>
+               <div className="p-4 sm:p-6 md:p-8 pt-4">
+                 <Skeleton className="h-9 md:h-10 w-36 md:w-44" />
+               </div>
+             </Card>
+           </div>
+         </div>
+       </motion.div>
+     );
+   }
+
   return (
     <motion.div
       className="space-y-8 md:space-y-10 lg:space-y-12" // Adjusted spacing
@@ -368,17 +442,12 @@ export default function ProfilePage() {
                      tabIndex={0}
                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerFileInput() }}
                  >
-                  {isLoading ? (
-                     <Skeleton className="h-full w-full rounded-full" />
-                   ) : (
-                     <>
+
                       <AvatarImage src={profile.avatarUrl} alt={profile.name} className="transition-opacity duration-300" />
                       {/* Fallback with initials */}
                       <AvatarFallback className="text-lg sm:text-xl md:text-2xl font-semibold">
                         {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                       </AvatarFallback>
-                     </>
-                   )}
                  </Avatar>
                   {/* Edit Icon Overlay */}
                   <div
@@ -399,9 +468,7 @@ export default function ProfilePage() {
                 </motion.div>
                 {/* Name - Editable */}
                 <AnimatePresence mode="wait"> {/* Animate presence for swapping Input/Title */}
-                  {isLoading ? (
-                    <Skeleton key="name-skeleton" className="h-7 sm:h-8 md:h-9 w-3/4 mt-4 mx-auto" />
-                  ) : isEditingProfile ? (
+                  { isEditingProfile ? (
                     <motion.div key="name-input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full mt-4">
                        <Label htmlFor="name" className="sr-only">Name</Label>
                        <Input
@@ -419,9 +486,6 @@ export default function ProfilePage() {
                    )}
                 </AnimatePresence>
                {/* Email - Read-only with Change Button */}
-               {isLoading ? (
-                  <Skeleton className="h-5 sm:h-6 md:h-7 w-1/2 mt-2 mx-auto" />
-               ) : (
                   <div className="mt-1 md:mt-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                     <CardDescription className="text-sm sm:text-base md:text-lg flex items-center gap-1 sm:gap-1.5">
                        <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> {profile.email} {/* Responsive Icon */}
@@ -431,18 +495,11 @@ export default function ProfilePage() {
                          Change Email
                       </Button>
                   </div>
-               )}
              </CardHeader>
              <CardContent className="text-center p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
                 {/* Bio - Editable */}
                 <AnimatePresence mode="wait">
-                    {isLoading ? (
-                      <div key="bio-skeleton" className="space-y-1 mt-1 md:mt-2">
-                        <Skeleton className="h-4 sm:h-5 w-full" />
-                        <Skeleton className="h-4 sm:h-5 w-5/6" />
-                        <Skeleton className="h-4 sm:h-5 w-3/4" />
-                      </div>
-                    ) : isEditingProfile ? (
+                    { isEditingProfile ? (
                        <motion.div key="bio-textarea" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full mt-2 md:mt-3">
                          <Label htmlFor="bio" className="sr-only">Bio</Label>
                          <Textarea
@@ -462,9 +519,6 @@ export default function ProfilePage() {
                <Separator className="my-4 md:my-6" />
                 {/* Edit/Save Button */}
                 <AnimatePresence mode="wait">
-                    {isLoading ? (
-                         <Skeleton key="button-skeleton" className="h-9 md:h-10 w-full" />
-                    ) : (
                          <motion.div
                               key={isEditingProfile ? 'save-button' : 'edit-button'}
                               initial={{ opacity: 0, y: 10 }}
@@ -492,7 +546,6 @@ export default function ProfilePage() {
                              )}
                            </Button>
                          </motion.div>
-                    )}
                  </AnimatePresence>
              </CardContent>
            </Card>
@@ -516,14 +569,6 @@ export default function ProfilePage() {
                  initial="hidden"
                  animate="visible"
               >
-                {isLoading ? (
-                   <div className="space-y-4">
-                     <Skeleton className="h-10 md:h-12 w-full" />
-                     <Skeleton className="h-10 md:h-12 w-full" />
-                     <Skeleton className="h-10 md:h-12 w-full" />
-                     <Skeleton className="h-9 md:h-10 w-1/3 mt-2" />
-                   </div>
-                ) : (
                  <Form {...passwordForm}>
                      <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4 sm:space-y-6">
                        <motion.div variants={itemVariants}>
@@ -600,7 +645,6 @@ export default function ProfilePage() {
                        </motion.div>
                      </form>
                    </Form>
-                )}
              </motion.div>
            </Card>
 
@@ -621,12 +665,7 @@ export default function ProfilePage() {
                  initial="hidden"
                  animate="visible"
               >
-                {isLoading ? (
-                    <>
-                        <Skeleton className="h-10 md:h-12 w-full" />
-                        <Skeleton className="h-10 md:h-12 w-full" />
-                    </>
-                ) : (
+
                   <>
                     <motion.div variants={itemVariants} className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
                       <Label htmlFor="emailNotifications" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
@@ -661,7 +700,6 @@ export default function ProfilePage() {
                        </div>
                     </motion.div>
                   </>
-                )}
              </motion.div>
            </Card>
 
@@ -682,9 +720,6 @@ export default function ProfilePage() {
                      initial="hidden"
                      animate="visible"
                  >
-                     {isLoading ? (
-                         <Skeleton className="h-9 md:h-10 w-36 md:w-44" />
-                     ) : (
                          <motion.div variants={itemVariants} className="flex flex-wrap gap-2 sm:gap-3">
                              {/* Delete Account with Confirmation */}
                              <AlertDialog>
@@ -695,7 +730,7 @@ export default function ProfilePage() {
                                          </Button>
                                      </motion.div>
                                  </AlertDialogTrigger>
-                                 <AlertDialogContent as={motion.div} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
+                                 <AlertDialogContent> {/* Removed as={motion.div} */}
                                      <AlertDialogHeader>
                                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                          <AlertDialogDescription>
@@ -712,7 +747,6 @@ export default function ProfilePage() {
                                  </AlertDialogContent>
                              </AlertDialog>
                          </motion.div>
-                     )}
                  </motion.div>
              </Card>
         </motion.div>
