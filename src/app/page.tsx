@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import Card components
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"; // Import Tooltip components
 
 // --- Dynamic Imports ---
 
@@ -88,7 +89,16 @@ export default function Home() {
         initial="hidden"
         animate="visible"
       >
-        {/* Removed glowing effect */}
+        {/* Background subtle animated gradient or pattern (Optional) */}
+        {/* <div className="absolute inset-0 -z-10 opacity-10 dark:opacity-5"> */}
+          {/* Example: Animated gradient */}
+          {/* <motion.div
+            className="absolute inset-0 bg-gradient-to-tr from-primary via-accent to-secondary"
+            animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            style={{ backgroundSize: "200% 200%" }}
+          ></motion.div> */}
+        {/* </div> */}
 
         {/* Content aligned above the background effect */}
         <div className="relative z-10">
@@ -192,7 +202,18 @@ export default function Home() {
           variants={itemVariants}
         >
              <BookOpen className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"/> Featured Courses
-             <Info className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-muted-foreground hover:text-foreground transition-colors cursor-help" title="Explore some of our most popular courses." />
+             {/* Wrap Info icon with Tooltip */}
+             <TooltipProvider delayDuration={100}>
+                 <Tooltip>
+                     <TooltipTrigger asChild>
+                          {/* Remove title prop from Info */}
+                          <Info className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
+                     </TooltipTrigger>
+                     <TooltipContent>
+                         <p>Explore some of our most popular courses.</p>
+                     </TooltipContent>
+                 </Tooltip>
+             </TooltipProvider>
         </motion.h2>
 
         {/* Dynamically Loaded Featured Courses */}
