@@ -80,7 +80,7 @@ export default function Home() {
   const studentCount = 12345; // Example count
 
   return (
-    <div className="space-y-16 md:space-y-20 lg:space-y-24">
+    <motion.div className="space-y-16 md:space-y-20 lg:space-y-24">
 
       {/* Hero Section */}
       <motion.section
@@ -206,7 +206,6 @@ export default function Home() {
              <TooltipProvider delayDuration={100}>
                  <Tooltip>
                      <TooltipTrigger asChild>
-                          {/* Remove title prop from Info */}
                           <Info className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
                      </TooltipTrigger>
                      <TooltipContent>
@@ -234,6 +233,6 @@ export default function Home() {
             </motion.div>
         </motion.div>
       </motion.section>
-    </div>
+    </motion.div>
   );
 }
