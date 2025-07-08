@@ -35,10 +35,12 @@
     "@vercel/speed-insights": "^1.0.12",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "cmdk": "^0.2.0",
+    "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.4.0",
     "geist": "^1.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "lucide-react": "^0.475.0",
     "next": "14.1.4",
     "react": "18.2.0",
@@ -62,4 +64,3 @@
     "typescript": "^5.7.3"
   }
 }
-

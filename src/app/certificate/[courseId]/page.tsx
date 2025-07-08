@@ -1,9 +1,10 @@
+
 "use client"; // Mark as Client Component for hooks and interactivity
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Award, CheckCircle, ArrowLeft } from "lucide-react";
+import { Download, Award, CheckCircle, ArrowLeft, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation"; // Use App Router hooks
@@ -11,7 +12,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { allCourses } from '@/data/courses'; // Assuming course data is needed
 import { Separator } from '@/components/ui/separator'; // Import Separator
 import { cn } from "@/lib/utils"; // Import cn
-
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { useToast } from '@/hooks/use-toast';
 
 interface CertificatePageProps {
   // params types handled by useParams hook
@@ -75,9 +78,12 @@ const itemVariants = {
 
 export default function CertificatePage() { // Removed props parameter
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [certificateData, setCertificateData] = useState<CertificateData | null>(null);
   const [userName, setUserName] = useState<string>('Learner'); // Default name
   const [hasMounted, setHasMounted] = useState(false); // Track mount state
+  const certificateRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const params = useParams(); // Get params using the hook
   const courseId = parseInt(params.courseId as string, 10); // Extract and parse courseId
@@ -153,12 +159,50 @@ export default function CertificatePage() { // Removed props parameter
     );
   }
 
-  const handleDownload = () => {
-    // In a real app, this would trigger a download of a PDF or image certificate
-    // This might involve calling a backend endpoint that generates the certificate
-    alert('Download functionality not implemented in this demo.');
-    console.log('Downloading certificate for:', certificateData.courseName);
+  const handleDownload = async () => {
+    const certificateElement = certificateRef.current;
+    if (!certificateElement || !certificateData) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not find the certificate element to download.",
+      });
+      return;
+    }
+
+    setIsDownloading(true);
+
+    try {
+      const canvas = await html2canvas(certificateElement, {
+        scale: 2, // Increase scale for better resolution
+        useCORS: true, // If images are from external sources
+        backgroundColor: null, // Use transparent background
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+
+      // Calculate dimensions for PDF
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`EduHub-Certificate-${certificateData.courseName.replace(/\s/g, '_')}.pdf`);
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast({
+        variant: "destructive",
+        title: "Download Failed",
+        description: "An error occurred while generating the certificate PDF.",
+      });
+    } finally {
+        setIsDownloading(false);
+    }
   };
+
 
   return (
     <motion.div
@@ -178,7 +222,7 @@ export default function CertificatePage() { // Removed props parameter
        </motion.div>
 
         {/* Certificate Card */}
-       <motion.div variants={itemVariants} className="w-full max-w-2xl lg:max-w-4xl">
+       <motion.div ref={certificateRef} variants={itemVariants} className="w-full max-w-2xl lg:max-w-4xl">
         <Card className="shadow-2xl border-4 border-primary/20 bg-gradient-to-br from-card via-blue-50/50 to-accent/10 dark:from-card dark:via-blue-950/20 dark:to-accent/20 rounded-lg overflow-hidden">
            {/* Add a decorative top border element */}
           <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary"></div>
@@ -230,9 +274,18 @@ export default function CertificatePage() { // Removed props parameter
        {/* Download Button */}
        <motion.div variants={itemVariants} className="mt-6 md:mt-10">
          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-           <Button size="lg" onClick={handleDownload} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg text-base sm:text-lg md:text-xl py-3 px-6 rounded-full">
-             <Download className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-             Download Certificate
+           <Button size="lg" onClick={handleDownload} disabled={isDownloading} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg text-base sm:text-lg md:text-xl py-3 px-6 rounded-full">
+             {isDownloading ? (
+                <>
+                    <Loader className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                    Generating...
+                </>
+             ) : (
+                <>
+                    <Download className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    Download Certificate
+                </>
+             )}
            </Button>
          </motion.div>
        </motion.div>

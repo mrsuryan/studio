@@ -1,3 +1,4 @@
+
 "use client"; // Mark as Client Component for hooks and interactivity
 
 import { useState, useEffect } from 'react';
@@ -149,29 +150,37 @@ export default function ModulePage() { // Removed props parameter
         </div>
       </motion.div>
 
-      {/* Video Player Placeholder */}
+      {/* Video Player */}
       <motion.div variants={itemVariants}>
         <Card className="overflow-hidden shadow-lg border-primary/10 rounded-lg">
-          <CardHeader className="p-0 relative bg-muted">
-            <motion.div
-              className="aspect-video w-full flex items-center justify-center text-muted-foreground bg-gradient-to-br from-muted to-background"
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Placeholder Icon/Text */}
-              <div className="text-center space-y-2">
-                 <Video className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 mx-auto opacity-50" />
-                 <p className="text-lg sm:text-xl md:text-2xl">Video Content Area</p>
-                 <p className="text-xs sm:text-sm text-muted-foreground/70">(Video Player Coming Soon)</p>
-              </div>
-              {/* You would embed your video player component here */}
-              {/* Example: <YourVideoPlayerComponent src="..." /> */}
-            </motion.div>
-          </CardHeader>
-          {/* Optional: Add video controls or description in CardContent */}
-          {/* <CardContent className="p-4">
-            <p>Video description or controls...</p>
-          </CardContent> */}
+            {moduleData.videoUrl ? (
+                <div className="aspect-video w-full bg-black">
+                    <video
+                        key={moduleData.videoUrl} // Re-mount video element if url changes
+                        width="100%"
+                        height="auto"
+                        controls
+                        preload="metadata"
+                        className="w-full h-full object-contain"
+                    >
+                        <source src={moduleData.videoUrl} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            ) : (
+                <CardHeader className="p-0 relative bg-muted">
+                    <motion.div
+                        className="aspect-video w-full flex items-center justify-center text-muted-foreground bg-gradient-to-br from-muted to-background"
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <div className="text-center space-y-2">
+                            <Video className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 mx-auto opacity-50" />
+                            <p className="text-lg sm:text-xl md:text-2xl">Video Content Not Available</p>
+                        </div>
+                    </motion.div>
+                </CardHeader>
+            )}
         </Card>
       </motion.div>
 

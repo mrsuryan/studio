@@ -1,3 +1,4 @@
+
 // Add Course type definition
 export interface Course {
     id: number;
@@ -5,7 +6,7 @@ export interface Course {
     description: string;
     progress: number;
     image: string;
-    modules: { id: string; title: string; completed: boolean }[];
+    modules: { id: string; title: string; completed: boolean; videoUrl?: string }[];
     duration: string;
     rating: number;
     aiHint?: string; // Optional AI hint for images
@@ -20,7 +21,12 @@ export const allCourses: Course[] = [
         description: "Learn HTML, CSS, and JavaScript fundamentals. Build your first website from scratch and understand the core concepts that power the web.",
         progress: 65,
         image: "https://picsum.photos/seed/webdevintro/600/400",
-        modules: [{ id: 'm1', title: 'HTML Basics', completed: true }, { id: 'm2', title: 'CSS Fundamentals', completed: true }, { id: 'm3', title: 'JavaScript Introduction', completed: false }, { id: 'm4', title: 'DOM Manipulation', completed: false }],
+        modules: [
+            { id: 'm1', title: 'HTML Basics', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm2', title: 'CSS Fundamentals', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm3', title: 'JavaScript Introduction', completed: false, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm4', title: 'DOM Manipulation', completed: false }
+        ],
         duration: "10 hours",
         rating: 4.7,
         aiHint: "web development code screen",
@@ -31,7 +37,12 @@ export const allCourses: Course[] = [
         description: "Dive deep into hooks, state management patterns like Context API and Redux, and performance optimization techniques for complex React applications.",
         progress: 30,
         image: "https://picsum.photos/seed/reactadvanced/600/400",
-        modules: [{ id: 'm5', title: 'React Hooks Deep Dive', completed: true }, { id: 'm6', title: 'State Management (Context API)', completed: false }, { id: 'm7', title: 'Performance Optimization', completed: false }, {id: 'm8', title: 'Testing React Apps', completed: false}],
+        modules: [
+            { id: 'm5', title: 'React Hooks Deep Dive', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm6', title: 'State Management (Context API)', completed: false, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm7', title: 'Performance Optimization', completed: false }, 
+            {id: 'm8', title: 'Testing React Apps', completed: false}
+        ],
         duration: "15 hours",
         rating: 4.8,
         aiHint: "react code editor",
@@ -53,7 +64,7 @@ export const allCourses: Course[] = [
         description: "Explore data analysis, visualization, and machine learning using Python libraries like NumPy, Pandas, Matplotlib, and Scikit-learn.",
         progress: 15,
         image: "https://picsum.photos/seed/datasciencepy/600/400",
-        modules: [{ id: 'm13', title: 'NumPy Essentials', completed: true }, { id: 'm14', title: 'Pandas DataFrames', completed: false }, { id: 'm15', title: 'Introduction to Matplotlib', completed: false }, {id: 'm16', title: 'Basic Machine Learning', completed: false}],
+        modules: [{ id: 'm13', title: 'NumPy Essentials', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, { id: 'm14', title: 'Pandas DataFrames', completed: false }, { id: 'm15', title: 'Introduction to Matplotlib', completed: false }, {id: 'm16', title: 'Basic Machine Learning', completed: false}],
         duration: "18 hours",
         rating: 4.9,
         aiHint: "python data analysis chart",
@@ -86,7 +97,7 @@ export const allCourses: Course[] = [
         description: "Learn the basics of cybersecurity threats, defenses, and best practices to protect digital assets.",
         progress: 10,
         image: "https://picsum.photos/seed/cybersecurity/600/400",
-        modules: [{ id: 'm25', title: 'Introduction to Threats', completed: true }, { id: 'm26', title: 'Network Security Basics', completed: false }, { id: 'm27', title: 'Cryptography Essentials', completed: false }, { id: 'm28', title: 'Security Best Practices', completed: false }],
+        modules: [{ id: 'm25', title: 'Introduction to Threats', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, { id: 'm26', title: 'Network Security Basics', completed: false }, { id: 'm27', title: 'Cryptography Essentials', completed: false }, { id: 'm28', title: 'Security Best Practices', completed: false }],
         duration: "16 hours",
         rating: 4.6,
         aiHint: "cyber security lock",
