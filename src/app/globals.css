@@ -5,6 +5,9 @@
 /* Import Geist font */
 @import url('https://fonts.googleapis.com/css2?family=Geist+Sans:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
+/* ADDING FONT FOR CERTIFICATE */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
 
 body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
@@ -111,6 +114,11 @@ body {
 :root {
   --font-geist-sans: "Geist Sans", sans-serif;
   --font-geist-mono: "Geist Mono", monospace;
+}
+
+/* Add custom font for certificate */
+.font-dancing-script {
+    font-family: "Dancing Script", cursive;
 }
 
 
