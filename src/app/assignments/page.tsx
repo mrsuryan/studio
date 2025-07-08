@@ -1,12 +1,17 @@
+
 "use client"; // Mark as Client Component for Framer Motion
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, CheckCircle, Clock, XCircle } from "lucide-react";
+import { ClipboardList, CheckCircle, Clock, XCircle, Download, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button"; // Import Button
+import { useRef, useState } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useToast } from "@/hooks/use-toast";
 
 // Define Assignment Status type
 type AssignmentStatus = 'pending' | 'submitted' | 'overdue' | 'graded';
@@ -64,6 +69,53 @@ const itemVariants = {
 };
 
 export default function AssignmentsPage() {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const { toast } = useToast();
+  const assignmentsCardRef = useRef<HTMLDivElement>(null);
+
+
+  const handleDownload = async () => {
+    const cardElement = assignmentsCardRef.current;
+    if (!cardElement) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not find the content to download.",
+      });
+      return;
+    }
+
+    setIsDownloading(true);
+
+    try {
+      const canvas = await html2canvas(cardElement, {
+        scale: 2,
+        useCORS: true,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`EduHub-Assignments.pdf`);
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast({
+        variant: "destructive",
+        title: "Download Failed",
+        description: "An error occurred while generating the assignments PDF.",
+      });
+    } finally {
+        setIsDownloading(false);
+    }
+  };
+
   return (
     <motion.div
       className="space-y-8 md:space-y-10 lg:space-y-12"
@@ -81,11 +133,21 @@ export default function AssignmentsPage() {
          Assignments Overview
       </motion.h1>
 
-      <motion.div variants={itemVariants}>
+      <motion.div variants={itemVariants} ref={assignmentsCardRef}>
         <Card className="shadow-lg border-primary/10 overflow-hidden rounded-lg">
-           <CardHeader className="p-4 sm:p-6 md:p-8">
-              <CardTitle className="text-xl sm:text-2xl md:text-3xl">Your Assignments</CardTitle>
-              <CardDescription className="text-sm sm:text-base md:text-lg">Keep track of your upcoming and completed assignments.</CardDescription>
+           <CardHeader className="p-4 sm:p-6 md:p-8 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-xl sm:text-2xl md:text-3xl">Your Assignments</CardTitle>
+                <CardDescription className="text-sm sm:text-base md:text-lg">Keep track of your upcoming and completed assignments.</CardDescription>
+              </div>
+              <Button size="sm" onClick={handleDownload} disabled={isDownloading}>
+                {isDownloading ? (
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <Download className="mr-2 h-4 w-4" />
+                )}
+                Download
+              </Button>
            </CardHeader>
            <CardContent className="p-0"> {/* Remove default padding */}
             <div className="overflow-x-auto"> {/* Add horizontal scroll for small screens */}
