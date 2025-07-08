@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
@@ -63,7 +64,7 @@ export default function RootLayout({
       <body className={cn(
          GeistSans.variable, // Apply Geist Sans variable
          GeistMono.variable, // Apply Geist Mono variable
-          "antialiased flex flex-col min-h-screen bg-gradient-to-br from-background to-blue-50/50 dark:from-background dark:to-blue-950/20" // Gradient background
+          "antialiased flex flex-col min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10" // Gradient background
         )}>
           {/* Header */}
           <Header />

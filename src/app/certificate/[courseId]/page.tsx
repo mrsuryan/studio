@@ -1,3 +1,4 @@
+
 "use client"; // Mark as Client Component for hooks and interactivity
 
 import { useState, useEffect, useRef } from 'react';
@@ -126,7 +127,7 @@ export default function CertificatePage() { // Removed props parameter
         variants={containerVariants}
       >
         <Skeleton className="h-9 w-36 mb-6 md:mb-8" />
-        <Card className="w-full max-w-2xl lg:max-w-4xl shadow-2xl border-4 border-primary/20 bg-gradient-to-br from-card to-blue-50/30 dark:from-card dark:to-blue-950/20 rounded-lg p-8 md:p-12 lg:p-16">
+        <Card className="w-full max-w-2xl lg:max-w-4xl shadow-2xl border-4 border-primary/20 bg-gradient-to-br from-card to-accent/20 rounded-lg p-8 md:p-12 lg:p-16">
           <CardContent className="text-center space-y-6 md:space-y-8">
             <Skeleton className="h-16 w-16 md:h-20 md:w-20 rounded-full mx-auto mb-4" />
             <Skeleton className="h-8 w-3/4 mx-auto" />
@@ -261,7 +262,7 @@ export default function CertificatePage() { // Removed props parameter
             className="w-full max-w-4xl lg:max-w-5xl bg-card text-card-foreground p-2 rounded-lg shadow-2xl"
         >
         <div className="border-2 border-primary/20 rounded-md p-2">
-            <div className="border border-dashed border-primary/30 rounded-md p-8 md:p-12 text-center relative overflow-hidden bg-gradient-to-br from-background to-blue-50/10 dark:from-background dark:to-blue-950/10">
+            <div className="border border-dashed border-primary/30 rounded-md p-8 md:p-12 text-center relative overflow-hidden bg-gradient-to-br from-background to-accent/10">
                 {/* Decorative Corners */}
                 <Corner className="top-2 left-2" />
                 <Corner className="top-2 right-2 transform rotate-90" />
