@@ -1,4 +1,3 @@
-
 "use client"; // Mark as Client Component for hooks and interactivity
 
 import { useEffect, useState, useRef, useCallback } from 'react';
@@ -418,7 +417,7 @@ export function Header() {
                           "relative flex items-center gap-1.5 transition-colors hover:text-primary pb-1 group",
                           isActive ? "text-primary font-semibold" : "text-foreground/70",
                           "after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-full after:bg-primary after:origin-center after:transition-transform after:duration-300 after:ease-out",
-                           isActive ? "after:scale-x-100" : "after:scale-x-0 group-hover:after:scale-x-50"
+                           isActive ? "after:scale-x-100" : "after:scale-x-0 group-hover:after:scale-x-100"
                        )}
                    >
                        <item.icon className="h-4 w-4 lg:h-5 lg:w-5" />
