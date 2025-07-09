@@ -76,7 +76,7 @@ export default function RootLayout({
           </main>
 
           {/* Footer */}
-          <footer className="mt-auto py-8 sm:py-12 border-t border-border/50 bg-background/50">
+          <footer className="mt-auto py-8 sm:py-12 border-t border-primary-foreground/20 bg-primary text-primary-foreground">
              {/* Use the new client component for the footer content */}
              <FooterContent />
           </footer>
