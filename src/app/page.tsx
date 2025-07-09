@@ -1,3 +1,4 @@
+
 "use client"; // Mark as Client Component for Framer Motion and dynamic imports
 
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <motion.section
-        className="text-center py-16 sm:py-20 md:py-24 px-4 rounded-xl bg-gradient-to-br from-primary/5 to-accent/5 shadow-lg overflow-hidden relative" // Increased padding, added relative and overflow hidden
+        className="text-center py-16 sm:py-20 md:py-24 px-4 rounded-xl bg-card/60 shadow-lg overflow-hidden relative" // Increased padding, added relative and overflow hidden
         variants={containerVariants}
         initial="hidden"
         animate="visible"

@@ -64,7 +64,7 @@ export default function RootLayout({
       <body className={cn(
          GeistSans.variable, // Apply Geist Sans variable
          GeistMono.variable, // Apply Geist Mono variable
-          "antialiased flex flex-col min-h-screen bg-gradient-to-b from-background to-muted/30" // Minimal Gradient background
+          "antialiased flex flex-col min-h-screen bg-gradient-to-br from-primary/10 to-background" // Blue and white gradient
         )}>
           {/* Header */}
           <Header />
