@@ -32,6 +32,7 @@ import * as React from 'react'; // Import React
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
