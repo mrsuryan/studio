@@ -4,14 +4,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Ribbon, CheckCircle, ArrowLeft, Loader } from "lucide-react"; // Changed Award to Ribbon
+import { Download, Ribbon, CheckCircle, ArrowLeft, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation"; // Use App Router hooks
 import { Skeleton } from '@/components/ui/skeleton';
 import { allCourses } from '@/data/courses'; // Assuming course data is needed
 import { Separator } from '@/components/ui/separator'; // Import Separator
-import { cn } from "@/lib/utils"; // Import cn
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useToast } from '@/hooks/use-toast';
@@ -71,17 +70,6 @@ const itemVariants = {
     },
   },
 };
-
-// SVG for decorative corners
-const Corner = ({ className }: { className?: string }) => (
-    <svg
-        className={cn("absolute w-12 h-12 text-primary/30", className)}
-        fill="currentColor"
-        viewBox="0 0 20 20"
-    >
-        <path d="M10 0C4.477 0 0 4.477 0 10v10h10C4.477 20 0 15.523 0 10S4.477 0 10 0z" />
-    </svg>
-);
 
 
 export default function CertificatePage() { // Removed props parameter
@@ -255,83 +243,51 @@ export default function CertificatePage() { // Removed props parameter
          </Button>
        </motion.div>
 
-        {/* Certificate Card */}
-       <motion.div
+        {/* Certificate Card - MINIMAL DESIGN */}
+        <motion.div
             ref={certificateRef}
             variants={itemVariants}
-            className="w-full max-w-5xl lg:max-w-6xl bg-card text-card-foreground p-2 rounded-lg shadow-2xl"
+            className="w-full max-w-4xl"
         >
-        <div className="border-2 border-primary/20 rounded-md p-2">
-            <div className="border border-dashed border-primary/30 rounded-md p-8 md:p-12 text-center relative overflow-hidden bg-gradient-to-br from-background to-accent/10">
-                {/* Decorative Corners */}
-                <Corner className="top-2 left-2" />
-                <Corner className="top-2 right-2 transform rotate-90" />
-                <Corner className="bottom-2 left-2 transform -rotate-90" />
-                <Corner className="bottom-2 right-2 transform rotate-180" />
-
-                <motion.div variants={itemVariants} className="flex justify-center items-center gap-4 mb-4">
-                    <Ribbon className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
-                    <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-widest uppercase">{certificateData.issuingOrg}</h2>
-                </motion.div>
-
-                <motion.p
-                    variants={itemVariants}
-                    className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-wider text-foreground"
-                >
-                    Certificate of Achievement
-                </motion.p>
-                
-                <motion.p
-                    variants={itemVariants}
-                    className="mt-6 text-base sm:text-lg text-muted-foreground uppercase tracking-widest"
-                >
-                    This certificate is proudly presented to
-                </motion.p>
-                
-                <motion.p
-                    variants={itemVariants}
-                    className="font-dancing-script text-6xl sm:text-7xl md:text-8xl my-4 text-primary"
-                >
-                    {certificateData.studentName}
-                </motion.p>
-                
-                <motion.p
-                    variants={itemVariants}
-                    className="text-base sm:text-lg text-muted-foreground"
-                >
-                    For successfully completing the course
-                </motion.p>
-
-                <motion.h1
-                    variants={itemVariants}
-                    className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mt-2 mb-8"
-                >
-                    {certificateData.courseName}
-                </motion.h1>
-
-                <motion.div
-                    variants={itemVariants}
-                    className="flex flex-col md:flex-row justify-around items-center gap-8 mt-10 text-muted-foreground"
-                >
-                    <div className="flex flex-col items-center">
-                        <p className="font-semibold text-foreground">{certificateData.completionDate}</p>
-                        <Separator className="w-24 mt-1" />
-                        <p className="text-sm mt-1">Date</p>
+            <Card className="shadow-2xl border-primary/20 bg-card rounded-2xl overflow-hidden">
+                <CardContent className="p-8 sm:p-12 md:p-16 space-y-8">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-wide uppercase">{certificateData.issuingOrg}</h2>
+                            <p className="text-sm sm:text-base text-muted-foreground">Certificate of Completion</p>
+                        </div>
+                        <Ribbon className="h-12 w-12 sm:h-16 sm:w-16 text-primary/80" />
                     </div>
-                    <div className="flex flex-col items-center">
-                        <p className="font-dancing-script text-2xl text-foreground">EduHub</p>
-                        <Separator className="w-24 mt-1" />
-                        <p className="text-sm mt-1">Issuing Authority</p>
+
+                    <Separator />
+
+                    <div className="space-y-4 text-center">
+                        <p className="text-base sm:text-lg text-muted-foreground">This certificate is awarded to</p>
+                        <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
+                            {certificateData.studentName}
+                        </p>
+                        <p className="text-base sm:text-lg text-muted-foreground">for successfully completing the course</p>
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary">
+                            {certificateData.courseName}
+                        </h1>
                     </div>
-                </motion.div>
-                
-                 <motion.div variants={itemVariants} className="mt-6 flex items-center justify-center gap-2 text-green-600 dark:text-green-400 font-medium text-sm sm:text-base">
-                     <CheckCircle className="h-4 w-4 md:h-5 md:w-5" />
-                     <span>Verified Completion</span>
-                  </motion.div>
-            </div>
-        </div>
-       </motion.div>
+
+                    <Separator />
+
+                    <div className="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 text-sm text-muted-foreground">
+                        <div className="flex flex-col items-center sm:items-start">
+                            <p className="font-semibold text-foreground">{certificateData.completionDate}</p>
+                            <p className="text-xs">Date of Completion</p>
+                        </div>
+                        <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-medium">
+                            <CheckCircle className="h-4 w-4" />
+                            <span>Verified Completion</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </motion.div>
+
 
        {/* Download Button */}
        <motion.div variants={itemVariants} className="mt-6 md:mt-10">
@@ -354,5 +310,3 @@ export default function CertificatePage() { // Removed props parameter
     </motion.div>
   );
 }
-
-    
