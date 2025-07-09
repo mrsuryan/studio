@@ -27,8 +27,15 @@ import {
 import * as z from "zod"; // Import Zod
 import { useForm } from "react-hook-form"; // Import useForm
 import { zodResolver } from "@hookform/resolvers/zod"; // Import zodResolver
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"; // Import Form components
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"; // Import Form components
 import * as React from 'react'; // Import React
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 
 // Animation Variants
@@ -97,11 +104,18 @@ const passwordSchema = z.object({
     path: ["confirmPassword"], // Error applies to the confirm field
   });
 
+// Zod schema for email change form
+const emailChangeSchema = z.object({
+  newEmail: z.string().email({ message: "Please enter a valid new email address." }),
+  password: z.string().min(1, { message: "Password is required to confirm." }),
+});
+
 export default function ProfilePage() {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile>(defaultUser);
   const [hasMounted, setHasMounted] = useState(false); // Track mount state
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
   const { toast } = useToast();
 
@@ -114,6 +128,16 @@ export default function ProfilePage() {
         confirmPassword: "",
       },
     });
+
+  // Form hook for email change
+  const emailForm = useForm<z.infer<typeof emailChangeSchema>>({
+      resolver: zodResolver(emailChangeSchema),
+      defaultValues: {
+        newEmail: "",
+        password: "",
+      },
+    });
+
 
   // Track mount state
   useEffect(() => {
@@ -186,8 +210,6 @@ export default function ProfilePage() {
         } else {
           document.documentElement.classList.remove('dark');
         }
-        // Optional: Toast notification for theme change
-        // toast({ title: `Theme changed to ${checked ? 'Dark' : 'Light'} Mode` });
     }
 
     // Trigger storage event to allow header (or other components) to react if needed
@@ -200,12 +222,9 @@ export default function ProfilePage() {
     if (typeof window === 'undefined') return;
 
     console.log("Saving profile:", profile);
-    // Only save fields that are editable in this section (name, bio)
     localStorage.setItem('userName', profile.name);
     localStorage.setItem('userBio', profile.bio);
-    // Ensure avatar URL is saved if it was changed
     localStorage.setItem('userAvatarUrl', profile.avatarUrl);
-    // Trigger storage event to update header etc.
     window.dispatchEvent(new Event('storage'));
 
     setIsEditingProfile(false);
@@ -215,63 +234,64 @@ export default function ProfilePage() {
     });
   };
 
-  // Handle password change form submission
   function onPasswordSubmit(values: z.infer<typeof passwordSchema>) {
       console.log("Password change submitted:", values);
-      // --- Simulate password change success ---
-      // In a real app: Send 'values.currentPassword' and 'values.newPassword' to the backend for verification and update.
-      // For this demo, we'll just show a success message.
-
-      // Simulate success (replace with actual API call logic)
       toast({
           title: "Password Updated",
-          description: "Your password has been changed successfully. (Demo)", // Indicate it's a demo
+          description: "Your password has been changed successfully. (Demo)",
        });
-      passwordForm.reset(); // Clear the form after submission
+      passwordForm.reset();
     }
 
-    // Simulate Email Change Request
-    const handleEmailChangeRequest = () => {
-      // In a real app:
-      // 1. Prompt the user for the new email address (e.g., using a Dialog).
-      // 2. Send the request to the backend.
-      // 3. Backend sends a verification email to the new address.
-      // 4. User clicks link in email to confirm.
-      // 5. Backend updates the email address.
-      toast({
-        title: "Change Email (Demo)",
-        description: "Functionality to change email requires backend integration and is not fully implemented in this demo.",
-        variant: "default", // Use default variant for informational messages
-      });
-    };
+    function onEmailChangeSubmit(values: z.infer<typeof emailChangeSchema>) {
+        console.log("Email change request:", values);
+        // In a real app, you would verify the password and then update the email.
+        // For this demo, we'll just simulate success.
+        
+        const newAvatarUrl = `https://picsum.photos/seed/${values.newEmail}/100`;
+
+        // Update local storage
+        localStorage.setItem('userEmail', values.newEmail);
+        localStorage.setItem('userAvatarUrl', newAvatarUrl);
+    
+        // Update state
+        setProfile(prev => ({ ...prev, email: values.newEmail, avatarUrl: newAvatarUrl }));
+    
+        // Trigger storage event to update header
+        window.dispatchEvent(new Event('storage'));
+    
+        toast({
+            title: "Email Updated",
+            description: `Your email has been changed to ${values.newEmail}.`,
+        });
+    
+        setIsEmailDialogOpen(false); // Close the dialog
+        emailForm.reset();
+    }
+
 
    const handleDeleteAccount = () => {
-     // Ensure this runs only on the client
      if (typeof window === 'undefined') return;
 
      console.log("Attempting to delete account...");
-    localStorage.clear(); // Clear all local storage data
-    window.dispatchEvent(new Event('storage')); // Notify header/other components
-    document.documentElement.classList.remove('dark'); // Reset dark mode visually
+    localStorage.clear();
+    window.dispatchEvent(new Event('storage'));
+    document.documentElement.classList.remove('dark');
 
      toast({
        title: "Account Deleted",
        description: "Your account and data have been removed. Redirecting...",
        variant: "destructive",
      });
-     // Redirect to signup page after a short delay
-     // Using window.location.href for simple client-side redirect after clearing storage
      setTimeout(() => {
          window.location.href = '/signup';
-     }, 1500); // Delay to allow toast visibility
+     }, 1500);
    };
 
-   // Handle file selection for avatar
    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
      const file = event.target.files?.[0];
      if (!file) return;
 
-     // Basic validation
      if (!file.type.startsWith('image/')) {
        toast({
          variant: "destructive",
@@ -290,7 +310,6 @@ export default function ProfilePage() {
        return;
      }
 
-     // Read file as data URL
      const reader = new FileReader();
      reader.onloadend = () => {
        const dataUrl = reader.result as string;
@@ -298,10 +317,8 @@ export default function ProfilePage() {
          ...prevProfile,
          avatarUrl: dataUrl,
        }));
-       // Automatically save the new avatar to localStorage
        if (typeof window !== 'undefined') {
            localStorage.setItem('userAvatarUrl', dataUrl);
-           // Trigger storage event to update header
            window.dispatchEvent(new Event('storage'));
        }
 
@@ -309,8 +326,6 @@ export default function ProfilePage() {
             title: "Avatar Updated",
             description: "Your profile picture has been changed.",
         });
-        // Optionally trigger save if in editing mode? Or just save avatar immediately.
-        // For simplicity, saving avatar immediately without needing main "Save" button.
      };
      reader.onerror = () => {
         toast({
@@ -322,12 +337,10 @@ export default function ProfilePage() {
      reader.readAsDataURL(file);
    };
 
-   // Trigger hidden file input click
    const triggerFileInput = () => {
      fileInputRef.current?.click();
    };
 
-   // Render skeleton while loading or before mount
    if (!hasMounted || isLoading) {
      return (
        <motion.div
@@ -394,80 +407,70 @@ export default function ProfilePage() {
 
   return (
     <motion.div
-      className="space-y-8 md:space-y-10 lg:space-y-12" // Adjusted spacing
+      className="space-y-8 md:space-y-10 lg:space-y-12"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       <motion.h1
-         className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3" // Responsive heading
+         className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3"
         variants={itemVariants}
       >
-         {/* Animated Icon */}
          <motion.div whileHover={{ rotate: 10, scale: 1.1 }}>
-             <Settings className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" /> {/* Changed Icon to Settings */}
+             <Settings className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" />
          </motion.div>
-         Settings & Profile {/* Updated Title */}
+         Settings & Profile
       </motion.h1>
 
-      {/* Responsive Grid */}
       <motion.div
-         className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12" // Adjusted breakpoint and gap
-        variants={containerVariants} // Stagger children within the grid
+         className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12"
+        variants={containerVariants}
       >
-        {/* Profile Information Card */}
         <motion.div className="lg:col-span-1" variants={itemVariants}>
-          <Card className="shadow-lg border-primary/10 rounded-lg overflow-hidden"> {/* Added rounded-lg and overflow */}
-             <CardHeader className="items-center text-center p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
+          <Card className="shadow-lg border-primary/10 rounded-lg overflow-hidden">
+             <CardHeader className="items-center text-center p-4 sm:p-6 md:p-8">
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.1, type: "spring", stiffness: 150 }} // Adjusted delay
-                  className="relative group" // Add relative positioning for overlay
+                  transition={{ delay: 0.1, type: "spring", stiffness: 150 }}
+                  className="relative group"
                 >
-                  {/* Hidden File Input */}
                   <input
                     type="file"
                     ref={fileInputRef}
                     onChange={handleFileChange}
-                    accept="image/png, image/jpeg, image/webp" // Specify accepted image types
+                    accept="image/png, image/jpeg, image/webp"
                     className="hidden"
                     aria-label="Upload profile picture"
                   />
-                 {/* Responsive Avatar */}
                  <Avatar
-                     className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 border-4 border-primary/20 cursor-pointer transition-transform duration-300 group-hover:scale-105" // Added hover scale
-                     onClick={triggerFileInput} // Make avatar clickable
+                     className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 border-4 border-primary/20 cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                     onClick={triggerFileInput}
                      role="button"
                      tabIndex={0}
                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerFileInput() }}
                  >
-
                       <AvatarImage src={profile.avatarUrl} alt={profile.name} className="transition-opacity duration-300" />
-                      {/* Fallback with initials */}
                       <AvatarFallback className="text-lg sm:text-xl md:text-2xl font-semibold">
                         {profile.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                       </AvatarFallback>
                  </Avatar>
-                  {/* Edit Icon Overlay */}
                   <div
-                     className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer" // Darker overlay
+                     className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                      onClick={triggerFileInput}
                      role="button"
                      aria-label="Change profile picture"
                    >
-                      {/* Animated Upload Icon */}
                       <motion.div
                           initial={{ y: 10, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.1, duration: 0.2 }}
                       >
-                         <Upload className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 text-white" /> {/* Responsive Icon */}
+                         <Upload className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 text-white" />
                      </motion.div>
                    </div>
                 </motion.div>
-                {/* Name - Editable */}
-                <AnimatePresence mode="wait"> {/* Animate presence for swapping Input/Title */}
+                <AnimatePresence mode="wait">
                   { isEditingProfile ? (
                     <motion.div key="name-input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full mt-4">
                        <Label htmlFor="name" className="sr-only">Name</Label>
@@ -475,7 +478,7 @@ export default function ProfilePage() {
                          id="name"
                          value={profile.name}
                          onChange={handleProfileInputChange}
-                          className="text-xl sm:text-2xl md:text-3xl font-semibold text-center h-auto py-1 px-2" // Responsive text/height/padding
+                          className="text-xl sm:text-2xl md:text-3xl font-semibold text-center h-auto py-1 px-2"
                          placeholder="Your Name"
                        />
                     </motion.div>
@@ -485,19 +488,16 @@ export default function ProfilePage() {
                      </motion.div>
                    )}
                 </AnimatePresence>
-               {/* Email - Read-only with Change Button */}
                   <div className="mt-1 md:mt-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                     <CardDescription className="text-sm sm:text-base md:text-lg flex items-center gap-1 sm:gap-1.5">
-                       <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> {profile.email} {/* Responsive Icon */}
+                       <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"/> {profile.email}
                     </CardDescription>
-                     {/* Add a small button to trigger email change flow */}
-                     <Button variant="link" size="sm" onClick={handleEmailChangeRequest} className="text-xs p-0 h-auto text-accent hover:underline">
+                     <Button variant="link" size="sm" onClick={() => setIsEmailDialogOpen(true)} className="text-xs p-0 h-auto text-accent hover:underline">
                          Change Email
                       </Button>
                   </div>
              </CardHeader>
-             <CardContent className="text-center p-4 sm:p-6 md:p-8 pt-0"> {/* Responsive padding */}
-                {/* Bio - Editable */}
+             <CardContent className="text-center p-4 sm:p-6 md:p-8 pt-0">
                 <AnimatePresence mode="wait">
                     { isEditingProfile ? (
                        <motion.div key="bio-textarea" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full mt-2 md:mt-3">
@@ -506,7 +506,7 @@ export default function ProfilePage() {
                            id="bio"
                            value={profile.bio}
                            onChange={handleProfileInputChange}
-                           className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary" // Responsive styles
+                           className="w-full p-2 border rounded-md text-xs sm:text-sm md:text-base text-muted-foreground min-h-[60px] sm:min-h-[80px] md:min-h-[100px] focus:ring-primary focus:border-primary"
                            placeholder="Tell us about yourself..."
                          />
                        </motion.div>
@@ -517,7 +517,6 @@ export default function ProfilePage() {
                     )}
                 </AnimatePresence>
                <Separator className="my-4 md:my-6" />
-                {/* Edit/Save Button */}
                 <AnimatePresence mode="wait">
                          <motion.div
                               key={isEditingProfile ? 'save-button' : 'edit-button'}
@@ -525,19 +524,19 @@ export default function ProfilePage() {
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
                               transition={{ duration: 0.2 }}
-                              whileHover={{ scale: 1.03 }} // Scale button on hover
-                              whileTap={{ scale: 0.97 }}   // Scale down on tap
+                              whileHover={{ scale: 1.03 }}
+                              whileTap={{ scale: 0.97 }}
                          >
                             <Button
                              variant={isEditingProfile ? "default" : "outline"}
                              size="sm"
                              onClick={() => (isEditingProfile ? handleProfileSave() : setIsEditingProfile(true))}
-                             className="w-full group transition-all text-xs sm:text-sm md:text-base md:py-2.5" // Responsive text size & padding
+                             className="w-full group transition-all text-xs sm:text-sm md:text-base md:py-2.5"
                              disabled={isLoading}
                            >
                              {isEditingProfile ? (
                                <>
-                                 <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Changes {/* Updated Text */}
+                                 <Save className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" /> Save Changes
                                </>
                              ) : (
                                <>
@@ -551,10 +550,7 @@ export default function ProfilePage() {
            </Card>
         </motion.div>
 
-        {/* Settings & Security Section */}
         <motion.div className="lg:col-span-2 space-y-6 md:space-y-8 lg:space-y-10" variants={itemVariants}>
-
-          {/* Change Password Card */}
           <Card className="shadow-md border-secondary/10 rounded-lg overflow-hidden">
              <CardHeader className="p-4 sm:p-6 md:p-8">
                <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2">
@@ -564,8 +560,8 @@ export default function ProfilePage() {
                <CardDescription className="text-sm md:text-base">Update your account password. Requires backend integration for full functionality.</CardDescription>
              </CardHeader>
              <motion.div
-                 className="p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
-                 variants={cardContentVariant} // Use content variant
+                 className="p-4 sm:p-6 md:p-8 pt-0"
+                 variants={cardContentVariant}
                  initial="hidden"
                  animate="visible"
               >
@@ -648,20 +644,19 @@ export default function ProfilePage() {
              </motion.div>
            </Card>
 
-           {/* Preferences Card */}
-           <Card className="shadow-md border-accent/10 rounded-lg overflow-hidden"> {/* Added rounded-lg and overflow */}
-             <CardHeader className="p-4 sm:p-6 md:p-8"> {/* Responsive padding */}
+           <Card className="shadow-md border-accent/10 rounded-lg overflow-hidden">
+             <CardHeader className="p-4 sm:p-6 md:p-8">
                <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2">
-                  <motion.div whileHover={{ rotate: 15 }}> {/* Animate Icon */}
+                  <motion.div whileHover={{ rotate: 15 }}>
                       <Settings className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-accent" />
                   </motion.div>
-                  Preferences {/* Responsive Icon */}
+                  Preferences
                </CardTitle>
                <CardDescription className="text-sm md:text-base">Manage your account preferences.</CardDescription>
              </CardHeader>
              <motion.div
-                 className="space-y-4 md:space-y-5 p-4 sm:p-6 md:p-8 pt-0" // Responsive padding
-                 variants={cardContentVariant} // Use content variant
+                 className="space-y-4 md:space-y-5 p-4 sm:p-6 md:p-8 pt-0"
+                 variants={cardContentVariant}
                  initial="hidden"
                  animate="visible"
               >
@@ -669,9 +664,8 @@ export default function ProfilePage() {
                   <>
                     <motion.div variants={itemVariants} className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
                       <Label htmlFor="emailNotifications" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
-                        <Bell className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground"/> Email Notifications {/* Responsive Icon */}
+                        <Bell className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground"/> Email Notifications
                       </Label>
-                       {/* Animated Switch */}
                        <motion.div whileTap={{ scale: 0.9 }}>
                          <Switch
                            id="emailNotifications"
@@ -683,12 +677,11 @@ export default function ProfilePage() {
                     </motion.div>
                     <motion.div variants={itemVariants} className="flex items-center justify-between p-3 md:p-4 rounded-md bg-muted/30 border">
                       <Label htmlFor="darkMode" className="flex items-center gap-2 cursor-pointer text-sm sm:text-base md:text-lg">
-                        <Moon className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" /> {/* Responsive Icon */}
+                        <Moon className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
                          Theme
                        </Label>
                        <div className="flex items-center gap-2">
                           <span className="text-muted-foreground text-xs sm:text-sm">{profile.darkMode ? "Dark" : "Light"}</span>
-                           {/* Animated Switch */}
                            <motion.div whileTap={{ scale: 0.9 }}>
                              <Switch
                                   id="darkMode"
@@ -703,7 +696,6 @@ export default function ProfilePage() {
              </motion.div>
            </Card>
 
-            {/* Danger Zone Card */}
             <Card className="shadow-md border-destructive/20 rounded-lg overflow-hidden">
                  <CardHeader className="p-4 sm:p-6 md:p-8 bg-destructive/5">
                    <CardTitle className="text-lg sm:text-xl md:text-2xl flex items-center gap-2 text-destructive">
@@ -715,13 +707,12 @@ export default function ProfilePage() {
                    </CardDescription>
                  </CardHeader>
                  <motion.div
-                     className="p-4 sm:p-6 md:p-8 pt-4" // Responsive padding
+                     className="p-4 sm:p-6 md:p-8 pt-4"
                      variants={cardContentVariant}
                      initial="hidden"
                      animate="visible"
                  >
                          <motion.div variants={itemVariants} className="flex flex-wrap gap-2 sm:gap-3">
-                             {/* Delete Account with Confirmation */}
                              <AlertDialog>
                                  <AlertDialogTrigger asChild>
                                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -730,7 +721,7 @@ export default function ProfilePage() {
                                          </Button>
                                      </motion.div>
                                  </AlertDialogTrigger>
-                                 <AlertDialogContent> {/* Removed as={motion.div} */}
+                                 <AlertDialogContent>
                                      <AlertDialogHeader>
                                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                          <AlertDialogDescription>
@@ -751,6 +742,55 @@ export default function ProfilePage() {
              </Card>
         </motion.div>
       </motion.div>
+
+      {/* Email Change Dialog */}
+      <Dialog open={isEmailDialogOpen} onOpenChange={setIsEmailDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                  <DialogTitle>Change Your Email Address</DialogTitle>
+                   <DialogDescription>
+                      Enter your new email and current password to make the change. This is a demo; no confirmation will be sent.
+                   </DialogDescription>
+              </DialogHeader>
+              <Form {...emailForm}>
+                  <form onSubmit={emailForm.handleSubmit(onEmailChangeSubmit)} className="space-y-4 py-4">
+                      <FormField
+                          control={emailForm.control}
+                          name="newEmail"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>New Email</FormLabel>
+                                  <FormControl>
+                                      <Input placeholder="new.email@example.com" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      <FormField
+                          control={emailForm.control}
+                          name="password"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>Current Password</FormLabel>
+                                  <FormControl>
+                                      <Input type="password" placeholder="••••••••" {...field} />
+                                  </FormControl>
+                                  <FormDescription>For security, please confirm your password.</FormDescription>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      <DialogFooter>
+                          <Button type="submit" disabled={emailForm.formState.isSubmitting}>
+                              {emailForm.formState.isSubmitting ? <Loader className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                              Save Change
+                          </Button>
+                      </DialogFooter>
+                  </form>
+              </Form>
+          </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
