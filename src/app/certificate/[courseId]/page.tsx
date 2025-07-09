@@ -246,7 +246,7 @@ export default function CertificatePage() { // Removed props parameter
       variants={containerVariants}
     >
         {/* Back Button */}
-       <motion.div variants={itemVariants} className="w-full max-w-4xl lg:max-w-5xl mb-4 sm:mb-6 md:mb-8 self-start">
+       <motion.div variants={itemVariants} className="w-full max-w-5xl lg:max-w-6xl mb-4 sm:mb-6 md:mb-8 self-start">
          <Button variant="outline" size="sm" asChild className="group transition-all hover:bg-accent hover:text-accent-foreground text-xs sm:text-sm md:text-base md:py-2 md:px-4">
            <Link href={`/courses/${certificateData.courseId}`}>
              <ArrowLeft className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:-translate-x-1 transition-transform duration-200" />
@@ -259,7 +259,7 @@ export default function CertificatePage() { // Removed props parameter
        <motion.div
             ref={certificateRef}
             variants={itemVariants}
-            className="w-full max-w-4xl lg:max-w-5xl bg-card text-card-foreground p-2 rounded-lg shadow-2xl"
+            className="w-full max-w-5xl lg:max-w-6xl bg-card text-card-foreground p-2 rounded-lg shadow-2xl"
         >
         <div className="border-2 border-primary/20 rounded-md p-2">
             <div className="border border-dashed border-primary/30 rounded-md p-8 md:p-12 text-center relative overflow-hidden bg-gradient-to-br from-background to-accent/10">
@@ -271,12 +271,12 @@ export default function CertificatePage() { // Removed props parameter
 
                 <motion.div variants={itemVariants} className="flex justify-center items-center gap-4 mb-4">
                     <Ribbon className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
-                    <h2 className="text-xl sm:text-2xl font-bold text-primary tracking-widest uppercase">{certificateData.issuingOrg}</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-primary tracking-widest uppercase">{certificateData.issuingOrg}</h2>
                 </motion.div>
 
                 <motion.p
                     variants={itemVariants}
-                    className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-wider text-foreground"
+                    className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-wider text-foreground"
                 >
                     Certificate of Achievement
                 </motion.p>
@@ -290,7 +290,7 @@ export default function CertificatePage() { // Removed props parameter
                 
                 <motion.p
                     variants={itemVariants}
-                    className="font-dancing-script text-5xl sm:text-6xl md:text-7xl my-4 text-primary"
+                    className="font-dancing-script text-6xl sm:text-7xl md:text-8xl my-4 text-primary"
                 >
                     {certificateData.studentName}
                 </motion.p>
@@ -304,7 +304,7 @@ export default function CertificatePage() { // Removed props parameter
 
                 <motion.h1
                     variants={itemVariants}
-                    className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mt-2 mb-8"
+                    className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mt-2 mb-8"
                 >
                     {certificateData.courseName}
                 </motion.h1>
@@ -354,3 +354,5 @@ export default function CertificatePage() { // Removed props parameter
     </motion.div>
   );
 }
+
+    
