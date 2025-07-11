@@ -151,7 +151,7 @@ export const allCourses: Course[] = [
         title: "Linux Command Line Basics",
         description: "Become proficient in using the Linux terminal for system administration and development tasks.",
         progress: 70,
-        image: "https://picsum.photos/seed/linuxcli/600/400",
+        image: "https://images.unsplash.com/photo-1544256718-3bcf237f3974?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsaW51eHxlbnwwfHx8fDE3NTIyMjU1MDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm45', title: 'Navigating the Filesystem', completed: true }, { id: 'm46', title: 'File Permissions', completed: true }, { id: 'm47', title: 'Process Management', completed: true }, { id: 'm48', title: 'Shell Scripting Introduction', completed: false }],
         duration: "10 hours",
         rating: 4.9,
