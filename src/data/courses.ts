@@ -250,7 +250,7 @@ export const allCourses: Course[] = [
         title: "Introduction to Docker & Kubernetes",
         description: "Learn containerization and orchestration.",
         progress: 20,
-        image: "https://images.unsplash.com/photo-1650295751050-b184e54e177c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkb2NrZXJ8ZW58MHx8fHwxNzUyMjI0OTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        image: "https://images.unsplash.com/photo-1646627927863-19874c27316b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2NrZXJ8ZW58MHx8fHwxNzUyMjI0OTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm81', title: 'Docker Fundamentals', completed: true }, { id: 'm82', title: 'Building Docker Images', completed: false }, { id: 'm83', title: 'Kubernetes Architecture', completed: false }, { id: 'm84', title: 'Deploying Applications with K8s', completed: false }],
         duration: "18 hours",
         rating: 4.7,
