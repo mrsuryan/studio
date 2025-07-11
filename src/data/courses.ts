@@ -20,7 +20,7 @@ export const allCourses: Course[] = [
         title: "Introduction to Web Development",
         description: "Learn HTML, CSS, and JavaScript fundamentals. Build your first website from scratch and understand the core concepts that power the web.",
         progress: 65,
-        image: "https://picsum.photos/seed/webdevintro/600/400",
+        image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMGNvZGV8ZW58MHx8fHwxNzUyMjIyMTg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [
             { id: 'm1', title: 'HTML Basics', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
             { id: 'm2', title: 'CSS Fundamentals', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
