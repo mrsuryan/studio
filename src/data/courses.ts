@@ -96,7 +96,7 @@ export const allCourses: Course[] = [
         title: "Cybersecurity Fundamentals",
         description: "Learn the basics of cybersecurity threats, defenses, and best practices to protect digital assets.",
         progress: 10,
-        image: "https://images.unsplash.com/photo-1550751827-4138d04d405b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjeWJlcnNlY3VyaXR5fGVufDB8fHx8MTc1NDQ4MzYzOXww&ixlib=rb-4.1.0&q=80&w=1080",
+        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjeWJlcnNlY3VyaXR5fGVufDB8fHx8MTc1MjIyMzcxMHww&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm25', title: 'Introduction to Threats', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, { id: 'm26', title: 'Network Security Basics', completed: false }, { id: 'm27', title: 'Cryptography Essentials', completed: false }, { id: 'm28', title: 'Security Best Practices', completed: false }],
         duration: "16 hours",
         rating: 4.6,
