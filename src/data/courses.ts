@@ -36,7 +36,7 @@ export const allCourses: Course[] = [
         title: "Advanced React Concepts",
         description: "Dive deep into hooks, state management patterns like Context API and Redux, and performance optimization techniques for complex React applications.",
         progress: 30,
-        image: "https://picsum.photos/seed/reactadvanced/600/400",
+        image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGNvZGV8ZW58MHx8fHwxNzUyMjIyMzU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [
             { id: 'm5', title: 'React Hooks Deep Dive', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
             { id: 'm6', title: 'State Management (Context API)', completed: false, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
