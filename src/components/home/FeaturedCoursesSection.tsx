@@ -11,8 +11,8 @@ import { motion } from "framer-motion";
 // Mock course data - Keep it local to this component, using relevant seeds from the main list
 const featuredCourses = [
   { id: 1, title: "Introduction to Web Development", description: "Learn HTML, CSS, and JavaScript fundamentals.", progress: 65, image: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3ZWIlMjBkZXZlbG9wbWVudHxlbnwwfHx8fDE3NTIyMjUwOTN8MA&ixlib=rb-4.1.0&q=80&w=1080", aiHint: "web development code screen" },
-  { id: 7, title: "Cybersecurity Fundamentals", description: "Basics of cybersecurity threats and defenses.", progress: 10, image: "https://picsum.photos/seed/cybersecurity/300/200", aiHint: "cyber security lock" },
-  { id: 21, title: "Introduction to Docker & Kubernetes", description: "Learn containerization and orchestration.", progress: 20, image: "https://picsum.photos/seed/dockerk8s/300/200", aiHint: "docker kubernetes containers" },
+  { id: 7, title: "Cybersecurity Fundamentals", description: "Basics of cybersecurity threats and defenses.", progress: 10, image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjeWJlcnNlY3VyaXR5fGVufDB8fHx8MTc1MjIyMzcxMHww&ixlib=rb-4.1.0&q=80&w=1080", aiHint: "cyber security lock" },
+  { id: 21, title: "Introduction to Docker & Kubernetes", description: "Learn containerization and orchestration.", progress: 20, image: "https://images.unsplash.com/photo-1637778352878-f0b46d574a04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkb2NrZXJ8ZW58MHx8fHwxNzUyMjI0OTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080", aiHint: "docker kubernetes containers" },
 ];
 
 // Animation Variants
