@@ -74,7 +74,7 @@ export const allCourses: Course[] = [
         title: "Cloud Computing Basics (AWS)",
         description: "Understand the fundamentals of cloud services on AWS, including EC2, S3, and basic architecture patterns.",
         progress: 0,
-        image: "https://images.unsplash.com/photo-1614741118884-62ac62b31e16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhd3MlMjBjbG91ZCUyMGNvbXB1dGluZ3xlbnwwfHx8fDE3NTQ0ODM2MDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1080&q=80",
         modules: [{ id: 'm17', title: 'What is Cloud Computing?', completed: false }, { id: 'm18', title: 'Core AWS Services (EC2, S3)', completed: false }, { id: 'm19', title: 'AWS Architecture Basics', completed: false }, {id: 'm20', title: 'Cloud Security Fundamentals', completed: false}],
         duration: "12 hours",
         rating: 4.5,
@@ -290,3 +290,5 @@ export const allCourses: Course[] = [
         aiHint: "python flask api code",
     },
 ];
+
+    
