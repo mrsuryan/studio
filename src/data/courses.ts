@@ -52,7 +52,7 @@ export const allCourses: Course[] = [
         title: "Data Structures and Algorithms",
         description: "Master essential computer science concepts, including arrays, linked lists, trees, graphs, sorting, and searching algorithms. Prepare for technical interviews.",
         progress: 0,
-        image: "https://picsum.photos/seed/datastructures/600/400",
+        image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkYXRhJTIwc3RydWN0dXJlfGVufDB8fHx8MTc1MjIyMjAxNHww&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm9', title: 'Arrays and Strings', completed: false }, { id: 'm10', title: 'Linked Lists', completed: false }, { id: 'm11', title: 'Trees and Graphs', completed: false }, {id: 'm12', title: 'Sorting Algorithms', completed: false}],
         duration: "20 hours",
         rating: 4.6,
