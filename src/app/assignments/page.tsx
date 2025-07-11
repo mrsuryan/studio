@@ -187,8 +187,7 @@ export default function AssignmentsPage() {
                             <TableCell className="text-right pr-4 sm:pr-6 md:pr-8 py-3 sm:py-4">
                                 {/* Example Action Button */}
                                 <Button variant="ghost" size="sm" asChild className="text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3">
-                                     {/* In a real app, link to assignment details/submission */}
-                                     <Link href={`#`}>
+                                     <Link href={`/assignments/${assignment.id}`}>
                                         View
                                      </Link>
                                  </Button>
@@ -218,3 +217,5 @@ export default function AssignmentsPage() {
     </motion.div>
   );
 }
+
+    
