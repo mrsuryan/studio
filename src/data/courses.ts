@@ -118,7 +118,7 @@ export const allCourses: Course[] = [
         title: "Introduction to DevOps",
         description: "Understand the culture, practices, and tools that enable faster and more reliable software delivery.",
         progress: 5,
-        image: "https://picsum.photos/seed/devopsintro/600/400",
+        image: "https://images.unsplash.com/photo-1631624215749-b10b3dd7bca7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkZXZvcHN8ZW58MHx8fHwxNzUyMjIzNzg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm33', title: 'What is DevOps?', completed: true }, { id: 'm34', title: 'CI/CD Pipelines', completed: false }, { id: 'm35', title: 'Infrastructure as Code', completed: false }, { id: 'm36', title: 'Monitoring and Logging', completed: false }],
         duration: "12 hours",
         rating: 4.4,
@@ -291,4 +291,5 @@ export const allCourses: Course[] = [
     },
 ];
 
+    
     
