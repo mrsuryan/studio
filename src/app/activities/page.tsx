@@ -1,13 +1,19 @@
 
-'use client';
+"use client"; // Mark as Client Component for Framer Motion
 
 import { Card, CardContent } from "@/components/ui/card";
-import { BellRing, CheckCircle, FileText, GraduationCap, PlayCircle } from "lucide-react";
+import { BellRing, CheckCircle, FileText, GraduationCap, PlayCircle, Download, Loader } from "lucide-react";
 import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 // Mock activity data with types
 type ActivityType = 'lesson_complete' | 'quiz_submit' | 'course_start' | 'grade_receive';
 
+// Mapping activity types to icons
 const activityIcons: Record<ActivityType, React.ElementType> = {
     lesson_complete: CheckCircle,
     quiz_submit: FileText,
@@ -15,22 +21,26 @@ const activityIcons: Record<ActivityType, React.ElementType> = {
     grade_receive: GraduationCap,
 };
 
+// Mapping activity types to colors (using Tailwind classes for theme compatibility)
 // Adjusted colors for better contrast/consistency if needed
 const activityColors: Record<ActivityType, string> = {
     lesson_complete: 'text-green-600 dark:text-green-400',
     quiz_submit: 'text-blue-600 dark:text-blue-400',
-    course_start: 'text-primary',
+    course_start: 'text-primary', // Using primary theme color
     grade_receive: 'text-purple-600 dark:text-purple-400',
 };
 
+// Mock activity data
 const activities = [
   { id: 1, type: 'lesson_complete' as ActivityType, description: "Completed 'Introduction to HTML' lesson.", timestamp: "2 hours ago" },
   { id: 2, type: 'quiz_submit' as ActivityType, description: "Submitted 'HTML Basics Quiz'. Score: 90%", timestamp: "1 day ago" },
   { id: 3, type: 'course_start' as ActivityType, description: "Started 'Advanced React Concepts' course.", timestamp: "3 days ago" },
   { id: 4, type: 'grade_receive' as ActivityType, description: "Received grade A for 'CSS Flexbox Challenge'.", timestamp: "5 days ago" },
   { id: 5, type: 'lesson_complete' as ActivityType, description: "Completed 'React Hooks Deep Dive' module.", timestamp: "6 days ago" },
+  // Add more mock activities if needed
 ];
 
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -61,6 +71,53 @@ const itemVariants = {
 };
 
 export default function ActivitiesPage() {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const { toast } = useToast();
+  const activitiesCardRef = useRef<HTMLDivElement>(null);
+
+  const handleDownload = async () => {
+    const cardElement = activitiesCardRef.current;
+    if (!cardElement) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not find the content to download.",
+      });
+      return;
+    }
+
+    setIsDownloading(true);
+
+    try {
+      const canvas = await html2canvas(cardElement, {
+        scale: 2,
+        useCORS: true,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`EduHub-Activities.pdf`);
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast({
+        variant: "destructive",
+        title: "Download Failed",
+        description: "An error occurred while generating the activities PDF.",
+      });
+    } finally {
+        setIsDownloading(false);
+    }
+  };
+
+
   return (
     <motion.div
       className="space-y-8 md:space-y-10 lg:space-y-12" // Adjusted spacing
@@ -68,17 +125,30 @@ export default function ActivitiesPage() {
       animate="visible"
       variants={containerVariants}
     >
-      <motion.h1
-         className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3" // Responsive font size and gap
-        variants={itemVariants} // Use item variant for the title
-      >
-         {/* Add subtle animation to the icon */}
-         <motion.div whileHover={{ rotate: [0, 15, -10, 0], transition: { duration: 0.5 } }}>
-            <BellRing className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" />
-         </motion.div>
-         Recent Activities Feed {/* Responsive Icon */}
-      </motion.h1>
+      <div className="flex justify-between items-start">
+        <motion.h1
+          className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary flex items-center gap-2 sm:gap-3" // Responsive font size and gap
+          variants={itemVariants} // Use item variant for the title
+        >
+          {/* Add subtle animation to the icon */}
+          <motion.div whileHover={{ rotate: [0, 15, -10, 0], transition: { duration: 0.5 } }}>
+              <BellRing className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10" />
+          </motion.div>
+          Recent Activities Feed {/* Responsive Icon */}
+        </motion.h1>
+        <motion.div variants={itemVariants}>
+          <Button size="sm" onClick={handleDownload} disabled={isDownloading}>
+            {isDownloading ? (
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+                <Download className="mr-2 h-4 w-4" />
+            )}
+            Download
+          </Button>
+        </motion.div>
+      </div>
 
+      <motion.div variants={itemVariants} ref={activitiesCardRef}>
         <Card className="shadow-lg border-primary/10 overflow-hidden"> {/* Added overflow hidden */}
           {/* Responsive Card Content Padding */}
           <CardContent className="p-4 sm:p-6 md:p-8 pt-6 divide-y divide-border/30"> {/* Use divide for separators */}
@@ -94,6 +164,7 @@ export default function ActivitiesPage() {
                  whileHover="hover" // Apply hover animation
                  initial="hidden" // Apply initial state for stagger
                  animate="visible" // Apply animate state for stagger
+                 // transition={{ delay: index * 0.05 }} // Apply individual delay if needed, container already staggers
                 >
                    {/* Icon container with animation */}
                    <motion.div
@@ -116,6 +187,7 @@ export default function ActivitiesPage() {
                    </div>
                </motion.div>
              )})}
+           {/* Empty State */}
            {activities.length === 0 && (
              <motion.div
                  variants={itemVariants} // Use item variant for animation
@@ -140,6 +212,7 @@ export default function ActivitiesPage() {
            )}
          </CardContent>
        </Card>
+      </motion.div>
     </motion.div>
   );
 }

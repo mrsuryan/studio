@@ -1,244 +1,292 @@
 
-// Shared course data
-export const allCourses = [
+// Add Course type definition
+export interface Course {
+    id: number;
+    title: string;
+    description: string;
+    progress: number;
+    image: string;
+    modules: { id: string; title: string; completed: boolean; videoUrl?: string }[];
+    duration: string;
+    rating: number;
+    aiHint?: string; // Optional AI hint for images
+}
+
+
+// Shared course data (as an array of Course objects)
+export const allCourses: Course[] = [
     {
         id: 1,
         title: "Introduction to Web Development",
         description: "Learn HTML, CSS, and JavaScript fundamentals. Build your first website from scratch and understand the core concepts that power the web.",
         progress: 65,
-        image: "https://picsum.photos/seed/webdevintro/600/400",
-        modules: [{ id: 'm1', title: 'HTML Basics', completed: true }, { id: 'm2', title: 'CSS Fundamentals', completed: true }, { id: 'm3', title: 'JavaScript Introduction', completed: false }, { id: 'm4', title: 'DOM Manipulation', completed: false }],
+        image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMGNvZGV8ZW58MHx8fHwxNzUyMjIyMTg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        modules: [
+            { id: 'm1', title: 'HTML Basics', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm2', title: 'CSS Fundamentals', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm3', title: 'JavaScript Introduction', completed: false, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm4', title: 'DOM Manipulation', completed: false }
+        ],
         duration: "10 hours",
-        rating: 4.7
+        rating: 4.7,
+        aiHint: "web development code screen",
     },
     {
         id: 2,
         title: "Advanced React Concepts",
         description: "Dive deep into hooks, state management patterns like Context API and Redux, and performance optimization techniques for complex React applications.",
         progress: 30,
-        image: "https://picsum.photos/seed/reactadvanced/600/400",
-        modules: [{ id: 'm5', title: 'React Hooks Deep Dive', completed: true }, { id: 'm6', title: 'State Management (Context API)', completed: false }, { id: 'm7', title: 'Performance Optimization', completed: false }, {id: 'm8', title: 'Testing React Apps', completed: false}],
+        image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGNvZGV8ZW58MHx8fHwxNzUyMjIyMzU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        modules: [
+            { id: 'm5', title: 'React Hooks Deep Dive', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm6', title: 'State Management (Context API)', completed: false, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, 
+            { id: 'm7', title: 'Performance Optimization', completed: false }, 
+            {id: 'm8', title: 'Testing React Apps', completed: false}
+        ],
         duration: "15 hours",
-        rating: 4.8
+        rating: 4.8,
+        aiHint: "react code editor",
     },
     {
         id: 3,
         title: "Data Structures and Algorithms",
         description: "Master essential computer science concepts, including arrays, linked lists, trees, graphs, sorting, and searching algorithms. Prepare for technical interviews.",
         progress: 0,
-        image: "https://picsum.photos/seed/datastructures/600/400",
+        image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkYXRhJTIwc3RydWN0dXJlfGVufDB8fHx8MTc1MjIyMjAxNHww&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm9', title: 'Arrays and Strings', completed: false }, { id: 'm10', title: 'Linked Lists', completed: false }, { id: 'm11', title: 'Trees and Graphs', completed: false }, {id: 'm12', title: 'Sorting Algorithms', completed: false}],
         duration: "20 hours",
-        rating: 4.6
+        rating: 4.6,
+        aiHint: "algorithm flowchart network",
     },
     {
         id: 4,
         title: "Python for Data Science",
         description: "Explore data analysis, visualization, and machine learning using Python libraries like NumPy, Pandas, Matplotlib, and Scikit-learn.",
         progress: 15,
-        image: "https://picsum.photos/seed/datasciencepy/600/400",
-        modules: [{ id: 'm13', title: 'NumPy Essentials', completed: true }, { id: 'm14', title: 'Pandas DataFrames', completed: false }, { id: 'm15', title: 'Introduction to Matplotlib', completed: false }, {id: 'm16', title: 'Basic Machine Learning', completed: false}],
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxweXRob24lMjBkYXRhJTIwYW5hbHlzaXMlMjBjaGFydHxlbnwwfHx8fDE3NTQ0ODM1MjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        modules: [{ id: 'm13', title: 'NumPy Essentials', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, { id: 'm14', title: 'Pandas DataFrames', completed: false }, { id: 'm15', title: 'Introduction to Matplotlib', completed: false }, {id: 'm16', title: 'Basic Machine Learning', completed: false}],
         duration: "18 hours",
-        rating: 4.9
+        rating: 4.9,
+        aiHint: "python data analysis chart",
     },
     {
         id: 5,
         title: "Cloud Computing Basics (AWS)",
         description: "Understand the fundamentals of cloud services on AWS, including EC2, S3, and basic architecture patterns.",
         progress: 0,
-        image: "https://picsum.photos/seed/awsbasics/600/400",
+        image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1080&q=80",
         modules: [{ id: 'm17', title: 'What is Cloud Computing?', completed: false }, { id: 'm18', title: 'Core AWS Services (EC2, S3)', completed: false }, { id: 'm19', title: 'AWS Architecture Basics', completed: false }, {id: 'm20', title: 'Cloud Security Fundamentals', completed: false}],
         duration: "12 hours",
-        rating: 4.5
+        rating: 4.5,
+        aiHint: "aws cloud computing",
     },
     {
         id: 6,
         title: "UI/UX Design Principles",
         description: "Learn the core concepts of user interface and experience design, including user research, wireframing, prototyping, and visual design principles.",
         progress: 50,
-        image: "https://picsum.photos/seed/uiuxdesign/600/400",
+        image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx1aSUyMHV4JTIwZGVzaWdufGVufDB8fHx8MTc1NDQ4MzYzNHww&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm21', title: 'User Research Methods', completed: true }, { id: 'm22', title: 'Wireframing and Prototyping', completed: true }, { id: 'm23', title: 'Visual Design Principles', completed: false }, {id: 'm24', title: 'Usability Testing', completed: false}],
         duration: "14 hours",
-        rating: 4.7
+        rating: 4.7,
+        aiHint: "ui ux design wireframe",
     },
     {
         id: 7,
         title: "Cybersecurity Fundamentals",
         description: "Learn the basics of cybersecurity threats, defenses, and best practices to protect digital assets.",
         progress: 10,
-        image: "https://picsum.photos/seed/cybersecurity/600/400",
-        modules: [{ id: 'm25', title: 'Introduction to Threats', completed: true }, { id: 'm26', title: 'Network Security Basics', completed: false }, { id: 'm27', title: 'Cryptography Essentials', completed: false }, { id: 'm28', title: 'Security Best Practices', completed: false }],
+        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjeWJlcnNlY3VyaXR5fGVufDB8fHx8MTc1MjIyMzcxMHww&ixlib=rb-4.1.0&q=80&w=1080",
+        modules: [{ id: 'm25', title: 'Introduction to Threats', completed: true, videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" }, { id: 'm26', title: 'Network Security Basics', completed: false }, { id: 'm27', title: 'Cryptography Essentials', completed: false }, { id: 'm28', title: 'Security Best Practices', completed: false }],
         duration: "16 hours",
-        rating: 4.6
+        rating: 4.6,
+        aiHint: "cyber security lock",
     },
     {
         id: 8,
         title: "Database Management (SQL)",
         description: "Master SQL for querying, managing, and manipulating relational databases effectively.",
         progress: 40,
-        image: "https://picsum.photos/seed/sqlbasics/600/400",
+        image: "https://images.unsplash.com/photo-1488229297570-58520851e868?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxkYXRhJTIwYmFzZXxlbnwwfHx8fDE3NTIyMjQzODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm29', title: 'Relational Database Concepts', completed: true }, { id: 'm30', title: 'Basic SQL Queries', completed: true }, { id: 'm31', title: 'Advanced SQL Joins', completed: false }, { id: 'm32', title: 'Database Design Principles', completed: false }],
         duration: "15 hours",
-        rating: 4.8
+        rating: 4.8,
+        aiHint: "sql database query",
     },
     {
         id: 9,
         title: "Introduction to DevOps",
         description: "Understand the culture, practices, and tools that enable faster and more reliable software delivery.",
         progress: 5,
-        image: "https://picsum.photos/seed/devopsintro/600/400",
+        image: "https://images.unsplash.com/photo-1667372335937-d03be6fb0a9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkZXZvcHN8ZW58MHx8fHwxNzUyMjIzNzg2fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm33', title: 'What is DevOps?', completed: true }, { id: 'm34', title: 'CI/CD Pipelines', completed: false }, { id: 'm35', title: 'Infrastructure as Code', completed: false }, { id: 'm36', title: 'Monitoring and Logging', completed: false }],
         duration: "12 hours",
-        rating: 4.4
+        rating: 4.4,
+        aiHint: "devops workflow automation",
     },
     {
         id: 10,
         title: "Machine Learning Basics",
         description: "Get introduced to the core concepts of machine learning, including supervised and unsupervised learning.",
         progress: 25,
-        image: "https://picsum.photos/seed/machinelearning/600/400",
+        image: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtYWNoaW5lJTIwbGVhcm5pbmd8ZW58MHx8fHwxNzUyMjI0MzAwfDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm37', title: 'Introduction to ML', completed: true }, { id: 'm38', title: 'Supervised Learning Algorithms', completed: false }, { id: 'm39', title: 'Unsupervised Learning', completed: false }, { id: 'm40', title: 'Model Evaluation', completed: false }],
         duration: "22 hours",
-        rating: 4.7
+        rating: 4.7,
+        aiHint: "machine learning brain network",
     },
     {
         id: 11,
         title: "Networking Essentials",
         description: "Learn the fundamentals of computer networks, protocols, and the OSI model.",
         progress: 0,
-        image: "https://picsum.photos/seed/networking/600/400",
-        modules: [{ id: 'm41', title: 'OSI Model Explained', completed: false }, { id: 'm42', title: 'TCP/IP Protocol Suite', completed: false }, { id: 'm43', title: 'IP Addressing and Subnetting', completed: false }, { id: 'm44', title: 'Common Network Devices', completed: false }],
+        image: "https://images.unsplash.com/photo-1691435828932-911a7801adfb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb21wdXRlciUyMG5ldHdvcmtpbmd8ZW58MHx8fHwxNzUyMjI0NTk3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        modules: [{ id: 'm41', title: 'OSI Model Explained', completed: false }, { id: 'm42', title: 'TCP/IP Protocol Suite', completed: false }, { id: 'm43', title: 'IP Addressing and Subnetting', completed: false }, { id: 'm44', 'title': 'Common Network Devices', completed: false }],
         duration: "14 hours",
-        rating: 4.5
+        rating: 4.5,
+        aiHint: "computer network servers",
     },
     {
         id: 12,
         title: "Linux Command Line Basics",
         description: "Become proficient in using the Linux terminal for system administration and development tasks.",
         progress: 70,
-        image: "https://picsum.photos/seed/linuxcli/600/400",
+        image: "https://images.unsplash.com/photo-1544256718-3bcf237f3974?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxsaW51eHxlbnwwfHx8fDE3NTIyMjU1MDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm45', title: 'Navigating the Filesystem', completed: true }, { id: 'm46', title: 'File Permissions', completed: true }, { id: 'm47', title: 'Process Management', completed: true }, { id: 'm48', title: 'Shell Scripting Introduction', completed: false }],
         duration: "10 hours",
-        rating: 4.9
+        rating: 4.9,
+        aiHint: "linux command line terminal",
     },
     {
         id: 13,
         title: "Agile Project Management",
         description: "Learn Agile methodologies like Scrum and Kanban for efficient project delivery.",
         progress: 15,
-        image: "https://picsum.photos/seed/agilepm/600/400",
+        image: "https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhZ2lsZSUyMHxlbnwwfHx8fDE3NTIyMjU2Mzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm49', title: 'Agile Principles', completed: true }, { id: 'm50', title: 'Scrum Framework', completed: false }, { id: 'm51', title: 'Kanban Method', completed: false }, { id: 'm52', title: 'User Stories and Backlogs', completed: false }],
         duration: "8 hours",
-        rating: 4.3
+        rating: 4.3,
+        aiHint: "agile scrum board sticky notes",
     },
     {
         id: 14,
         title: "Introduction to Blockchain",
         description: "Understand the technology behind cryptocurrencies and distributed ledger systems.",
         progress: 0,
-        image: "https://picsum.photos/seed/blockchain/600/400",
+        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxibG9ja2NoYWlufGVufDB8fHx8MTc1MjIyNDcwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm53', title: 'What is Blockchain?', completed: false }, { id: 'm54', title: 'Cryptography in Blockchain', completed: false }, { id: 'm55', title: 'Consensus Mechanisms', completed: false }, { id: 'm56', title: 'Blockchain Use Cases', completed: false }],
         duration: "12 hours",
-        rating: 4.2
+        rating: 4.2,
+        aiHint: "blockchain network nodes",
     },
     {
         id: 15,
         title: "API Design and Development",
         description: "Learn how to design, build, and document RESTful APIs using best practices.",
         progress: 35,
-        image: "https://picsum.photos/seed/apidesign/600/400",
+        image: "https://images.unsplash.com/photo-1623282033815-40b05d96c903?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhcGl8ZW58MHx8fHwxNzUyMjI1MDQzfDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm57', title: 'REST Principles', completed: true }, { id: 'm58', title: 'API Design Patterns', completed: false }, { id: 'm59', title: 'API Documentation (Swagger/OpenAPI)', completed: false }, { id: 'm60', title: 'API Security Basics', completed: false }],
         duration: "16 hours",
-        rating: 4.7
+        rating: 4.7,
+        aiHint: "api integration code connection",
     },
     {
         id: 16,
         title: "Ethical Hacking Fundamentals",
         description: "Explore the techniques used by hackers to find vulnerabilities, but for ethical purposes.",
         progress: 20,
-        image: "https://picsum.photos/seed/ethicalhacking/600/400",
+        image: "https://images.unsplash.com/photo-1669054626218-f0b57b8ec632?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxldGhpY2FsJTIwaGFja2luZ3xlbnwwfHx8fDE3NTIyMjQ3ODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm61', title: 'Ethical Hacking Overview', completed: true }, { id: 'm62', title: 'Reconnaissance Techniques', completed: false }, { id: 'm63', title: 'Scanning Networks', completed: false }, { id: 'm64', title: 'Web Application Hacking Basics', completed: false }],
         duration: "20 hours",
-        rating: 4.6
+        rating: 4.6,
+        aiHint: "ethical hacking code vulnerability",
     },
     {
         id: 17,
         title: "Advanced CSS and Sass",
         description: "Master modern CSS features and Sass preprocessor.",
         progress: 0,
-        image: "https://picsum.photos/seed/advancedcss/600/400",
+        image: "https://images.unsplash.com/photo-1508317469940-e3de49ba902e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjc3N8ZW58MHx8fHwxNzUyMjI0ODAyfDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm65', title: 'Advanced Selectors', completed: false }, { id: 'm66', title: 'CSS Grid Layout', completed: false }, { id: 'm67', title: 'Sass Variables & Mixins', completed: false }, { id: 'm68', title: 'Responsive Design with Sass', completed: false }],
         duration: "14 hours",
-        rating: 4.8
+        rating: 4.8,
+        aiHint: "css sass code design",
     },
     {
         id: 18,
         title: "Node.js Backend Development",
         description: "Build scalable server-side applications with Node.js.",
         progress: 45,
-        image: "https://picsum.photos/seed/nodejsdev/600/400",
+        image: "https://images.unsplash.com/photo-1619410283995-43d9134e7656?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxub2RlLmpzfGVufDB8fHx8MTc1MjIyNDg0MXww&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm69', title: 'Node.js Basics', completed: true }, { id: 'm70', title: 'Express.js Framework', completed: true }, { id: 'm71', title: 'Asynchronous JavaScript', completed: false }, { id: 'm72', title: 'Working with Databases', completed: false }],
         duration: "18 hours",
-        rating: 4.7
+        rating: 4.7,
+        aiHint: "nodejs backend code",
     },
     {
         id: 19,
         title: "Mobile App Development (React Native)",
         description: "Create cross-platform mobile apps.",
         progress: 10,
-        image: "https://picsum.photos/seed/reactnative/600/400",
+        image: "https://images.unsplash.com/photo-1670057037226-b3d65909424f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMG5hdGl2ZXxlbnwwfHx8fDE3NTIyMjQ5MTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm73', title: 'React Native Setup', completed: true }, { id: 'm74', title: 'Core Components', completed: false }, { id: 'm75', title: 'Navigation', completed: false }, { id: 'm76', title: 'State Management in RN', completed: false }],
         duration: "25 hours",
-        rating: 4.5
+        rating: 4.5,
+        aiHint: "react native mobile app development",
     },
     {
         id: 20,
         title: "Cloud Security Best Practices",
         description: "Secure cloud infrastructure on major platforms.",
         progress: 0,
-        image: "https://picsum.photos/seed/cloudsecurity/600/400",
+        image: "https://images.unsplash.com/photo-1667372283496-893f0b1e7c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjbG91ZCUyMHNlY3VyaXR5fGVufDB8fHx8MTc1MjIyNDkzMHww&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm77', title: 'IAM and Access Control', completed: false }, { id: 'm78', title: 'Network Security Groups', completed: false }, { id: 'm79', title: 'Data Encryption', completed: false }, { id: 'm80', title: 'Monitoring and Auditing', completed: false }],
         duration: "16 hours",
-        rating: 4.6
+        rating: 4.6,
+        aiHint: "cloud security shield data",
     },
     {
         id: 21,
         title: "Introduction to Docker & Kubernetes",
         description: "Learn containerization and orchestration.",
         progress: 20,
-        image: "https://picsum.photos/seed/dockerk8s/600/400",
+        image: "https://images.unsplash.com/photo-1646627927863-19874c27316b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2NrZXJ8ZW58MHx8fHwxNzUyMjI0OTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm81', title: 'Docker Fundamentals', completed: true }, { id: 'm82', title: 'Building Docker Images', completed: false }, { id: 'm83', title: 'Kubernetes Architecture', completed: false }, { id: 'm84', title: 'Deploying Applications with K8s', completed: false }],
         duration: "18 hours",
-        rating: 4.7
+        rating: 4.7,
+        aiHint: "docker kubernetes containers",
     },
     {
         id: 22,
         title: "Software Testing Fundamentals",
         description: "Understand different testing methodologies.",
         progress: 5,
-        image: "https://picsum.photos/seed/softwaretesting/600/400",
+        image: "https://images.unsplash.com/photo-1573164574472-797cdf4a583a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzb2Z0d2FyZSUyMHRlc3Rpbmd8ZW58MHx8fHwxNzUyMjI0OTg1fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm85', title: 'Types of Testing', completed: true }, { id: 'm86', title: 'Unit Testing', completed: false }, { id: 'm87', title: 'Integration Testing', completed: false }, { id: 'm88', title: 'Test Automation Basics', completed: false }],
         duration: "10 hours",
-        rating: 4.4
+        rating: 4.4,
+        aiHint: "software testing checklist code",
     },
     {
         id: 23,
         title: "Version Control with Git & GitHub",
         description: "Master Git for collaboration and code management.",
         progress: 80,
-        image: "https://picsum.photos/seed/gitgithub/600/400",
+        image: "https://images.unsplash.com/photo-1618401479427-c8ef9465fbe1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxnaXR8ZW58MHx8fHwxNzUyMjI1MDA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm89', title: 'Git Basics', completed: true }, { id: 'm90', title: 'Branching and Merging', completed: true }, { id: 'm91', title: 'Working with GitHub', completed: true }, { id: 'm92', title: 'Collaboration Workflows', completed: true }],
         duration: "6 hours",
-        rating: 4.9
+        rating: 4.9,
+        aiHint: "git github version control branch",
     },
     {
         id: 24,
         title: "Building RESTful APIs with Python (Flask)",
         description: "Develop web APIs using the Flask framework.",
         progress: 0,
-        image: "https://picsum.photos/seed/pythonflaskapi/600/400",
+        image: "https://images.unsplash.com/photo-1623282033815-40b05d96c903?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhcGl8ZW58MHx8fHwxNzUyMjI1MDQzfDA&ixlib=rb-4.1.0&q=80&w=1080",
         modules: [{ id: 'm93', title: 'Flask Introduction', completed: false }, { id: 'm94', title: 'Routing and Views', completed: false }, { id: 'm95', title: 'Request Handling', completed: false }, { id: 'm96', title: 'Building JSON APIs', completed: false }],
         duration: "14 hours",
-        rating: 4.6
+        rating: 4.6,
+        aiHint: "python flask api code",
     },
-  ];
+];

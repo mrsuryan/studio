@@ -1,11 +1,11 @@
-
-'use client';
+"use client"; // Mark as Client Component for Framer Motion and Link
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpenCheck, CalendarClock, History } from "lucide-react";
 import { motion } from "framer-motion";
-import Link from "next/link";
+import Link from "next/link"; // Import Next.js Link
 
+// Animation Variants
 const cardVariants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
@@ -47,6 +47,7 @@ export default function DashboardPage() {
          className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6 md:mb-8 lg:mb-10 flex items-center gap-2 sm:gap-3" // Responsive font size and gap
         variants={cardVariants} // Use card variant for initial animation
       >
+        {/* Using a simple SVG for dashboard icon */}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> {/* Responsive Icon Size */}
         Dashboard Overview
       </motion.h1>
@@ -55,8 +56,9 @@ export default function DashboardPage() {
         className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3" // Adjusted gaps
         variants={containerVariants}
       >
+        {/* Courses Card */}
         <motion.div variants={cardVariants} whileHover="hover">
-          <Link href="/courses" className="block h-full">
+          <Link href="/courses" className="block h-full"> {/* Wrap Card in Link */}
             {/* Enhanced Card Styling */}
              <Card className="h-full transition-shadow duration-300 cursor-pointer bg-gradient-to-br from-card via-primary/5 to-transparent border-l-4 border-primary/50 hover:border-primary focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"> {/* Added focus ring */}
                {/* Responsive Card Header */}
@@ -68,6 +70,7 @@ export default function DashboardPage() {
                </CardHeader>
                {/* Responsive Card Content */}
                <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+                 {/* Mock data - replace with dynamic data later */}
                  <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">+5</div>
                  <p className="text-sm sm:text-base md:text-lg text-muted-foreground mt-1">
                    View and manage your enrolled courses.
@@ -77,8 +80,9 @@ export default function DashboardPage() {
           </Link>
         </motion.div>
 
+        {/* Deadlines Card */}
         <motion.div variants={cardVariants} whileHover="hover">
-           <Link href="/assignments" className="block h-full">
+           <Link href="/assignments" className="block h-full"> {/* Wrap Card in Link */}
              <Card className="h-full transition-shadow duration-300 cursor-pointer bg-gradient-to-br from-card via-accent/5 to-transparent border-l-4 border-accent/50 hover:border-accent focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2"> {/* Added focus ring */}
                {/* Responsive Card Header */}
                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pt-4 px-4 sm:px-6">
@@ -89,6 +93,7 @@ export default function DashboardPage() {
                </CardHeader>
                {/* Responsive Card Content */}
                <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+                  {/* Mock data */}
                   <div className="text-xl sm:text-2xl md:text-3xl font-bold text-accent">3 Assignments</div>
                  <p className="text-sm sm:text-base md:text-lg text-muted-foreground mt-1">
                    Stay on track with assignment due dates.
@@ -98,8 +103,9 @@ export default function DashboardPage() {
           </Link>
         </motion.div>
 
+        {/* Activity Card */}
         <motion.div variants={cardVariants} whileHover="hover">
-          <Link href="/activities" className="block h-full">
+          <Link href="/activities" className="block h-full"> {/* Wrap Card in Link */}
               <Card className="h-full transition-shadow duration-300 cursor-pointer bg-gradient-to-br from-card via-secondary/10 to-transparent border-l-4 border-secondary/50 hover:border-muted-foreground focus-within:ring-2 focus-within:ring-muted-foreground focus-within:ring-offset-2"> {/* Added focus ring */}
                {/* Responsive Card Header */}
                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pt-4 px-4 sm:px-6">
@@ -110,6 +116,7 @@ export default function DashboardPage() {
                </CardHeader>
                {/* Responsive Card Content */}
                <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+                 {/* Mock data */}
                  <div className="text-xl sm:text-2xl md:text-3xl font-bold text-muted-foreground">Last Login: Yesterday</div>
                  <p className="text-sm sm:text-base md:text-lg text-muted-foreground mt-1">
                    See your latest interactions and progress.
@@ -120,6 +127,7 @@ export default function DashboardPage() {
         </motion.div>
       </motion.div>
 
+      {/* Progress Placeholder */}
       {/* Placeholder - ensure it's also responsive */}
        <motion.div variants={cardVariants}> {/* Use card variant for animation */}
           <Card className="border-primary/10 overflow-hidden"> {/* Added overflow hidden */}
@@ -137,13 +145,7 @@ export default function DashboardPage() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.3 }}
                    >
-                       {/* Add a subtle animated background pattern */}
-                      <motion.div
-                           className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 opacity-50"
-                           initial={{ x: "-100%" }}
-                           animate={{ x: "100%" }}
-                           transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                      />
+                       {/* Removed glowing effect */}
                       <span className="relative z-10">Progress Chart Area</span>
                   </motion.div>
              </CardContent>

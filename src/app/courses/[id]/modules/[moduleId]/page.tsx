@@ -1,23 +1,21 @@
 
-'use client';
+"use client"; // Mark as Client Component for hooks and interactivity
 
-import * as React from 'react'; // Import React
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Video, CheckCircle, Circle, FileText, ArrowRight } from "lucide-react"; // Added ArrowRight
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation"; // Use App Router hooks
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useEffect } from 'react';
 import { allCourses } from '@/data/courses'; // Import shared course data
 
 interface ModulePageProps {
-  params: Promise<{ // params is a Promise
-    id: string; // Course ID
-    moduleId: string; // Module ID
-  }>;
+  // params types handled by useParams hook
 }
 
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -43,31 +41,36 @@ const itemVariants = {
 };
 
 // Placeholder for fetching module details (replace with actual logic)
-const findModuleData = (courseId: number, moduleId: string) => {
-  const course = allCourses.find(c => c.id === courseId);
+const findModuleData = (courseIdParam: number, moduleIdParam: string) => {
+  const course = allCourses.find(c => c.id === courseIdParam);
   if (!course) return null;
-  const module = course.modules.find(m => m.id === moduleId);
+  const module = course.modules.find(m => m.id === moduleIdParam);
   if (!module) return null;
   // Return course title along with module details
-  return { courseTitle: course.title, ...module };
+  return { courseTitle: course.title, ...module, courseId: course.id }; // Include courseId
 };
 
-export default function ModulePage({ params }: ModulePageProps) {
+export default function ModulePage() { // Removed props parameter
   const [isLoading, setIsLoading] = useState(true);
   const [moduleData, setModuleData] = useState<ReturnType<typeof findModuleData>>(null);
 
-  // Unwrap the params Promise using React.use()
-  const resolvedParams = React.use(params);
-  const courseId = parseInt(resolvedParams.id, 10);
-  const moduleId = resolvedParams.moduleId;
+  // Get params using useParams hook
+  const params = useParams();
+  const courseId = parseInt(params.id as string, 10); // Extract and parse the course ID
+  const moduleId = params.moduleId as string; // Extract module ID
 
   useEffect(() => {
     // Simulate fetching data
     setIsLoading(true);
-    const data = findModuleData(courseId, moduleId);
-    setModuleData(data);
-    setTimeout(() => setIsLoading(false), 300); // Simulate loading time
-  }, [moduleId, courseId]); // Use resolved params in dependency array
+    if (moduleId) { // Ensure moduleId is defined
+        const data = findModuleData(courseId, moduleId);
+        setModuleData(data);
+    } else {
+        setModuleData(null); // Handle case where moduleId is missing
+    }
+    // Simulate loading time
+    setTimeout(() => setIsLoading(false), 300); // Reduced delay
+  }, [moduleId, courseId]); // Use params from hook in dependency array
 
   if (isLoading) {
     return (
@@ -95,7 +98,7 @@ export default function ModulePage({ params }: ModulePageProps) {
     );
   }
 
-  if (!moduleData) {
+  if (!moduleData || !moduleId) { // Check moduleId as well
     return (
       <motion.div
           className="text-center py-16 sm:py-20 md:py-24"
@@ -106,8 +109,8 @@ export default function ModulePage({ params }: ModulePageProps) {
          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-destructive mb-4 md:mb-5">Module Not Found</h1>
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 md:mb-8">We couldn't find the module you were looking for in this course.</p>
          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-             <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105 text-sm sm:text-base md:text-lg md:py-2.5 md:px-5">
-               <Link href={`/courses/${courseId}`}> {/* Use resolved courseId */}
+              <Button variant="outline" asChild className="mt-4 transition-transform hover:scale-105 text-sm sm:text-base md:text-lg md:py-2.5 md:px-5">
+               <Link href={`/courses/${courseId}`}>
                  <ArrowLeft className="mr-2 h-4 w-4 md:h-5 md:w-5" /> Back to Course Details
                </Link>
              </Button>
@@ -128,7 +131,7 @@ export default function ModulePage({ params }: ModulePageProps) {
       {/* Back Button */}
       <motion.div variants={itemVariants}>
         <Button variant="outline" size="sm" asChild className="mb-4 sm:mb-6 md:mb-8 group transition-all hover:bg-accent hover:text-accent-foreground text-xs sm:text-sm md:text-base md:py-2 md:px-4">
-          <Link href={`/courses/${courseId}`}> {/* Use resolved courseId */}
+          <Link href={`/courses/${courseId}`}>
             <ArrowLeft className="mr-1.5 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 group-hover:-translate-x-1 transition-transform duration-200" />
             Back to {courseTitle || 'Course'}
           </Link>
@@ -147,29 +150,37 @@ export default function ModulePage({ params }: ModulePageProps) {
         </div>
       </motion.div>
 
-      {/* Video Player Placeholder */}
+      {/* Video Player */}
       <motion.div variants={itemVariants}>
         <Card className="overflow-hidden shadow-lg border-primary/10 rounded-lg">
-          <CardHeader className="p-0 relative bg-muted">
-            <motion.div
-              className="aspect-video w-full flex items-center justify-center text-muted-foreground bg-gradient-to-br from-muted to-background"
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Placeholder Icon/Text */}
-              <div className="text-center space-y-2">
-                 <Video className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 mx-auto opacity-50" />
-                 <p className="text-lg sm:text-xl md:text-2xl">Video Content Area</p>
-                 <p className="text-xs sm:text-sm text-muted-foreground/70">(Video Player Coming Soon)</p>
-              </div>
-              {/* You would embed your video player component here */}
-              {/* Example: <YourVideoPlayerComponent src="..." /> */}
-            </motion.div>
-          </CardHeader>
-          {/* Optional: Add video controls or description in CardContent */}
-          {/* <CardContent className="p-4">
-            <p>Video description or controls...</p>
-          </CardContent> */}
+            {moduleData.videoUrl ? (
+                <div className="aspect-video w-full bg-black">
+                    <video
+                        key={moduleData.videoUrl} // Re-mount video element if url changes
+                        width="100%"
+                        height="auto"
+                        controls
+                        preload="metadata"
+                        className="w-full h-full object-contain"
+                    >
+                        <source src={moduleData.videoUrl} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            ) : (
+                <CardHeader className="p-0 relative bg-muted">
+                    <motion.div
+                        className="aspect-video w-full flex items-center justify-center text-muted-foreground bg-gradient-to-br from-muted to-background"
+                        whileHover={{ scale: 1.01 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <div className="text-center space-y-2">
+                            <Video className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 mx-auto opacity-50" />
+                            <p className="text-lg sm:text-xl md:text-2xl">Video Content Not Available</p>
+                        </div>
+                    </motion.div>
+                </CardHeader>
+            )}
         </Card>
       </motion.div>
 
@@ -202,11 +213,11 @@ export default function ModulePage({ params }: ModulePageProps) {
 
       {/* Navigation Buttons (Next/Previous Module) */}
       <motion.div variants={itemVariants} className="flex justify-between mt-8 md:mt-12">
-        {/* Placeholder for Previous Module Button */}
+        {/* Placeholder for Previous Module Button - Add logic later */}
         <Button variant="outline" disabled>
           <ArrowLeft className="mr-2 h-4 w-4" /> Previous Module
         </Button>
-        {/* Placeholder for Next Module Button */}
+        {/* Placeholder for Next Module Button - Add logic later */}
          <Button variant="default" disabled>
            Next Module <ArrowRight className="ml-2 h-4 w-4" />
          </Button>
@@ -215,4 +226,3 @@ export default function ModulePage({ params }: ModulePageProps) {
     </motion.div>
   );
 }
-

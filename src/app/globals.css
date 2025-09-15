@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Geist font */
+@import url('https://fonts.googleapis.com/css2?family=Geist+Sans:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
+/* ADDING FONT FOR CERTIFICATE */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
+
 body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
@@ -85,7 +92,7 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    min-height: 100vh;
+    min-height: 100vh; /* Ensure body takes full viewport height */
     display: flex;
     flex-direction: column;
   }
@@ -101,12 +108,56 @@ body {
    ::selection {
      @apply bg-primary/20 text-primary-foreground; /* Custom selection style */
    }
+
+    /* Add pseudo elements to body for background effect */
+    body::before,
+    body::after {
+        content: '';
+        position: fixed; /* Use fixed to cover the viewport */
+        z-index: -1; /* Place behind all content */
+        border-radius: 50%;
+        filter: blur(96px); /* xl blur */
+        will-change: transform; /* Performance hint */
+    }
+    
+    /* Light mode blobs */
+    body::before {
+        background-color: hsl(var(--primary) / 0.1);
+        width: 30rem;
+        height: 30rem;
+        top: -10rem;
+        left: -15rem;
+        animation: blob-1-animation 20s infinite alternate;
+    }
+    
+    body::after {
+        background-color: hsl(var(--accent) / 0.1);
+        width: 35rem;
+        height: 35rem;
+        bottom: -15rem;
+        right: -20rem;
+        animation: blob-2-animation 25s infinite alternate -12s;
+    }
+
+    /* Dark mode blobs - slightly more opaque */
+    .dark body::before {
+        background-color: hsl(var(--primary) / 0.2);
+    }
+    
+    .dark body::after {
+        background-color: hsl(var(--accent) / 0.2);
+    }
 }
 
-/* Custom font variables if needed */
+/* Geist font variables */
 :root {
-  --font-geist-sans: "Geist", sans-serif;
+  --font-geist-sans: "Geist Sans", sans-serif;
   --font-geist-mono: "Geist Mono", monospace;
+}
+
+/* Add custom font for certificate */
+.font-dancing-script {
+    font-family: "Dancing Script", cursive;
 }
 
 
@@ -119,6 +170,25 @@ body {
 @keyframes slideInUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* Keyframes for the background blobs */
+@keyframes blob-1-animation {
+    from {
+        transform: translate(-10%, 10%) scale(1);
+    }
+    to {
+        transform: translate(15%, -15%) scale(1.1);
+    }
+}
+
+@keyframes blob-2-animation {
+    from {
+        transform: translate(10%, -10%) scale(1);
+    }
+    to {
+        transform: translate(-15%, 15%) scale(0.9);
+    }
 }
 
 .animate-fadeIn {

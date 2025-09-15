@@ -1,13 +1,12 @@
-
-"use client";
+"use client"; // Mark as Client Component for client-side hooks and interactivity
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from "framer-motion"; // Import AnimatePresence
-import { useEffect } from 'react';
+import { useRouter } from "next/navigation"; // Use App Router's router
+import { useEffect } from 'react'; // Import useEffect for client-side checks
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -54,14 +53,14 @@ const itemVariants = {
 
 export default function LoginPage() {
    const { toast } = useToast();
-   const router = useRouter();
+   const router = useRouter(); // Use App Router's router
 
    // Redirect if already logged in (client-side check)
    useEffect(() => {
      if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
        router.push('/'); // Redirect to homepage
      }
-   }, [router]);
+   }, [router]); // Add router to dependency array
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,35 +74,38 @@ export default function LoginPage() {
     console.log("Login submitted:", values);
 
     // --- Simulate successful login ---
-    // Derive a placeholder name from the email
+    // In a real app, you would send this to your backend for verification
+    // For now, we'll simulate success and store info in localStorage
+
+    // Basic name derivation from email (replace with actual user data fetch if possible)
     const nameFromEmail = values.email.split('@')[0] || "User";
-    // Capitalize first letter, handle short names gracefully
+    // Capitalize first letter
     const userName = nameFromEmail.length > 0
       ? nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
       : "User";
 
     if (typeof window !== 'undefined') {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userEmail', values.email);
-        localStorage.setItem('userName', userName);
-        // Set default values for other profile fields if not existing
-        if (!localStorage.getItem('userBio')) {
-            localStorage.setItem('userBio', 'Learning enthusiast.');
-        }
-        if (!localStorage.getItem('userEmailNotifications')) {
-            localStorage.setItem('userEmailNotifications', 'true');
-        }
-        // Ensure dark mode is set correctly based on potential profile settings or default
-        const storedDarkMode = localStorage.getItem('userDarkMode') === 'true';
-        localStorage.setItem('userDarkMode', String(storedDarkMode));
-        if (storedDarkMode) {
-             document.documentElement.classList.add('dark');
-        } else {
-             document.documentElement.classList.remove('dark');
-        }
-        localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`); // Default avatar on login
-        // Trigger storage event for header update
-        window.dispatchEvent(new Event('storage'));
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', values.email);
+      localStorage.setItem('userName', userName); // Store derived name
+      // Set default bio if none exists
+      if (!localStorage.getItem('userBio')) {
+          localStorage.setItem('userBio', 'Learning enthusiast.');
+      }
+      // Set default notification preference if none exists
+      if (!localStorage.getItem('userEmailNotifications')) {
+          localStorage.setItem('userEmailNotifications', 'true');
+      }
+      // Maintain dark mode preference or default to false
+      const storedDarkMode = localStorage.getItem('userDarkMode') === 'true';
+      localStorage.setItem('userDarkMode', String(storedDarkMode));
+      // Theme application is now handled in the profile page useEffect
+
+      // Set a default avatar URL based on email hash
+      localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`);
+
+      // Trigger storage event to update header immediately
+      window.dispatchEvent(new Event('storage'));
     }
 
     toast({
@@ -111,7 +113,7 @@ export default function LoginPage() {
       description: "Redirecting you to your dashboard...",
     });
 
-    router.push('/'); // Redirect to homepage
+    router.push('/'); // Redirect to homepage after login
   }
 
   return (
@@ -132,7 +134,7 @@ export default function LoginPage() {
                  transition={{ delay: 0.2, type: "spring", stiffness: 150, damping: 10 }} // Spring animation for icon
                >
                   {/* Responsive Icon Size */}
-                  <LogIn className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 mx-auto text-primary" />
+                  <LogIn className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:h-14 mx-auto text-primary" />
                 </motion.div>
                 {/* Responsive Titles */}
                 <motion.div variants={itemVariants}>
@@ -163,7 +165,7 @@ export default function LoginPage() {
                              <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence> {/* Animate error message appearance */}
-                              <FormMessage as={motion.p} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}/>
+                               <FormMessage/>
                            </AnimatePresence>
                          </FormItem>
                        )}
@@ -181,7 +183,7 @@ export default function LoginPage() {
                              <Input type="password" placeholder="••••••••" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                            </FormControl>
                            <AnimatePresence>
-                              <FormMessage as={motion.p} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}/>
+                               <FormMessage/>
                            </AnimatePresence>
                          </FormItem>
                        )}

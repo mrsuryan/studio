@@ -1,13 +1,12 @@
-
-"use client";
+"use client"; // Mark as Client Component for client-side hooks and interactivity
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from "framer-motion"; // Import AnimatePresence
-import { useEffect } from 'react';
+import { useRouter } from "next/navigation"; // Use App Router's router
+import { useEffect } from 'react'; // Import useEffect for client-side checks
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -57,14 +56,14 @@ const itemVariants = {
 
 export default function SignupPage() {
   const { toast } = useToast();
-  const router = useRouter();
+  const router = useRouter(); // Use App Router's router
 
   // Redirect if already logged in (client-side check)
    useEffect(() => {
      if (typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true') {
        router.push('/'); // Redirect to homepage
      }
-   }, [router]);
+   }, [router]); // Add router to dependency array
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,25 +77,28 @@ export default function SignupPage() {
  function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Signup submitted:", values);
      // --- Simulate successful signup & auto-login ---
+     // In a real app, you would send this data to your backend to create the user account
+     // For now, simulate success and store info in localStorage
+
      if (typeof window !== 'undefined') {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userName', values.name);
-        localStorage.setItem('userEmail', values.email);
-        // Set default profile fields on signup
-        localStorage.setItem('userBio', 'New user - ready to learn!');
-        localStorage.setItem('userEmailNotifications', 'true');
-        localStorage.setItem('userDarkMode', 'false'); // Default to light mode
-        localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`); // Default avatar on signup
-        // Trigger storage event for header update
-        window.dispatchEvent(new Event('storage'));
-        // Apply initial theme based on default (light)
-        document.documentElement.classList.remove('dark');
+       localStorage.setItem('isLoggedIn', 'true');
+       localStorage.setItem('userName', values.name);
+       localStorage.setItem('userEmail', values.email);
+       localStorage.setItem('userBio', 'New user - ready to learn!'); // Default bio
+       localStorage.setItem('userEmailNotifications', 'true'); // Default notification setting
+       localStorage.setItem('userDarkMode', 'false'); // Default to light mode
+       localStorage.setItem('userAvatarUrl', `https://picsum.photos/seed/${values.email}/100`); // Default avatar on signup
+
+       // Trigger storage event to update header immediately
+       window.dispatchEvent(new Event('storage'));
+
+       // Theme application is now handled in the profile page useEffect
      }
 
      toast({
       title: "Signup Successful!",
       description: "Welcome to EduHub! Redirecting you...",
-      variant: "default",
+      variant: "default", // Use 'success' variant if you have one defined
     });
 
     router.push('/'); // Redirect to homepage after signup
@@ -151,7 +153,7 @@ export default function SignupPage() {
                                <Input placeholder="John Doe" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                              </FormControl>
                              <AnimatePresence>
-                                <FormMessage as={motion.p} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}/>
+                                 <FormMessage/>
                              </AnimatePresence>
                            </FormItem>
                          )}
@@ -169,7 +171,7 @@ export default function SignupPage() {
                                <Input placeholder="you@example.com" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                              </FormControl>
                              <AnimatePresence>
-                                <FormMessage as={motion.p} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}/>
+                                 <FormMessage/>
                              </AnimatePresence>
                            </FormItem>
                          )}
@@ -187,7 +189,7 @@ export default function SignupPage() {
                                <Input type="password" placeholder="•••••••• (min. 6 characters)" {...field} className="text-sm sm:text-base md:text-lg py-2.5 sm:py-3 h-10 sm:h-11 md:h-12" />
                              </FormControl>
                              <AnimatePresence>
-                                <FormMessage as={motion.p} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}/>
+                                 <FormMessage/>
                              </AnimatePresence>
                            </FormItem>
                          )}
